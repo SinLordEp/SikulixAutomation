@@ -9,19 +9,13 @@ public class JNAUtils {
 
     private JNAUtils(){}
 
-    public static WinDef.HWND getWindowByPreciseTitle(String title){
+    public static WinDef.HWND getWindowByTitle(String title){
         WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, title);
         if (hwnd != null) {
             return hwnd;
         } else {
             throw new WindowErrorException("No Window with precise title is found");
         }
-    }
-
-    //TODO
-    public static WinDef.HWND getWindowByNameMatching(String partialTitle){
-
-        return null;
     }
 
     public static int getWindowCurrentWidth(WinDef.HWND window){
