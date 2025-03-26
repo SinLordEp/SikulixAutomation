@@ -71,10 +71,11 @@ public class SikulixUtils {
         ImagePath.add(path);
     }
 
-    public static void printSelectedRegionLocation(){
+    public static Region printSelectedRegionLocation(){
         Region region = screen.selectRegion();
         System.out.printf("Region selected: X: %s - Y: %s - Width: %s - Height: %s",
                 region.getX(), region.getY(), region.getW(), region.getH());
+        return region;
     }
 
 }
