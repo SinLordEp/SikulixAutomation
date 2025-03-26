@@ -1,6 +1,6 @@
 package utils;
 
-import exceptions.ComponentNotFoundException;
+import exceptions.ImageNotFoundException;
 import org.sikuli.script.FindFailed;
 import org.sikuli.script.Pattern;
 import org.sikuli.script.Region;
@@ -36,7 +36,7 @@ public class SikulixUtils {
         try {
             targetRegion.wait(imagePath, timeoutSec).click();
         } catch (FindFailed e) {
-            throw new ComponentNotFoundException("Target image is not found at target area!");
+            throw new ImageNotFoundException("Target image is not found at target area!");
         }
     }
 
@@ -44,7 +44,7 @@ public class SikulixUtils {
         try {
             targetRegion.wait(new Pattern(imagePath).similar(tolerance), timeoutSec).click();
         } catch (FindFailed e) {
-            throw new ComponentNotFoundException("Target image is has no match at target area!");
+            throw new ImageNotFoundException("Target image is has no match at target area!");
         }
     }
 }
