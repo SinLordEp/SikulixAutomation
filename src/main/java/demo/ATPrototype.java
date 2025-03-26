@@ -6,6 +6,7 @@ import utils.JNAUtils;
 public class ATPrototype {
     public static void main(String[] args) {
         new DemoGUI().run();
+        new ToolGUI();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
