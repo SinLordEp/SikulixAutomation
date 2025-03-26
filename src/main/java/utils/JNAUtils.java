@@ -3,6 +3,7 @@ package utils;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import exceptions.WindowErrorException;
+import org.sikuli.script.Region;
 
 public class JNAUtils {
 
@@ -54,4 +55,9 @@ public class JNAUtils {
     public static void setWindowAtLocation(WinDef.HWND window, int x, int y){
         User32.INSTANCE.MoveWindow(window, x, y, getWindowCurrentWidth(window), getWindowCurrentHeight(window), true);
     }
+
+    public static Region convertWindowToRegion(WinDef.HWND window){
+        return new Region(getWindowCurrentX(window), getWindowCurrentY(window), getWindowCurrentWidth(window), getWindowCurrentHeight(window));
+    }
+
 }
