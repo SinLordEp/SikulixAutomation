@@ -1,5 +1,8 @@
 package utils;
 
+import exceptions.ComponentNotFoundException;
+import org.sikuli.script.FindFailed;
+import org.sikuli.script.Pattern;
 import org.sikuli.script.Region;
 
 import java.awt.image.BufferedImage;
@@ -27,5 +30,21 @@ public class SikulixUtils {
 
     public static boolean compareTwoRegions(Region firstRegion, Region secondRegion){
         return compareImagesByPixel(firstRegion.getScreen().capture().getImage(), secondRegion.getScreen().capture().getImage());
+    }
+
+    public static void clickOnImageMatchOrThrow(Region targetRegion, String imagePath, int timeoutSec){
+        try {
+            targetRegion.wait(imagePath, timeoutSec).click();
+        } catch (FindFailed e) {
+            throw new ComponentNotFoundException("Target image is not found at target area!");
+        }
+    }
+
+    public static void clickOnImageSimilarOrThrow(Region targetRegion, String imagePath, double tolerance, int timeoutSec){
+        try {
+            targetRegion.wait(new Pattern(imagePath).similar(tolerance), timeoutSec).click();
+        } catch (FindFailed e) {
+            throw new ComponentNotFoundException("Target image is has no match at target area!");
+        }
     }
 }
