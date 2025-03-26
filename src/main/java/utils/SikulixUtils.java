@@ -1,14 +1,17 @@
 package utils;
 
-import exceptions.ImageNotFoundException;
-import org.sikuli.script.FindFailed;
-import org.sikuli.script.Pattern;
-import org.sikuli.script.Region;
+import exceptions.TargetNotFoundException;
+import org.sikuli.basics.Settings;
+import org.sikuli.script.*;
 
 import java.awt.image.BufferedImage;
 
 public class SikulixUtils {
-
+    public static final Screen screen = new Screen();
+    static{
+        Settings.OcrTextRead = true;
+        Settings.OcrTextSearch = true;
+    }
     private SikulixUtils(){}
 
     public static boolean compareRegionBeforeAfterRunnable(Runnable runnable, Region targetRegion){
@@ -32,19 +35,40 @@ public class SikulixUtils {
         return compareImagesByPixel(firstRegion.getScreen().capture().getImage(), secondRegion.getScreen().capture().getImage());
     }
 
-    public static void clickOnImageMatchOrThrow(Region targetRegion, String imagePath, int timeoutSec){
+    public static void clickOnImageMatchOrThrow(Region region, String imagePath, int timeoutSec){
         try {
-            targetRegion.wait(imagePath, timeoutSec).click();
+            region.wait(imagePath, timeoutSec).click();
         } catch (FindFailed e) {
-            throw new ImageNotFoundException("Target image is not found at target area!");
+            throw new TargetNotFoundException("Target image is not found in target area!");
         }
     }
 
-    public static void clickOnImageSimilarOrThrow(Region targetRegion, String imagePath, double tolerance, int timeoutSec){
+    public static void clickOnImageSimilarOrThrow(Region region, String imagePath, double tolerance, int timeoutSec){
         try {
-            targetRegion.wait(new Pattern(imagePath).similar(tolerance), timeoutSec).click();
+            region.wait(new Pattern(imagePath).similar(tolerance), timeoutSec).click();
         } catch (FindFailed e) {
-            throw new ImageNotFoundException("Target image is has no match at target area!");
+            throw new TargetNotFoundException("Target image is has no match in target area!");
         }
     }
+
+    public static String getTextFromRegion(Region region){
+        return region.text();
+    }
+
+    public static void clickIfTextFoundOrThrow(Region region, String text, int timeoutSec){
+        try {
+            region.waitText(text, timeoutSec).click();
+        } catch (FindFailed e) {
+            throw new TargetNotFoundException("Text is not found in target area!");
+        }
+    }
+
+    public static void setImagePath(String path){
+        ImagePath.setBundlePath(path);
+    }
+
+    public static void addImagePath(String path){
+        ImagePath.add(path);
+    }
+
 }
