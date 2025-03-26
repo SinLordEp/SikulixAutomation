@@ -7,7 +7,7 @@ import exceptions.WindowErrorException;
 public class JNAUtils {
 
     private JNAUtils(){}
-    
+
     public static WinDef.HWND getWindowByPreciseTitle(String title){
         WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, title);
         if (hwnd != null) {
