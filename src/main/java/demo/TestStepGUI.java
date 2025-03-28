@@ -15,7 +15,7 @@ public class TestStepGUI extends JFrame{
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // === Top Fixed Panel ===
+        // top panel
         JPanel topPanel = new JPanel(new GridBagLayout());
         GridBagConstraints topGbc = new GridBagConstraints();
         topGbc.insets = new Insets(5, 5, 5, 5);
@@ -47,7 +47,7 @@ public class TestStepGUI extends JFrame{
         gbc.anchor = GridBagConstraints.NORTH;
         int row = 0;
 
-        // L3 title
+        // L3 - title
         gbc.gridy = row++;
         mainPanel.add(new JLabel("Pass element"), gbc);
 
@@ -102,10 +102,10 @@ public class TestStepGUI extends JFrame{
         }
 
         JPanel scrollWrapper = new JPanel(new BorderLayout());
-        scrollWrapper.add(mainPanel, BorderLayout.NORTH); // 保证内容从顶端开始
+        scrollWrapper.add(mainPanel, BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane(scrollWrapper);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // 提高滚动速率
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
         // bottom buttons

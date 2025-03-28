@@ -16,12 +16,16 @@ public class ATPrototype {
     static Region region = new Region(1,1, width-1, height-1);
     private static final ArrayList<TestCase> testCases = new ArrayList<>();
     public static void main(String[] args) {
-        new TestStepGUI(region).run();
-        //captureWindow();
-        //testCases.add(testCaseOne());
-        //runTest();
+        new ToolGUI().run();
+        //new TestStepGUI(region).run();
+
     }
 
+    public static void demoRun(){
+        captureWindow();
+        testCases.add(testCaseOne());
+        runTest();
+    }
     public static void captureWindow(){
         WinDef.HWND window = JNAUtils.getWindowByTitle("Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@");
         JNAUtils.setWindowSize(window, width,height);
