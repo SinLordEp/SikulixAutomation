@@ -16,17 +16,8 @@ public class DemoGUI {
         textFieldTest = new JTextField();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         mainPanel.add(textFieldTest, BorderLayout.NORTH);
-        String[] columnNames = {"Shape", "Color"};
-        Object[][] data = {
-                {"round", "red"},
-                {"square", "green"}
-        };
-        DefaultTableModel model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model);
-        JScrollPane scrollPane = new JScrollPane(table);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        buttonOK = new JButton("OK");
-        buttonCancel = new JButton("Cancel");
+        buttonOK = new JButton("Screenshot");
+        buttonCancel = new JButton("Save Image");
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         buttonPanel.add(buttonOK);
