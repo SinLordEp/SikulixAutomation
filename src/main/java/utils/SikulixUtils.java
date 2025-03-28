@@ -10,6 +10,7 @@ import java.util.Objects;
 
 public class SikulixUtils {
     public static final Screen screen = new Screen();
+    private static final String imageRoot = "testcaseimage/";
     static{
         Settings.OcrTextRead = true;
         Settings.OcrTextSearch = true;
@@ -23,34 +24,28 @@ public class SikulixUtils {
     private SikulixUtils(){}
 
     public static TestState handleTestStep(TestStep step){
-        return switch (step.getAction()){
+        TestState state = switch (step.getAction()){
             case FIND -> findImage(step);
             case CLICK -> clickOnFound(step);
             case TYPE, PASTE -> clickAndText(step);
         };
+        // retry when retry image is not null and has match by clicking
+        if(state == TestState.NO_MATCH && step.getRetryImagePath() != null && handleFindFailed(() -> step.getRegion().wait(new Pattern(step.getRetryImagePath()).similar(step.getSimilarity()), step.getTimeoutSec()).click()) == TestState.MATCHED){
+                state = findImage(step);
+        }
+        //return NO_MATCH when image has no match and error image is null
+        if(state == TestState.NO_MATCH && step.getErrorImagePath() == null){
+            return TestState.NO_MATCH;
+        }
+        //return FAIL when image has no match and error image is matched
+        if(handleFindFailed(() -> step.getRegion().wait(new Pattern(step.getErrorImagePath()).similar(step.getSimilarity()), step.getTimeoutSec())) == TestState.MATCHED){
+            return TestState.FAIL;
+        }
+        return TestState.PASS;
     }
 
     private static TestState findImage(TestStep step){
-        TestState state = handleFindFailed(() -> step.getRegion().wait(new Pattern(step.getImagePath()).similar(step.getSimilarity()), step.getTimeoutSec()));
-        if(step.getErrorImagePath() == null && state != TestState.PASS){
-            return state;
-        }else{
-            if(handleFindFailed(() -> step.getRegion().wait(new Pattern(step.getErrorImagePath()).similar(step.getSimilarity()), step.getTimeoutSec())) == TestState.PASS){
-                state = TestState.FAIL;
-            }
-        }
-        return state;
-    }
-
-    public static TestState findImage(Region region, String imagePath, double similarity, int timeoutSec){
-        return handleFindFailed(() -> region.wait(new Pattern(imagePath).similar(similarity), timeoutSec));
-    }
-
-    public static boolean compareRegionBeforeAfterRunnable(Runnable runnable, Region targetRegion){
-        BufferedImage imageBefore = targetRegion.getScreen().capture().getImage();
-        runnable.run();
-        BufferedImage imageAfter = targetRegion.getScreen().capture().getImage();
-        return compareImagesByPixel(imageBefore, imageAfter);
+        return handleFindFailed(() -> step.getRegion().wait(new Pattern(step.getImagePath()).similar(step.getSimilarity()), step.getTimeoutSec()));
     }
 
     public static boolean compareImagesByPixel(BufferedImage firstImage, BufferedImage secondImage){
@@ -61,10 +56,6 @@ public class SikulixUtils {
             }
         }
         return true;
-    }
-
-    public static boolean compareTwoRegions(Region firstRegion, Region secondRegion){
-        return compareImagesByPixel(firstRegion.getScreen().capture().getImage(), secondRegion.getScreen().capture().getImage());
     }
 
     private static TestState clickOnFound(TestStep step){
@@ -89,12 +80,10 @@ public class SikulixUtils {
         });
     }
 
-    public static String getTextFromRegion(Region region){
-        return region.text();
-    }
-
-    public static void setImagePath(String path){
-        ImagePath.setBundlePath(path);
+    public static void setImagePath(String folderName){
+        ImagePath.reset();
+        ImagePath.add(imageRoot + "universal");
+        ImagePath.add(imageRoot + folderName + "/");
     }
 
     public static String getImagePath(){
@@ -108,7 +97,7 @@ public class SikulixUtils {
     private static TestState handleFindFailed(FindFailedReturnBool function){
         try{
             function.run();
-            return TestState.PASS;
+            return TestState.MATCHED;
         }catch (FindFailed e){
             return TestState.NO_MATCH;
         }catch(Exception e){

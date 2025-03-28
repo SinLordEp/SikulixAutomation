@@ -16,12 +16,16 @@ public class ATPrototype {
     static Region region = new Region(1,1, width-1, height-1);
     private static final ArrayList<TestCase> testCases = new ArrayList<>();
     public static void main(String[] args) {
-        //new ToolGUI().run();
+        new TestStepGUI(region).run();
+        //captureWindow();
+        //testCases.add(testCaseOne());
+        //runTest();
+    }
+
+    public static void captureWindow(){
         WinDef.HWND window = JNAUtils.getWindowByTitle("Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@");
         JNAUtils.setWindowSize(window, width,height);
         JNAUtils.setWindowAtLocation(window, 0, 0);
-        testCases.add(testCaseOne());
-        runTest();
     }
 
     public static void runTest(){
@@ -32,18 +36,19 @@ public class ATPrototype {
                     TestState state = SikulixUtils.handleTestStep(testStep);
                     if (state == TestState.FAIL){
                         throw new TestStepFailedException("Defined error detected");
-                    } else if (state == TestState.NO_MATCH) {
+                    }
+                    if (state == TestState.NO_MATCH) {
                         throw new TestStepFailedException("Expected result is not detected");
                     }
                 });
             }catch (TestStepFailedException e){
-                System.err.println("Test case failed with cause: " + e.getMessage());
+                System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
             }
         }
     }
 
     public static TestCase testCaseOne(){
-        TestCase testCase = new TestCase("Ventas_001", region);
+        TestCase testCase = new TestCase("ventas_001", region);
         testCase.addClickStep("Ventas_button.png", 2, null);
         testCase.addMatchStep("Ventas_panel.png", 2, null);
         testCase.addClickStep("Buscar_button.png", 2, null);
@@ -55,5 +60,10 @@ public class ATPrototype {
         return testCase;
     }
 
+    public static TestCase testCaseTwo(){
+        TestCase testCase = new TestCase("", region);
+
+        return testCase;
+    }
 
 }

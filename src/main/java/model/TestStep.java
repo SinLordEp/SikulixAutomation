@@ -4,110 +4,124 @@ import org.sikuli.script.Region;
 import utils.TestAction;
 
 public class TestStep {
-    private Region region;
-    private String imagePath;
-    private String errorImagePath;
-    private double similarity = 0.9;
-    private int timeoutSec;
-    private TestAction action = TestAction.FIND;
-    private String outputText;
-    private boolean enterKey = false;
+    private final Region region;
+    private final String imagePath;
+    private final String retryImagePath;
+    private final String errorImagePath;
+    private final double similarity;
+    private final int timeoutSec;
+    private final TestAction action;
+    private final String outputText;
+    private final boolean enterKey;
 
-    public TestStep(Region region, String imagePath, int timeoutSec, String errorImagePath) {
-        this.region = region;
-        this.imagePath = imagePath;
-        this.timeoutSec = timeoutSec;
-        this.errorImagePath = errorImagePath;
+    private TestStep(Builder builder) {
+        this.region = builder.region;
+        this.imagePath = builder.imagePath;
+        this.retryImagePath = builder.retryImagePath;
+        this.errorImagePath = builder.errorImagePath;
+        this.similarity = builder.similarity;
+        this.timeoutSec = builder.timeoutSec;
+        this.action = builder.action;
+        this.outputText = builder.outputText;
+        this.enterKey = builder.enterKey;
+
     }
 
-    public TestStep(Region region, String imagePath, int timeoutSec, TestAction action, String errorImagePath) {
-        this.region = region;
-        this.imagePath = imagePath;
-        this.action = action;
-        this.timeoutSec = timeoutSec;
-        this.errorImagePath = errorImagePath;
-    }
+    public static class Builder{
+        private Region region;
+        private String imagePath;
+        private String retryImagePath = null;
+        private String errorImagePath = null;
+        private double similarity = 0.9;
+        private int timeoutSec;
+        private TestAction action = TestAction.FIND;
+        private String outputText;
+        private boolean enterKey = false;
 
-    public TestStep(String imagePath, Region region, double similarity, int timeoutSec, TestAction action, String errorImagePath) {
-        this.imagePath = imagePath;
-        this.region = region;
-        this.similarity = similarity;
-        this.timeoutSec = timeoutSec;
-        this.action = action;
-        this.errorImagePath = errorImagePath;
-    }
+        public Builder setRegion(Region region) {
+            this.region = region;
+            return this;
+        }
 
-    public TestStep(Region region, String imagePath, int timeoutSec, TestAction action, String outputText, boolean enterKey, String errorImagePath) {
-        this.region = region;
-        this.imagePath = imagePath;
-        this.timeoutSec = timeoutSec;
-        this.action = action;
-        this.outputText = outputText;
-        this.enterKey = enterKey;
-        this.errorImagePath = errorImagePath;
+        public Builder setImagePath(String imagePath) {
+            this.imagePath = imagePath;
+            return this;
+        }
+
+        public Builder setRetryImagePath(String retryImagePath) {
+            this.retryImagePath = retryImagePath;
+            return this;
+        }
+
+        public Builder setErrorImagePath(String errorImagePath) {
+            this.errorImagePath = errorImagePath;
+            return this;
+        }
+
+        public Builder setSimilarity(double similarity) {
+            this.similarity = similarity;
+            return this;
+        }
+
+        public Builder setTimeoutSec(int timeoutSec) {
+            this.timeoutSec = timeoutSec;
+            return this;
+        }
+
+        public Builder setAction(TestAction action) {
+            this.action = action;
+            return this;
+        }
+
+        public Builder setOutputText(String outputText) {
+            this.outputText = outputText;
+            return this;
+        }
+
+        public Builder setEnterKey(boolean enterKey) {
+            this.enterKey = enterKey;
+            return this;
+        }
+
+        public TestStep build(){
+            return new TestStep(this);
+        }
     }
 
     public Region getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
-        this.region = region;
-    }
-
     public String getImagePath() {
         return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
     }
 
     public double getSimilarity() {
         return similarity;
     }
 
-    public void setSimilarity(double similarity) {
-        this.similarity = similarity;
-    }
-
     public int getTimeoutSec() {
         return timeoutSec;
-    }
-
-    public void setTimeoutSec(int timeoutSec) {
-        this.timeoutSec = timeoutSec;
     }
 
     public TestAction getAction() {
         return action;
     }
 
-    public void setAction(TestAction action) {
-        this.action = action;
-    }
-
     public String getOutputText() {
         return outputText;
-    }
-
-    public void setOutputText(String outputText) {
-        this.outputText = outputText;
     }
 
     public boolean isEnterKey() {
         return enterKey;
     }
 
-    public void setEnterKey(boolean enterKey) {
-        this.enterKey = enterKey;
-    }
-
     public String getErrorImagePath() {
         return errorImagePath;
     }
 
-    public void setErrorImagePath(String errorImagePath) {
-        this.errorImagePath = errorImagePath;
+    public String getRetryImagePath() {
+        return retryImagePath;
     }
+
 }
