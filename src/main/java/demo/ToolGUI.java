@@ -11,7 +11,8 @@ public class ToolGUI extends JFrame{
     private final Map<String, List<TestCaseItem>> categoryDataMap = new HashMap<>();
     private final DefaultListModel<String> leftListModel = new DefaultListModel<>();
     private final JList<String> leftList = new JList<>(leftListModel);
-    private final JPanel rightDetailPanel = new JPanel();
+    private final DefaultListModel<TestCaseItem> caseListModel = new DefaultListModel<>();
+    private final JList<TestCaseItem> caseList = new JList<>(caseListModel);
     private final JButton editButton = new JButton("Edit");
 
     public ToolGUI() {
@@ -32,10 +33,26 @@ public class ToolGUI extends JFrame{
         leftList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane categoryPane = new JScrollPane(leftList);
 
-        rightDetailPanel.setLayout(new BoxLayout(rightDetailPanel, BoxLayout.Y_AXIS));
-        JScrollPane casePane = new JScrollPane(rightDetailPanel);
+        caseList.setCellRenderer(new CaseListRenderer());
+        caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        caseList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && caseList.getSelectedValue() != null) {
+                editButton.setEnabled(true);
+            }
+        });
+        caseList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int index = caseList.locationToIndex(evt.getPoint());
+                if (index >= 0) {
+                    TestCaseItem item = caseListModel.getElementAt(index);
+                    item.selected = !item.selected;
+                    caseList.repaint();
+                }
+            }
+        });
 
-        // Load category and cases config
+        JScrollPane casePane = new JScrollPane(caseList);
+
         for (int i = 1; i <= 10; i++) {
             String category = "Category " + i;
             leftListModel.addElement(category);
@@ -51,14 +68,14 @@ public class ToolGUI extends JFrame{
                 loadCases(leftList.getSelectedValue());
             }
         });
-        // add category and case panel
+
         splitPane.setLeftComponent(categoryPane);
         splitPane.setRightComponent(casePane);
         splitPane.setResizeWeight(0.3);
         testCasePanel.add(splitPane, BorderLayout.CENTER);
         testCasePanel.setPreferredSize(new Dimension(750, 200));
         mainPanel.add(testCasePanel);
-        // add category and case panel
+
         JPanel buttonRow = new JPanel(new BorderLayout());
         JPanel leftButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftButtons.add(new JButton("Load config"));
@@ -105,35 +122,13 @@ public class ToolGUI extends JFrame{
     }
 
     private void loadCases(String category) {
-        rightDetailPanel.removeAll();
+        caseListModel.clear();
         if (category == null) return;
         List<TestCaseItem> items = categoryDataMap.getOrDefault(category, new ArrayList<>());
         for (TestCaseItem item : items) {
-            JPanel row = new JPanel(new BorderLayout());
-            JCheckBox checkBox = new JCheckBox();
-            checkBox.setSelected(item.selected);
-            DefaultListModel<String> model = new DefaultListModel<>();
-            model.addElement(item.name);
-            JList<String> list = new JList<>(model);
-            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.setVisibleRowCount(1);
-            list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-            list.setFixedCellHeight(30);
-            list.setFixedCellWidth(150);
-            list.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-
-            list.addListSelectionListener(e -> editButton.setEnabled(true));
-
-            checkBox.addActionListener(e -> item.selected = checkBox.isSelected());
-
-            row.add(checkBox, BorderLayout.WEST);
-            row.add(list, BorderLayout.CENTER);
-            row.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-            rightDetailPanel.add(row);
+            caseListModel.addElement(item);
         }
-        rightDetailPanel.revalidate();
-        rightDetailPanel.repaint();
+        editButton.setEnabled(false);
     }
 
     private static class TestCaseItem {
@@ -142,6 +137,22 @@ public class ToolGUI extends JFrame{
         TestCaseItem(String name, boolean selected) {
             this.name = name;
             this.selected = selected;
+        }
+        public String toString() {
+            return name;
+        }
+    }
+
+    private static class CaseListRenderer extends JCheckBox implements ListCellRenderer<TestCaseItem> {
+        @Override
+        public Component getListCellRendererComponent(JList<? extends TestCaseItem> list, TestCaseItem value, int index, boolean isSelected, boolean cellHasFocus) {
+            setText(value.name);
+            setSelected(value.selected);
+            setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+            setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+            setEnabled(list.isEnabled());
+            setFont(list.getFont());
+            return this;
         }
     }
 
