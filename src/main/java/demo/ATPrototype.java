@@ -10,6 +10,9 @@ import utils.TestState;
 
 import java.util.ArrayList;
 
+/**
+ * @author Sin
+ */
 public class ATPrototype {
     static int width = 1400;
     static int height = 1000;
@@ -18,7 +21,6 @@ public class ATPrototype {
     public static void main(String[] args) {
         new ToolGUI().run();
         //new TestStepGUI(region).run();
-
     }
 
     public static void demoRun(){
