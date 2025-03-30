@@ -4,42 +4,91 @@ import org.sikuli.script.Region;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 
+/**
+ * @author Sin
+ */
 public class TestStepGUI extends JFrame{
-    private Region region;
+    private final Region region;
+
     public TestStepGUI(Region region) {
         this.region = region;
         setTitle("Create TestStep");
-        setSize(500, 800);
+        setSize(400, 800);
+        setResizable(false);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        setMainPanel();
+    }
 
-        // top panel
-        JPanel topPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints topGbc = new GridBagConstraints();
-        topGbc.insets = new Insets(5, 5, 5, 5);
-        topGbc.fill = GridBagConstraints.HORIZONTAL;
-        topGbc.weightx = 1;
-        int topRow = 0;
+    private void setMainPanel(){
+        add(stepInfoPanel(), BorderLayout.NORTH);
+        add(stepElementPane(), BorderLayout.CENTER);
+        add(bottomButtonsPanel(), BorderLayout.SOUTH);
+    }
 
-        JPanel regionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        regionPanel.add(new JLabel("X: " + region.getX()));
-        regionPanel.add(new JLabel("Y: " + region.getY()));
-        regionPanel.add(new JLabel("Width: " + region.getW()));
-        regionPanel.add(new JLabel("Height: " + region.getH()));
-        regionPanel.add(new JButton("Toggle area highlight"));
-        topGbc.gridy = topRow++;
-        topPanel.add(regionPanel, topGbc);
+    private JPanel stepInfoPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        int row = 0;
 
-        topGbc.gridy = topRow++;
-        topPanel.add(new JSeparator(), topGbc);
+        // Step name label and input
+        gbc.gridy = row++;
+        JPanel namePanel = new JPanel(new BorderLayout());
+        namePanel.add(new JLabel("Step name: "), BorderLayout.WEST);
+        namePanel.add(new JTextField(20), BorderLayout.CENTER);
+        panel.add(namePanel, gbc);
 
-        add(topPanel, BorderLayout.NORTH);
+        // Description label
+        gbc.gridy = row++;
+        panel.add(new JLabel("Description:"), gbc);
 
-        // central panel
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setAlignmentY(TOP_ALIGNMENT);
+        // Description input (2 rows height)
+        gbc.gridy = row++;
+        gbc.gridheight = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 0.1;
+        JTextArea descriptionText = new JTextArea(3, 20);
+        descriptionText.setLineWrap(true);
+        descriptionText.setWrapStyleWord(true);
+        JScrollPane descScroll = new JScrollPane(descriptionText);
+        descScroll.setPreferredSize(new Dimension(400, 60));
+        panel.add(descScroll, gbc);
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 0;
+        row++;
+
+        // 4 region info labels + 4 inputs
+        gbc.gridy = row++;
+        JPanel regionValuesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        regionValuesPanel.add(new JLabel("X:"));
+        regionValuesPanel.add(new JTextField(String.valueOf(region.getX()), 3));
+        regionValuesPanel.add(new JLabel("Y:"));
+        regionValuesPanel.add(new JTextField(String.valueOf(region.getY()), 3));
+        regionValuesPanel.add(new JLabel("Width:"));
+        regionValuesPanel.add(new JTextField(String.valueOf(region.getW()), 3));
+        regionValuesPanel.add(new JLabel("Height:"));
+        regionValuesPanel.add(new JTextField(String.valueOf(region.getH()), 3));
+        panel.add(regionValuesPanel, gbc);
+
+        // Toggle highlight button
+        gbc.gridy = row++;
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(new JButton("Toggle area highlight"));
+        panel.add(buttonPanel, gbc);
+
+        return panel;
+    }
+
+    private JScrollPane stepElementPane() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setAlignmentY(TOP_ALIGNMENT);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -47,130 +96,181 @@ public class TestStepGUI extends JFrame{
         gbc.anchor = GridBagConstraints.NORTH;
         int row = 0;
 
-        // L3 - title
+        // Title
         gbc.gridy = row++;
-        mainPanel.add(new JLabel("Pass element"), gbc);
+        panel.add(new JLabel("Pass element"), gbc);
 
-        // L4 options
-        JPanel optionRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Option row
+        gbc.gridy = row++;
+        panel.add(matchTypePanel(), gbc);
+
+        // Input label
+        gbc.gridy = row++;
+        panel.add(new JLabel("Image name or Text:"), gbc);
+
+        // Input field
+        gbc.gridy = row++;
+        JTextField inputField = new JTextField();
+        inputField.setPreferredSize(new Dimension(200, 25));
+        panel.add(inputField, gbc);
+
+        // Screenshot button
+        gbc.gridy = row++;
+        panel.add(screenshotButtonPanel(), gbc);
+
+        // Image label
+        gbc.gridy = row++;
+        JLabel img = new JLabel(new ImageIcon());
+        img.setPreferredSize(new Dimension(300, 100));
+        panel.add(img, gbc);
+
+        // Action type selection
+        gbc.gridy = row++;
+        JPanel actionPanel = actionTypePanel();
+        panel.add(actionPanel, gbc);
+
+        // Collapsible element panels
+        String[] elementTitles = {"Precondition element","Fail element", "Retry element", "Close element"};
+        for (int i = 0; i <= 3; i++) {
+            gbc.gridy = row++;
+            panel.add(elementCollapsiblePanel(elementTitles[i]), gbc);
+        }
+
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.add(panel, BorderLayout.NORTH);
+
+        JScrollPane scrollPane = new JScrollPane(wrapper);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        return scrollPane;
+    }
+
+    private static JPanel actionTypePanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ButtonGroup buttonGroup = new ButtonGroup();
+        JRadioButton matchBtn = new JRadioButton("Match", true);
+        JRadioButton clickBtn = new JRadioButton("Click");
+        JRadioButton typeBtn = new JRadioButton("Type");
+        JRadioButton pasteBtn = new JRadioButton("Paste");
+        buttonGroup.add(matchBtn);
+        buttonGroup.add(clickBtn);
+        buttonGroup.add(typeBtn);
+        buttonGroup.add(pasteBtn);
+        panel.add(matchBtn);
+        panel.add(clickBtn);
+        panel.add(typeBtn);
+        panel.add(pasteBtn);
+        return panel;
+    }
+
+    private JPanel matchTypePanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ButtonGroup group = new ButtonGroup();
         JRadioButton opt1 = new JRadioButton("Image", true);
         JRadioButton opt2 = new JRadioButton("Text");
         group.add(opt1);
         group.add(opt2);
-        JCheckBox checkBox = new JCheckBox("Click");
-        optionRow.add(opt1);
-        optionRow.add(opt2);
-        optionRow.add(Box.createHorizontalStrut(50));
-        optionRow.add(checkBox);
-        gbc.gridy = row++;
-        mainPanel.add(optionRow, gbc);
-
-        // L5 - input with label
-        gbc.gridy = row++;
-        mainPanel.add(new JLabel("Image Path or Text:"), gbc);
-        gbc.gridy = row++;
-        JTextField mainInput = new JTextField();
-        mainInput.setPreferredSize(new Dimension(200, 25));
-        mainPanel.add(mainInput, gbc);
-
-        // L6 - screenshot button
-        gbc.gridy = row++;
-        JPanel shotBtnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton shotBtn = new JButton("Screenshot");
-        shotBtn.setPreferredSize(new Dimension(120, 25));
-        shotBtnPanel.add(shotBtn);
-        mainPanel.add(shotBtnPanel, gbc);
-
-        // L7 - image
-        gbc.gridy = row++;
-        JLabel img1 = new JLabel(new ImageIcon());
-        img1.setPreferredSize(new Dimension(300, 100));
-        mainPanel.add(img1, gbc);
-
-        // L8~L22 - collapsible panels
-        for (int section = 1; section <= 3; section++) {
-            String title = switch (section) {
-                case 1 -> "Fail element";
-                case 2 -> "Retry element";
-                case 3 -> "Close element";
-                default -> throw new IllegalStateException("Unexpected value: " + section);
-            };
-            JPanel collapsiblePanel = createCollapsiblePanel(title);
-            gbc.gridy = row++;
-            mainPanel.add(collapsiblePanel, gbc);
-        }
-
-        JPanel scrollWrapper = new JPanel(new BorderLayout());
-        scrollWrapper.add(mainPanel, BorderLayout.NORTH);
-
-        JScrollPane scrollPane = new JScrollPane(scrollWrapper);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(scrollPane, BorderLayout.CENTER);
-
-        // bottom buttons
-        JPanel bottomButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
-        bottomButtons.add(new JButton("Save Step"));
-        bottomButtons.add(new JButton("Cancel"));
-        add(bottomButtons, BorderLayout.SOUTH);
+        panel.add(opt1);
+        panel.add(opt2);
+        return panel;
     }
 
-    private JPanel createCollapsiblePanel(String title) {
+    private JPanel screenshotButtonPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton shotBtn = new JButton("Screenshot");
+        shotBtn.setPreferredSize(new Dimension(120, 25));
+        panel.add(shotBtn);
+        return panel;
+    }
+
+    private JPanel bottomButtonsPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        panel.add(new JButton("Save Step"));
+        panel.add(new JButton("Cancel"));
+        return panel;
+    }
+
+    private JPanel elementCollapsiblePanel(String title) {
         JPanel panel = new JPanel(new BorderLayout());
         JButton toggle = new JButton("▶ " + title);
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setAlignmentY(TOP_ALIGNMENT);
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setAlignmentY(TOP_ALIGNMENT);
 
-        // Label above input
-        content.add(new JLabel("Image Path or Text:"));
+        // Match type label
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        labelPanel.add(new JLabel("Image Path or Text:"));
+        contentPanel.add(labelPanel);
 
-        // Three options and checkbox
-        JPanel choiceRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ButtonGroup choiceGroup = new ButtonGroup();
-        JRadioButton opt1 = new JRadioButton("None", true);
-        JRadioButton opt2 = new JRadioButton("Image");
-        JRadioButton opt3 = new JRadioButton("Text");
-        choiceGroup.add(opt1);
-        choiceGroup.add(opt2);
-        choiceGroup.add(opt3);
-        choiceRow.add(opt1);
-        choiceRow.add(opt2);
-        choiceRow.add(opt3);
-        choiceRow.add(new JCheckBox("Click"));
-        content.add(choiceRow);
-        // input
+        // Match type selection
+        JPanel matchTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ButtonGroup typeGroup = new ButtonGroup();
+        JRadioButton none = new JRadioButton("None", true);
+        JRadioButton img = new JRadioButton("Image");
+        JRadioButton txt = new JRadioButton("Text");
+        typeGroup.add(none);
+        typeGroup.add(img);
+        typeGroup.add(txt);
+        matchTypePanel.add(none);
+        matchTypePanel.add(img);
+        matchTypePanel.add(txt);
+        contentPanel.add(matchTypePanel);
+
+        // Match type input
         JTextField input = new JTextField();
         input.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
-        content.add(input);
-        // button
-        JButton btn = new JButton("Screenshot");
-        btn.setPreferredSize(new Dimension(120, 25));
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        btnPanel.add(btn);
-        content.add(btnPanel);
-        // image
-        JLabel subImg = new JLabel(new ImageIcon());
-        subImg.setPreferredSize(new Dimension(300, 100));
-        content.add(subImg);
+        contentPanel.add(input);
+
+        // Screenshot button
+        JPanel screenshotButton = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton screenshot = new JButton("Screenshot");
+        screenshot.setPreferredSize(new Dimension(120, 25));
+        screenshotButton.add(screenshot);
+        contentPanel.add(screenshotButton);
+
+        JLabel imageLabel = new JLabel(new ImageIcon());
+        imageLabel.setPreferredSize(new Dimension(300, 100));
+        contentPanel.add(imageLabel);
+
+        JPanel actionPanel = actionTypePanel();
+        contentPanel.add(actionPanel);
+
+        // Visibility control
+        ActionListener visibilityUpdater = _ -> {
+            boolean show = !none.isSelected();
+            input.setVisible(show);
+            screenshotButton.setVisible(show);
+            imageLabel.setVisible(show && img.isSelected());
+            actionPanel.setVisible(show);
+            panel.revalidate();
+            panel.repaint();
+        };
+        none.addActionListener(visibilityUpdater);
+        img.addActionListener(visibilityUpdater);
+        txt.addActionListener(visibilityUpdater);
+        input.setVisible(false);
+        screenshotButton.setVisible(false);
+        imageLabel.setVisible(false);
+        actionPanel.setVisible(false);
 
         panel.add(toggle, BorderLayout.NORTH);
-        panel.add(content, BorderLayout.CENTER);
-        content.setVisible(false);
-        toggle.addActionListener(e -> {
-            boolean visible = !content.isVisible();
-            content.setVisible(visible);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        contentPanel.setVisible(false);
+        toggle.addActionListener(_ -> {
+            boolean visible = !contentPanel.isVisible();
+            contentPanel.setVisible(visible);
             toggle.setText((visible ? "▼ " : "▶ ") + title);
             panel.revalidate();
         });
+
         return panel;
     }
 
 
 
+
     public void run(){
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        //pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
