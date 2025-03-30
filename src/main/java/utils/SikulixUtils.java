@@ -59,7 +59,7 @@ public class SikulixUtils {
 
     public static void setImagePath(String folderName){
         ImagePath.reset();
-        ImagePath.add(IMAGE_ROOT + "universal");
+        ImagePath.add(IMAGE_ROOT + "universal/");
         ImagePath.add(IMAGE_ROOT + folderName + "/");
     }
 
