@@ -6,7 +6,7 @@ import model.TestCase;
 import org.sikuli.script.*;
 import utils.JNAUtils;
 import utils.SikulixUtils;
-import utils.TestState;
+import model.StepState;
 
 import java.util.ArrayList;
 
@@ -39,11 +39,11 @@ public class ATPrototype {
             try{
                 testCase.getSteps().forEach(testStep ->
                 {
-                    TestState state = SikulixUtils.handleTestStep(testStep);
-                    if (state == TestState.FAIL){
+                    StepState state = SikulixUtils.handleTestStep(testStep);
+                    if (state == StepState.FAIL){
                         throw new TestStepFailedException("Defined error detected");
                     }
-                    if (state == TestState.NO_MATCH) {
+                    if (state == StepState.NO_MATCH) {
                         throw new TestStepFailedException("Expected result is not detected");
                     }
                 });
