@@ -1,8 +1,11 @@
-package model;
+package utils;
 
 import exceptions.UndefinedException;
+import model.StepElement;
+import model.StepElementType;
+import model.StepState;
+import model.TestStep;
 import org.sikuli.script.FindFailed;
-import utils.SikulixUtils;
 
 /**
  * @author Sin

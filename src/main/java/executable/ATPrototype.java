@@ -6,6 +6,7 @@ import exceptions.TestStepFailedException;
 import model.*;
 import org.sikuli.script.Region;
 import utils.JNAUtils;
+import utils.StepExecutor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
