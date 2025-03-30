@@ -22,9 +22,9 @@ public class ATPrototype {
     public static void main(String[] args) {
         //new ToolGUI().run();
         //new TestStepGUI(region).run();
-        //categoryToJsonFile();
-        jsonFileToCategory();
-        runTest();
+        categoryToJsonFile();
+        //jsonFileToCategory();
+        //runTest();
     }
 
     public static void demoRun(){
@@ -123,7 +123,7 @@ public class ATPrototype {
         element7.setRegion(region);
         element7.setPath("Busqueda_nombreContiene_input.PNG");
         element7.setAction(StepAction.TYPE);
-        element7.setDataSource(DataSource.INPUT_TEXT);
+        element7.setTextDataSource(DataSource.TEXT);
         element7.setOutputText("aaaaaaa");
         element7.setEnterKey(true);
         step7.setStepElement(StepElementType.PASS, element7);

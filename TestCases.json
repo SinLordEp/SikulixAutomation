@@ -4,6 +4,7 @@
     "steps" : [ {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
@@ -17,6 +18,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -26,6 +28,7 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
@@ -39,6 +42,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -48,6 +52,7 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
@@ -61,6 +66,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -70,6 +76,7 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
@@ -83,6 +90,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -92,6 +100,7 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
@@ -105,6 +114,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -114,6 +124,7 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
@@ -127,6 +138,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -136,11 +148,12 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : null,
         "PASS" : {
-          "dataSource" : "INPUT_TEXT",
+          "dataSource" : "IMAGE",
           "action" : "TYPE",
           "path" : "Busqueda_nombreContiene_input.PNG",
           "x" : 1,
@@ -149,6 +162,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : "TEXT",
           "outputText" : "aaaaaaa",
           "enterKey" : true
         },
@@ -158,6 +172,7 @@
     }, {
       "name" : null,
       "description" : null,
+      "jsonPath" : null,
       "stepElements" : {
         "PRECONDITION" : null,
         "FAIL" : {
@@ -170,6 +185,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -183,6 +199,7 @@
           "height" : 999,
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
         },

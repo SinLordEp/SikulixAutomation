@@ -16,6 +16,7 @@ public class StepElement {
     private int height = 0;
     private double similarity = 0.9;
     private int timeoutSec = 2;
+    private DataSource textDataSource = null;
     private String outputText = null;
     private boolean enterKey = false;
 
@@ -120,5 +121,13 @@ public class StepElement {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public DataSource getTextDataSource() {
+        return textDataSource;
+    }
+
+    public void setTextDataSource(DataSource textDataSource) {
+        this.textDataSource = textDataSource;
     }
 }

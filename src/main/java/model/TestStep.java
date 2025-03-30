@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class TestStep {
     private String name;
     private String description;
+    private String jsonPath;
     private HashMap<StepElementType, StepElement> stepElements = new HashMap<>();
 
     public TestStep(){
@@ -44,5 +45,13 @@ public class TestStep {
 
     public void setStepElements(HashMap<StepElementType, StepElement> stepElements) {
         this.stepElements = stepElements;
+    }
+
+    public String getJsonPath() {
+        return jsonPath;
+    }
+
+    public void setJsonPath(String jsonPath) {
+        this.jsonPath = jsonPath;
     }
 }
