@@ -18,7 +18,7 @@ public class ATPrototype {
     static int width = 1400;
     static int height = 1000;
     static Region region = new Region(1,1, width-1, height-1);
-    private static HashMap<String, ArrayList<TestCase>> category = new HashMap<>();
+    private static HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
     public static void main(String[] args) {
         //new ToolGUI().run();
         //new TestStepGUI(region).run();
@@ -34,12 +34,12 @@ public class ATPrototype {
     public static void categoryToJsonFile(){
         ArrayList<TestCase> testCases = new ArrayList<>();
         testCases.add(testCaseOne());
-        category.put("Ventas", testCases);
-        TestCaseParser.testCaseCategoryToJson(category);
+        categories.put("Ventas", testCases);
+        TestCaseParser.testCaseCategoryToJson(categories);
     }
 
     public static void jsonFileToCategory(){
-        category = TestCaseParser.jsonToTestCaseCategory("TestCases.json");
+        categories = TestCaseParser.jsonToTestCaseCategory("TestCases.json");
     }
 
     public static void captureWindow(){
@@ -49,22 +49,24 @@ public class ATPrototype {
     }
 
     public static void runTest(){
-        for(TestCase testCase : category.get("Ventas")){
-            try{
-                testCase.getSteps().forEach(testStep ->
-                {
-                    StepState state = StepExecutor.execute(testStep);
-                    if (state == StepState.FAIL){
-                        throw new TestStepFailedException("Defined error detected");
-                    }
-                    if (state == StepState.NO_MATCH) {
-                        throw new TestStepFailedException("Expected result is not detected");
-                    }
-                });
-            }catch (TestStepFailedException e){
-                System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
+        categories.forEach((_, textCases) ->{
+            for(TestCase testCase : textCases){
+                try{
+                    testCase.getSteps().forEach(testStep ->
+                    {
+                        StepState state = StepExecutor.execute(testStep);
+                        if (state == StepState.FAIL){
+                            throw new TestStepFailedException("Defined error detected");
+                        }
+                        if (state == StepState.NO_MATCH) {
+                            throw new TestStepFailedException("Expected result is not detected");
+                        }
+                    });
+                }catch (TestStepFailedException e){
+                    System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
+                }
             }
-        }
+        });
     }
 
     public static TestCase testCaseOne(){
