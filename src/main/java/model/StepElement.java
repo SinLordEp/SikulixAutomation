@@ -1,39 +1,25 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.sikuli.script.Region;
 
 /**
  * @author Sin
  */
 public class StepElement {
-    private String name;
-    private StepElementType type;
-    private DataSource dataSource;
+    private DataSource dataSource = DataSource.IMAGE;
     private StepAction action = StepAction.FIND;
-    private String imagePath;
-    private Region region;
+    private String path;
+    private int x = 0;
+    private int y = 0;
+    private int width = 0;
+    private int height = 0;
     private double similarity = 0.9;
     private int timeoutSec = 2;
-    private String outputText;
-    private boolean enterKey;
+    private String outputText = null;
+    private boolean enterKey = false;
 
     public StepElement() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public StepElementType getType() {
-        return type;
-    }
-
-    public void setType(StepElementType type) {
-        this.type = type;
     }
 
     public DataSource getDataSource() {
@@ -52,12 +38,12 @@ public class StepElement {
         this.action = action;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getPath() {
+        return path;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public double getSimilarity() {
@@ -92,11 +78,47 @@ public class StepElement {
         this.enterKey = enterKey;
     }
 
+    @JsonIgnore
     public Region getRegion() {
-        return region;
+        return new Region(x, y, width, height);
+    }
+    @JsonIgnore
+    public void setRegion(Region region) {
+        this.x = region.x;
+        this.y = region.y;
+        this.width = region.w;
+        this.height = region.h;
     }
 
-    public void setRegion(Region region) {
-        this.region = region;
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }

@@ -1,0 +1,194 @@
+{
+  "Ventas" : [ {
+    "name" : "ventas_001",
+    "steps" : [ {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "CLICK",
+          "path" : "Ventas_button.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "FIND",
+          "path" : "Ventas_panel.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "CLICK",
+          "path" : "Buscar_button.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "FIND",
+          "path" : "Busqueda_panel.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "CLICK",
+          "path" : "Busqueda_buscar_button.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "FIND",
+          "path" : "Busqueda_resultado_uno.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "PASS" : {
+          "dataSource" : "INPUT_TEXT",
+          "action" : "TYPE",
+          "path" : "Busqueda_nombreContiene_input.PNG",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : "aaaaaaa",
+          "enterKey" : true
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : null,
+      "description" : null,
+      "stepElements" : {
+        "PRECONDITION" : null,
+        "FAIL" : {
+          "dataSource" : "IMAGE",
+          "action" : "FIND",
+          "path" : "Busqueda_resultado_vacio.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "PASS" : {
+          "dataSource" : "IMAGE",
+          "action" : "FIND",
+          "path" : "Busqueda_resultado_uno.png",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    } ]
+  } ]
+}

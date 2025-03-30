@@ -1,7 +1,5 @@
 package model;
 
-import org.sikuli.script.Region;
-
 import java.util.HashMap;
 
 /**
@@ -10,7 +8,7 @@ import java.util.HashMap;
 public class TestStep {
     private String name;
     private String description;
-    private final HashMap<StepElementType, StepElement> stepElements = new HashMap<>();
+    private HashMap<StepElementType, StepElement> stepElements = new HashMap<>();
 
     public TestStep(){
         stepElements.put(StepElementType.PRECONDITION, null);
@@ -38,5 +36,13 @@ public class TestStep {
 
     public HashMap<StepElementType, StepElement> getStepElements() {
         return stepElements;
+    }
+
+    public void setStepElement(StepElementType type, StepElement element){
+        stepElements.put(type, element);
+    }
+
+    public void setStepElements(HashMap<StepElementType, StepElement> stepElements) {
+        this.stepElements = stepElements;
     }
 }
