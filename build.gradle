@@ -22,5 +22,5 @@ test {
 }
 
 application {
-    mainClass = 'demo.ATPrototype'
+    mainClass = 'executable.ATPrototype'
 }
