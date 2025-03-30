@@ -1,10 +1,11 @@
-package demo;
+package gui;
 
 import org.sikuli.script.Region;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 
 /**
@@ -275,8 +276,8 @@ public class TestStepGUI extends JFrame{
         setVisible(true);
     }
 
-    private void screenshot(){
-
+    private void onScreenshot(BufferedImage image, JLabel label) {
+        label.setIcon(new ImageIcon(image));
     }
 
 

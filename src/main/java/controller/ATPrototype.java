@@ -1,4 +1,4 @@
-package demo;
+package controller;
 
 import com.sun.jna.platform.win32.WinDef;
 import dao.TestCaseParser;
