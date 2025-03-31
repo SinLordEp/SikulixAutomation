@@ -11,12 +11,14 @@ import utils.SikulixUtils;
 import utils.StepExecutor;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * @author Sin
  */
 public class ToolController {
+    private Thread testThread = null;
     private TestCaseDAO dao;
     private final List<EventListener<EventPackage>> listeners = new ArrayList<>();
     public ToolController() {
@@ -115,13 +117,14 @@ public class ToolController {
     }
 
     public void startTest(LinkedHashMap<String, TestCase> testCases){
-        LinkedHashMap<String, CaseState> testResults = new LinkedHashMap<>();
-        testCases.forEach((_, testCase) -> testResults.put(testCase.getName(), CaseState.QUEUED));
-        notifyEvent(new EventPackage(EventCommand.PROCESS_CHANGED, testResults));
-        testCases.forEach((caseName, testCase) -> {
-            CaseState state = CaseState.QUEUED;
+        dao.initializeTestResults(testCases);
+        notifyEvent(new EventPackage(EventCommand.PROCESS_CHANGED, dao.getTestResults()));
+        testThread = new Thread(() -> testCases.forEach((caseName, testCase) -> {
+            dao.updateTestResult(caseName, CaseState.ONGOING);
+            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getTestResults()));
             try{
-                SikulixUtils.setImagePath(testCase.getName());
+                Thread.sleep(500);
+                SikulixUtils.setImagePath(caseName);
                 testCase.getSteps().forEach(testStep ->
                 {
                     StepState stepState = StepExecutor.execute(testStep);
@@ -131,11 +134,33 @@ public class ToolController {
                     if (stepState == StepState.NO_MATCH) {
                         throw new TestStepFailedException("Expected result is not detected");
                     }
+                    dao.updateTestResult(caseName, CaseState.PASS);
                 });
             }catch (TestStepFailedException e){
                 System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
+                dao.updateTestResult(caseName, CaseState.FAIL);
+            }catch (InterruptedException e){
+                notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getTestResults()));
+                throw new OperationCancelException();
             }
-        });
+        }));
+        testThread.start();
+    }
+
+    public void stopTest(){
+        testThread.interrupt();
+    }
+
+    public void generateResult(){
+        String path = dao.getPath(".csv");
+        if (!path.toLowerCase().endsWith(".csv".toLowerCase())) {
+            path += ".csv";
+        }
+        try {
+            dao.generateTestResult(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String pathChooser(){

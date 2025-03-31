@@ -3,15 +3,19 @@ package dao;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exceptions.OperationCancelException;
+import model.CaseState;
 import model.TestCase;
 import model.TestStep;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author Sin
@@ -19,6 +23,7 @@ import java.util.HashMap;
 public class TestCaseDAO {
     private String configPath;
     private HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
+    private LinkedHashMap<String, CaseState> testResults;
 
     public TestCaseDAO() {
     }
@@ -103,5 +108,27 @@ public class TestCaseDAO {
 
     public void setConfigPath(String configPath) {
         this.configPath = configPath;
+    }
+
+    public LinkedHashMap<String, CaseState> getTestResults() {
+        return testResults;
+    }
+
+    public void initializeTestResults(LinkedHashMap<String, TestCase> testCases) {
+        testResults = new LinkedHashMap<>();
+        testCases.forEach((_, testCase) -> testResults.put(testCase.getName(), CaseState.QUEUED));
+    }
+
+    public void updateTestResult(String caseName, CaseState caseState){
+        testResults.put(caseName, caseState);
+    }
+
+    public void generateTestResult(String path) throws IOException {
+        List<String> output = new ArrayList<>();
+        testResults.forEach((caseName,caseState) -> {
+            String line = caseName + ";" + caseState.toString();
+            output.add(line);
+        });
+        Files.write(Paths.get(path), output);
     }
 }
