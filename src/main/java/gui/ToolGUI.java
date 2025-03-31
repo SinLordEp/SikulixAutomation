@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final ToolController controller;
-    private TestResultTableModel resultModel;
+    private TestResultTableModel resultModel = new TestResultTableModel(new LinkedHashMap<>());
     private final DefaultListModel<String> categoryListModel = new DefaultListModel<>();
     private final JList<String> categoryList = new JList<>(categoryListModel);
     private final DefaultListModel<TestCase> caseListModel = new DefaultListModel<>();
@@ -255,11 +255,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     public void updateTestResults(LinkedHashMap<String, CaseState> testResults){
-        if(resultModel == null){
-            resultModel = new TestResultTableModel(testResults);
-        }else{
-            resultModel.setData(testResults);
-        }
+        resultModel.setData(testResults);
     }
 
     private LinkedHashMap<String, TestCase> createTestPlan(){

@@ -25,7 +25,7 @@ public class ATPrototype {
     private static HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
     public static void main(String[] args) {
         new ToolController().run();
-        //new TestStepGUI(region).run();
+        //new TestStepGUI().run();
         //categoryToJsonFile();
         //demoRun();
     }

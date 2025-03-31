@@ -17,7 +17,7 @@ public class TestStepGUI extends JFrame{
     private Region region = new Region(1,1,1399,999);
     private TestStep testStep;
 
-    public TestStepGUI(TestStep testStep, Callback<TestStep> callback) {
+    public TestStepGUI() {
         setTitle("TestStep Editor");
         setSize(400, 800);
         setResizable(false);
