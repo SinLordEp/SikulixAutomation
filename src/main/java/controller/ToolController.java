@@ -37,6 +37,9 @@ public class ToolController {
     public void loadConfig(){
         String path = dao.getPath(".json");
         if(path != null){
+            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
+                path += ".json";
+            }
             dao.loadConfig(path);
         }else{
             throw new OperationCancelException();
@@ -50,6 +53,9 @@ public class ToolController {
         String path = dao.getConfigPath();
         if(path == null || path.isEmpty()){
             path = dao.getPath(".json");
+            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
+                path += ".json";
+            }
         }
         dao.saveConfig(path);
     }
@@ -135,6 +141,9 @@ public class ToolController {
     public String pathChooser(){
         String path = dao.getPath(".json");
         if(path != null){
+            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
+                path += ".json";
+            }
             return path;
         }else{
             throw new OperationCancelException();

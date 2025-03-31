@@ -90,15 +90,7 @@ public class TestCaseDAO {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setSelectedFile(new File("New config" + extension));
         int result = fileChooser.showSaveDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-            if (!filePath.toLowerCase().endsWith(extension.toLowerCase())) {
-                filePath += extension;
-            }
-            return filePath;
-        }else {
-            throw new OperationCancelException();
-        }
+        return result == JFileChooser.APPROVE_OPTION ? fileChooser.getSelectedFile().getAbsolutePath() : null;
     }
 
     public HashMap<String, ArrayList<TestCase>> getCategories() {
