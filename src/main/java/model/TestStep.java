@@ -54,4 +54,9 @@ public class TestStep {
     public void setJsonPath(String jsonPath) {
         this.jsonPath = jsonPath;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

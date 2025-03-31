@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import utils.SikulixUtils;
 
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.List;
 public class TestCase {
     private String name;
     private ArrayList<TestStep> steps = new ArrayList<>();
+    @JsonIgnore
+    private boolean selected = false;
 
     public TestCase() {
     }
@@ -37,5 +40,18 @@ public class TestCase {
 
     public void setSteps(ArrayList<TestStep> steps) {
         this.steps = steps;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

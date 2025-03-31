@@ -2,7 +2,7 @@
   "Ventas" : [ {
     "name" : "ventas_001",
     "steps" : [ {
-      "name" : null,
+      "name" : "step 1",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -26,7 +26,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 2",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -50,7 +50,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 3",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -74,7 +74,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 4",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -98,7 +98,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 5",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -122,7 +122,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 6",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -146,7 +146,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 7",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
@@ -170,7 +170,7 @@
         "CLOSE" : null
       }
     }, {
-      "name" : null,
+      "name" : "step 8",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {

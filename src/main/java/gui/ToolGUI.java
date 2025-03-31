@@ -1,9 +1,11 @@
 package gui;
 
 import controller.ToolController;
+import dao.TestResultTableModel;
 import model.CaseState;
 import model.EventPackage;
 import model.TestCase;
+import model.TestStep;
 import utils.EventListener;
 
 import javax.swing.*;
@@ -17,15 +19,15 @@ import java.util.List;
  */
 public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final ToolController controller;
-    private final Map<String, List<TestCaseItem>> categoryDataMap = new HashMap<>();
-    private final Map<String, List<TestStep>> stepDataMap = new HashMap<>();
+    private TestResultTableModel resultModel;
     private final DefaultListModel<String> categoryListModel = new DefaultListModel<>();
     private final JList<String> categoryList = new JList<>(categoryListModel);
-    private final DefaultListModel<TestCaseItem> caseListModel = new DefaultListModel<>();
-    private final JList<TestCaseItem> caseList = new JList<>(caseListModel);
+    private final DefaultListModel<TestCase> caseListModel = new DefaultListModel<>();
+    private final JList<TestCase> caseList = new JList<>(caseListModel);
     private final DefaultListModel<TestStep> stepListModel = new DefaultListModel<>();
     private final JList<TestStep> stepList = new JList<>(stepListModel);
-    private final JButton editButton = new JButton("Edit");
+    private HashMap<String, ArrayList<TestCase>> testCases = new HashMap<>();
+
 
     public ToolGUI(ToolController controller) {
         this.controller = controller;
@@ -42,8 +44,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         caseList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && caseList.getSelectedValue() != null) {
-                editButton.setEnabled(true);
-                loadTestSteps(caseList.getSelectedValue().name);
+                loadTestSteps(caseList.getSelectedValue());
             }
         });
         caseList.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -53,8 +54,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 if (index >= 0) {
                     Rectangle rect = caseList.getCellBounds(index, index);
                     if (evt.getX() - rect.x < 20) {
-                        TestCaseItem item = caseListModel.getElementAt(index);
-                        item.selected = !item.selected;
+                        TestCase testCase = caseListModel.getElementAt(index);
+                        testCase.setSelected(!testCase.isSelected());
                         caseList.repaint();
                     }
                 }
@@ -67,22 +68,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             label.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
             return label;
         });
-
-        for (int i = 1; i <= 10; i++) {
-            String category = "Category " + i;
-            categoryListModel.addElement(category);
-            List<TestCaseItem> testCases = new ArrayList<>();
-            for (int j = 1; j <= 10; j++) {
-                String testCaseName = "TestCase " + j;
-                testCases.add(new TestCaseItem(testCaseName, true));
-                List<TestStep> steps = new ArrayList<>();
-                for (int k = 1; k <= 3; k++) {
-                    steps.add(new TestStep(testCaseName + "-Step" + k));
-                }
-                stepDataMap.put(testCaseName, steps);
-            }
-            categoryDataMap.put(category, testCases);
-        }
 
         categoryList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -106,7 +91,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.add(testConfigPanel(), BorderLayout.CENTER);
         // Row 3 Testing process panel
         panel.add(testProgressPanel(), BorderLayout.SOUTH);
-        JScrollPane scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(1000, 800));
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
@@ -114,8 +99,14 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private JPanel configButtonsPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.add(new JButton("Load config"));
-        panel.add(new JButton("Save config"));
+        JButton load = new JButton("Load Testcase");
+        load.addActionListener(_ -> controller.loadConfig());
+        panel.add(load);
+
+        JButton save = new JButton("Save Testcases");
+        save.addActionListener(_ -> controller.saveConfig());
+        panel.add(save);
+
         return panel;
     }
 
@@ -134,7 +125,15 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private JPanel categoryPanel(){
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JScrollPane(categoryList), BorderLayout.CENTER);
-        panel.add(addAndDeleteButtonsPanel(), BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton addButton = new JButton("+");
+        addButton.addActionListener(_ -> controller.addCategory());
+        buttonPanel.add(addButton);
+
+        JButton deleteButton = new JButton("-");
+        deleteButton.addActionListener(_ -> controller.deleteCategory(categoryList.getSelectedValue()));
+        buttonPanel.add(deleteButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         return panel;
     }
 
@@ -147,21 +146,33 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private JPanel casePanel(){
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JScrollPane(caseList), BorderLayout.CENTER);
-        panel.add(addAndDeleteButtonsPanel(), BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton addButton = new JButton("+");
+        addButton.addActionListener(_ -> controller.addTestCase(categoryList.getSelectedValue()));
+        buttonPanel.add(addButton);
+
+        JButton deleteButton = new JButton("-");
+        deleteButton.addActionListener(_ -> controller.deleteTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex()));
+        buttonPanel.add(deleteButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
         return panel;
     }
 
     private JPanel stepPanel(){
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JScrollPane(stepList), BorderLayout.CENTER);
-        panel.add(addAndDeleteButtonsPanel(), BorderLayout.SOUTH);
-        return panel;
-    }
 
-    private JPanel addAndDeleteButtonsPanel(){
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panel.add(new JButton("+"));
-        panel.add(new JButton("-"));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton addButton = new JButton("+");
+        addButton.addActionListener(_ -> controller.addTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex()));
+        buttonPanel.add(addButton);
+
+        JButton deleteButton = new JButton("-");
+        deleteButton.addActionListener(_ -> controller.deleteTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex()));
+        buttonPanel.add(deleteButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
         return panel;
     }
 
@@ -170,33 +181,35 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(runTestButtonPanel());
         panel.setBorder(BorderFactory.createTitledBorder("Testing Process"));
-        panel.add(new JScrollPane(testProgressTable()));
-        panel.add(progressButtonPanel());
+        panel.add(new JScrollPane(testResultTable()));
+        panel.add(resultButtonPanel());
         return panel;
     }
 
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.add(new JButton("Start"));
-        panel.add(new JButton("Stop"));
+        JButton startButton = new JButton("Start");
+        startButton.addActionListener(_ -> controller.startTest(createTestPlan()));
+        panel.add(startButton);
+
+        JButton stopButton = new JButton("Stop");
+        stopButton.addActionListener(_ -> controller.stopTest());
+        panel.add(stopButton);
+
         return panel;
     }
 
-    private JTable testProgressTable(){
-        String[] columns = {"Test case", "Status"};
-        Object[][] data = new Object[20][2];
-        for (int i = 0; i < 20; i++) {
-            data[i][0] = "TestCase" + (i + 1);
-            data[i][1] = "FAIL";
-        }
-        JTable table = new JTable(data, columns);
+    private JTable testResultTable(){
+        JTable table = new JTable(resultModel);
         table.setPreferredScrollableViewportSize(new Dimension(100, 150));
         return table;
     }
 
-    private JPanel progressButtonPanel(){
+    private JPanel resultButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panel.add(new JButton("Generate result"));
+        JButton generateButton = new JButton("Generate result");
+        generateButton.addActionListener(_ -> controller.generateResult());
+        panel.add(generateButton);
         return panel;
     }
 
@@ -205,49 +218,23 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         if (category == null) {
             return;
         }
-        List<TestCaseItem> items = categoryDataMap.getOrDefault(category, new ArrayList<>());
-        for (TestCaseItem item : items) {
-            caseListModel.addElement(item);
-        }
-        editButton.setEnabled(false);
+        caseListModel.addAll(testCases.getOrDefault(category, new ArrayList<>()));
+        caseList.setModel(caseListModel);
         stepListModel.clear();
     }
 
-    private void loadTestSteps(String testCaseName) {
+    private void loadTestSteps(TestCase testCase) {
         stepListModel.clear();
-        List<TestStep> steps = stepDataMap.getOrDefault(testCaseName, new ArrayList<>());
-        for (TestStep step : steps) {
-            stepListModel.addElement(step);
-        }
+        stepListModel.addAll(testCase.getSteps());
+
     }
 
-    private static class TestCaseItem {
-        String name;
-        boolean selected;
-        TestCaseItem(String name, boolean selected) {
-            this.name = name;
-            this.selected = selected;
-        }
-        public String toString() {
-            return name;
-        }
-    }
 
-    private static class TestStep {
-        String description;
-        TestStep(String description) {
-            this.description = description;
-        }
-        public String toString() {
-            return description;
-        }
-    }
-
-    private static class CaseListRenderer extends JCheckBox implements ListCellRenderer<TestCaseItem> {
+    private static class CaseListRenderer extends JCheckBox implements ListCellRenderer<TestCase> {
         @Override
-        public Component getListCellRendererComponent(JList<? extends TestCaseItem> list, TestCaseItem value, int index, boolean isSelected, boolean cellHasFocus) {
-            setText(value.name);
-            setSelected(value.selected);
+        public Component getListCellRendererComponent(JList<? extends TestCase> list, TestCase testCase, int index, boolean isSelected, boolean cellHasFocus) {
+            setText(testCase.getName());
+            setSelected(testCase.isSelected());
             setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
             setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
             setEnabled(list.isEnabled());
@@ -262,11 +249,21 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     public void updateTestCases(HashMap<String, ArrayList<TestCase>> testCases){
-
+        this.testCases = testCases;
+        categoryListModel.clear();
+        categoryListModel.addAll(testCases.keySet());
     }
 
     public void updateTestResults(LinkedHashMap<String, CaseState> testResults){
+        if(resultModel == null){
+            resultModel = new TestResultTableModel(testResults);
+        }else{
+            resultModel.setData(testResults);
+        }
+    }
 
+    private LinkedHashMap<String, TestCase> createTestPlan(){
+        return null;
     }
 
     @Override
