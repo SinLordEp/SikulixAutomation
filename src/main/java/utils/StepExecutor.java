@@ -1,5 +1,6 @@
 package utils;
 
+import com.sun.jna.platform.win32.WinDef;
 import exceptions.UndefinedException;
 import model.StepElement;
 import model.StepElementType;

@@ -263,7 +263,13 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private LinkedHashMap<String, TestCase> createTestPlan(){
-        return null;
+        LinkedHashMap<String, TestCase> testPlan = new LinkedHashMap<>();
+        testCases.forEach((_, testCases) -> testCases.forEach(testCase -> {
+            if(testCase.isSelected()){
+                testPlan.put(testCase.getName(), testCase);
+            }
+        }));
+        return testPlan;
     }
 
     @Override

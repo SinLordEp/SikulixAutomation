@@ -1,5 +1,6 @@
 package controller;
 
+import com.sun.jna.platform.win32.WinDef;
 import dao.TestCaseDAO;
 import exceptions.OperationCancelException;
 import exceptions.TestStepFailedException;
@@ -7,6 +8,7 @@ import gui.TestStepGUI;
 import gui.ToolGUI;
 import model.*;
 import utils.EventListener;
+import utils.JNAUtils;
 import utils.SikulixUtils;
 import utils.StepExecutor;
 
@@ -121,7 +123,7 @@ public class ToolController {
         notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
         testThread = new Thread(() -> testCases.forEach((caseName, testCase) -> {
             dao.updateTestResult(caseName, CaseState.ONGOING);
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getTestResults()));
+            notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
             try{
                 Thread.sleep(500);
                 SikulixUtils.setImagePath(caseName);
@@ -140,10 +142,11 @@ public class ToolController {
                 System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
                 dao.updateTestResult(caseName, CaseState.FAIL);
             }catch (InterruptedException e){
-                notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getTestResults()));
+                notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
                 throw new OperationCancelException();
             }
         }));
+        captureWindow();
         testThread.start();
     }
 
@@ -161,6 +164,12 @@ public class ToolController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private  void captureWindow(){
+        WinDef.HWND window = JNAUtils.getWindowByTitle("Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@");
+        JNAUtils.setWindowSize(window, 1400,1000);
+        JNAUtils.setWindowAtLocation(window, 0, 0);
     }
 
     public String pathChooser(){
