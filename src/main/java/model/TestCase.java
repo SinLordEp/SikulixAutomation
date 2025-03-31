@@ -17,7 +17,6 @@ public class TestCase {
 
     public TestCase(String name) {
         this.name = name;
-        SikulixUtils.setImagePath(name);
     }
 
     public void addStep(TestStep step) {

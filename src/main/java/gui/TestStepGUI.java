@@ -1,6 +1,8 @@
 package gui;
 
+import model.TestStep;
 import org.sikuli.script.Region;
+import utils.Callback;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,11 +14,11 @@ import java.awt.image.BufferedImage;
  * @author Sin
  */
 public class TestStepGUI extends JFrame{
-    private final Region region;
+    private Region region = new Region(1,1,1399,999);
+    private TestStep testStep;
 
-    public TestStepGUI(Region region) {
-        this.region = region;
-        setTitle("Create TestStep");
+    public TestStepGUI(TestStep testStep, Callback<TestStep> callback) {
+        setTitle("TestStep Editor");
         setSize(400, 800);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -32,6 +34,7 @@ public class TestStepGUI extends JFrame{
 
     private JPanel stepInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Step Info"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -89,6 +92,7 @@ public class TestStepGUI extends JFrame{
 
     private JScrollPane stepElementPane() {
         JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Step elements"));
         panel.setAlignmentY(TOP_ALIGNMENT);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -146,6 +150,10 @@ public class TestStepGUI extends JFrame{
     }
 
     private static JPanel actionTypePanel() {
+        JPanel wrapper = new JPanel();
+        wrapper.setBorder(BorderFactory.createTitledBorder("Action type"));
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ButtonGroup buttonGroup = new ButtonGroup();
         JRadioButton matchBtn = new JRadioButton("Match", true);
@@ -160,7 +168,52 @@ public class TestStepGUI extends JFrame{
         panel.add(clickBtn);
         panel.add(typeBtn);
         panel.add(pasteBtn);
-        return panel;
+        wrapper.add(panel);
+
+        // Text source panel
+        JPanel sourcePanel = new JPanel();
+        sourcePanel.setBorder(BorderFactory.createTitledBorder("Text Data Source"));
+        sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.Y_AXIS));
+        JPanel formatRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ButtonGroup formatGroup = new ButtonGroup();
+        JRadioButton textOption = new JRadioButton("Text", true);
+        JRadioButton jsonOption = new JRadioButton("JSON");
+        formatGroup.add(textOption);
+        formatGroup.add(jsonOption);
+        formatRow.add(textOption);
+        formatRow.add(jsonOption);
+        sourcePanel.add(formatRow);
+
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel sourceLabel = new JLabel("Output Text:");
+        labelPanel.add(sourceLabel);
+        sourcePanel.add(labelPanel);
+
+        JTextField outputField = new JTextField();
+        outputField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
+        sourcePanel.add(outputField);
+
+        sourcePanel.setVisible(false);
+        wrapper.add(sourcePanel);
+
+        // Toggle label and input field
+        ActionListener formatSwitch = _ -> sourceLabel.setText(textOption.isSelected() ? "Output Text:" : "Json file path:");
+        textOption.addActionListener(formatSwitch);
+        jsonOption.addActionListener(formatSwitch);
+
+        // Toggle text source panel
+        ActionListener typeSwitch = _ -> {
+            boolean visible = typeBtn.isSelected() || pasteBtn.isSelected();
+            sourcePanel.setVisible(visible);
+            wrapper.revalidate();
+            wrapper.repaint();
+        };
+        typeBtn.addActionListener(typeSwitch);
+        pasteBtn.addActionListener(typeSwitch);
+        matchBtn.addActionListener(typeSwitch);
+        clickBtn.addActionListener(typeSwitch);
+
+        return wrapper;
     }
 
     private JPanel matchTypePanel() {

@@ -20,6 +20,7 @@ public class StepElement {
     private String outputText = null;
     private boolean enterKey = false;
 
+
     public StepElement() {
     }
 

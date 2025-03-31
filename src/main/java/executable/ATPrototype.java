@@ -1,11 +1,15 @@
 package executable;
 
 import com.sun.jna.platform.win32.WinDef;
-import dao.TestCaseParser;
+import controller.ToolController;
+import dao.TestCaseDAO;
 import exceptions.TestStepFailedException;
+import gui.TestStepGUI;
+import gui.ToolGUI;
 import model.*;
 import org.sikuli.script.Region;
 import utils.JNAUtils;
+import utils.SikulixUtils;
 import utils.StepExecutor;
 
 import java.util.ArrayList;
@@ -20,26 +24,27 @@ public class ATPrototype {
     static Region region = new Region(1,1, width-1, height-1);
     private static HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
     public static void main(String[] args) {
-        //new ToolGUI().run();
+        new ToolController().run();
         //new TestStepGUI(region).run();
-        categoryToJsonFile();
-        //jsonFileToCategory();
-        //runTest();
+        //categoryToJsonFile();
+        //demoRun();
     }
 
     public static void demoRun(){
         captureWindow();
+        jsonFileToCategory();
+        runTest();
     }
 
     public static void categoryToJsonFile(){
         ArrayList<TestCase> testCases = new ArrayList<>();
         testCases.add(testCaseOne());
         categories.put("Ventas", testCases);
-        TestCaseParser.testCaseCategoryToJson(categories);
+        //TestCaseDAO.testCaseCategoryToJson(categories);
     }
 
     public static void jsonFileToCategory(){
-        categories = TestCaseParser.jsonToTestCaseCategory("TestCases.json");
+        categories = TestCaseDAO.jsonToTestCaseCategory("TestCases.json");
     }
 
     public static void captureWindow(){
@@ -52,6 +57,7 @@ public class ATPrototype {
         categories.forEach((_, textCases) ->{
             for(TestCase testCase : textCases){
                 try{
+                    SikulixUtils.setImagePath(testCase.getName());
                     testCase.getSteps().forEach(testStep ->
                     {
                         StepState state = StepExecutor.execute(testStep);

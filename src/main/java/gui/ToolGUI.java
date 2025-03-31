@@ -1,17 +1,22 @@
 package gui;
 
+import controller.ToolController;
+import model.CaseState;
+import model.EventPackage;
+import model.TestCase;
+import utils.EventListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Sin
  */
-public class ToolGUI extends JFrame{
+public class ToolGUI extends JFrame implements EventListener<EventPackage>{
+    private final ToolController controller;
     private final Map<String, List<TestCaseItem>> categoryDataMap = new HashMap<>();
     private final Map<String, List<TestStep>> stepDataMap = new HashMap<>();
     private final DefaultListModel<String> categoryListModel = new DefaultListModel<>();
@@ -22,7 +27,8 @@ public class ToolGUI extends JFrame{
     private final JList<TestStep> stepList = new JList<>(stepListModel);
     private final JButton editButton = new JButton("Edit");
 
-    public ToolGUI() {
+    public ToolGUI(ToolController controller) {
+        this.controller = controller;
         setTitle("Testing Automation");
         setMinimumSize(new Dimension(400, 800));
         setPreferredSize(new Dimension(400, 800));
@@ -253,6 +259,11 @@ public class ToolGUI extends JFrame{
 
     public void run(){
         setVisible(true);
+    }
+
+    @Override
+    public void onEvent(EventPackage eventPackage) {
+
     }
 
 }
