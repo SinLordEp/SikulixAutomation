@@ -47,7 +47,7 @@ public class ToolController {
             throw new OperationCancelException();
         }
         if(!dao.getCategories().isEmpty()){
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
@@ -66,7 +66,7 @@ public class ToolController {
         String name = JOptionPane.showInputDialog("Input name of the new category name:");
         if(name != null && !name.isEmpty()){
             dao.addCategory(name);
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }else{
             throw new OperationCancelException();
         }
@@ -75,7 +75,7 @@ public class ToolController {
     public void deleteCategory(String category){
         if(category != null && !category.isEmpty()){
             dao.deleteCategory(category);
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
@@ -83,14 +83,14 @@ public class ToolController {
         String name = JOptionPane.showInputDialog("Input name of the new test case:");
         if(name != null && !name.isEmpty()){
             dao.addTestCase(category, new TestCase(name));
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
     public void deleteTestCase(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             dao.deleteTestCase(category, caseIndex);
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
@@ -98,30 +98,30 @@ public class ToolController {
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestStep testStep = new TestStep();
             new TestStepGUI(testStep, newTestStep -> dao.addTestStep(category, caseIndex, newTestStep));
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
     public void deleteTestStep(String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             dao.deleteTestStep(category, caseIndex, stepIndex);
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             new TestStepGUI(dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTessStep(category, caseIndex, stepIndex, newTestStep));
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getCategories()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
     public void startTest(LinkedHashMap<String, TestCase> testCases){
         dao.initializeTestResults(testCases);
-        notifyEvent(new EventPackage(EventCommand.PROCESS_CHANGED, dao.getTestResults()));
+        notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
         testThread = new Thread(() -> testCases.forEach((caseName, testCase) -> {
             dao.updateTestResult(caseName, CaseState.ONGOING);
-            notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getTestResults()));
+            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getTestResults()));
             try{
                 Thread.sleep(500);
                 SikulixUtils.setImagePath(caseName);
@@ -140,7 +140,7 @@ public class ToolController {
                 System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
                 dao.updateTestResult(caseName, CaseState.FAIL);
             }catch (InterruptedException e){
-                notifyEvent(new EventPackage(EventCommand.CONFIG_CHANGED, dao.getTestResults()));
+                notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getTestResults()));
                 throw new OperationCancelException();
             }
         }));

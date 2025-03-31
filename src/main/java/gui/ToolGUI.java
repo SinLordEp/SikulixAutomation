@@ -261,9 +261,21 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         setVisible(true);
     }
 
+    public void updateTestCases(HashMap<String, ArrayList<TestCase>> testCases){
+
+    }
+
+    public void updateTestResults(LinkedHashMap<String, CaseState> testResults){
+
+    }
+
     @Override
     public void onEvent(EventPackage eventPackage) {
-
+        switch (eventPackage.getCommand()){
+            case TESTCASE_CHANGED -> updateTestCases(eventPackage.getTestCases());
+            case RESULT_CHANGED -> updateTestResults(eventPackage.getTestResults());
+            default -> throw new RuntimeException("Unknown command (To be perfected)");
+        }
     }
 
 }
