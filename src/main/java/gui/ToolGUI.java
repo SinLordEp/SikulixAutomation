@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final ToolController controller;
-    private TestResultTableModel resultModel = new TestResultTableModel(new LinkedHashMap<>());
+    private final TestResultTableModel resultModel = new TestResultTableModel(new LinkedHashMap<>());
     private final DefaultListModel<String> categoryListModel = new DefaultListModel<>();
     private final JList<String> categoryList = new JList<>(categoryListModel);
     private final DefaultListModel<TestCase> caseListModel = new DefaultListModel<>();
