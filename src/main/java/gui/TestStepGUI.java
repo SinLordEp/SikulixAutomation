@@ -246,8 +246,7 @@ public class TestStepGUI extends JFrame {
             case CLOSE -> "Close element";
         };
         ctx.matchSelected = isNewStep || testStep.getStepElements().get(element) == null
-                ? DataSource.NONE
-                : testStep.getStepElements().get(element).getDataSource();
+                ? DataSource.NONE : testStep.getStepElements().get(element).getDataSource();
 
         switch (element) {
             case PASS -> {
