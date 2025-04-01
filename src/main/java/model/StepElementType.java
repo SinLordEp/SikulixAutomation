@@ -5,5 +5,5 @@ package model;
  */
 
 public enum StepElementType {
-    PRECONDITION, PASS, FAIL, RETRY, CLOSE
+    PASS, PRECONDITION, FAIL, RETRY, CLOSE
 }

@@ -1,8 +1,7 @@
-package dao;
+package data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import exceptions.OperationCancelException;
 import model.CaseState;
 import model.TestCase;
 import model.TestStep;
@@ -91,7 +90,7 @@ public class TestCaseDAO {
 
 
     public String getPath(String extension) {
-        JFileChooser fileChooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser(new File("src").getAbsolutePath());
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setSelectedFile(new File("New config" + extension));
         int result = fileChooser.showSaveDialog(null);

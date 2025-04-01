@@ -16,7 +16,7 @@ public class Screenshot extends JFrame{
     private Rectangle captureRect;
     private BufferedImage imageCaptured;
 
-    public Screenshot() {
+    public Screenshot(Callback<BufferedImage> callback) {
         setUndecorated(true);
         setAlwaysOnTop(true);
         setOpacity(0.3f);
@@ -37,7 +37,7 @@ public class Screenshot extends JFrame{
                 captureRect = createRectangle(startPoint, e.getPoint());
                 dispose();
                 try {
-                    captureAndSave(captureRect);
+                    captureAndSave(captureRect, callback);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -83,9 +83,10 @@ public class Screenshot extends JFrame{
         }
     }
 
-    private void captureAndSave(Rectangle rect) throws Exception {
+    private void captureAndSave(Rectangle rect, Callback<BufferedImage> callback) throws Exception {
         Robot robot = new Robot();
         imageCaptured = robot.createScreenCapture(rect);
+        callback.onSubmit(imageCaptured);
     }
 
     public void saveImage(String fileName, String filePath) throws IOException {

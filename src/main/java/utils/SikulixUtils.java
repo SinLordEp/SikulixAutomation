@@ -4,7 +4,10 @@ import model.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Sin
@@ -13,6 +16,7 @@ public class SikulixUtils {
     public static final Screen SCREEN = new Screen();
     private static final String IMAGE_ROOT = "image/";
     static{
+        ImagePath.setBundlePath("image");
         Settings.OcrTextRead = true;
         Settings.OcrTextSearch = true;
     }
@@ -71,6 +75,23 @@ public class SikulixUtils {
         ImagePath.add(path);
     }
 
+    public static void highlightRegion(Region region){
+        region.highlight();
+    }
 
+    public static BufferedImage loadImage(String path) {
+        String fullPath = ImagePath.getBundlePath() + File.separator + path;
+        try {
+            return ImageIO.read(new File(fullPath));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void saveImage(BufferedImage image, String path) throws IOException {
+        String fullPath = ImagePath.getBundlePath() + File.separator + path;
+        ImageIO.write(image,"PNG", new File(path));
+    }
 
 }

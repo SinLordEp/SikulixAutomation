@@ -55,6 +55,26 @@ public class TestStep {
         this.jsonPath = jsonPath;
     }
 
+    public StepElement getPassElement(){
+        return stepElements.get(StepElementType.PASS);
+    }
+
+    public StepElement getPreconditionElement(){
+        return stepElements.get(StepElementType.PRECONDITION);
+    }
+
+    public StepElement getFailElement(){
+        return stepElements.get(StepElementType.FAIL);
+    }
+
+    public StepElement getRetryElement(){
+        return stepElements.get(StepElementType.RETRY);
+    }
+
+    public StepElement getCloseElement(){
+        return stepElements.get(StepElementType.CLOSE);
+    }
+
     @Override
     public String toString() {
         return name;

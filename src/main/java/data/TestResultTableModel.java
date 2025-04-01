@@ -1,4 +1,4 @@
-package dao;
+package data;
 
 import model.CaseState;
 

@@ -1,7 +1,7 @@
 package gui;
 
 import controller.ToolController;
-import dao.TestResultTableModel;
+import data.TestResultTableModel;
 import model.CaseState;
 import model.EventPackage;
 import model.TestCase;
@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.*;
-import java.util.List;
 
 /**
  * @author Sin

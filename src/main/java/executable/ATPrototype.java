@@ -2,16 +2,16 @@ package executable;
 
 import com.sun.jna.platform.win32.WinDef;
 import controller.ToolController;
-import dao.TestCaseDAO;
+import data.TestCaseDAO;
 import exceptions.TestStepFailedException;
 import gui.TestStepGUI;
-import gui.ToolGUI;
 import model.*;
 import org.sikuli.script.Region;
 import utils.JNAUtils;
 import utils.SikulixUtils;
 import utils.StepExecutor;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,54 +25,6 @@ public class ATPrototype {
     private static HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
     public static void main(String[] args) {
         new ToolController().run();
-        //new TestStepGUI().run();
-        //categoryToJsonFile();
-        //demoRun();
-    }
-
-    public static void demoRun(){
-        captureWindow();
-        jsonFileToCategory();
-        runTest();
-    }
-
-    public static void categoryToJsonFile(){
-        ArrayList<TestCase> testCases = new ArrayList<>();
-        testCases.add(testCaseOne());
-        categories.put("Ventas", testCases);
-        //TestCaseDAO.testCaseCategoryToJson(categories);
-    }
-
-    public static void jsonFileToCategory(){
-        categories = TestCaseDAO.jsonToTestCaseCategory("TestCases.json");
-    }
-
-    public static void captureWindow(){
-        WinDef.HWND window = JNAUtils.getWindowByTitle("Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@");
-        JNAUtils.setWindowSize(window, width,height);
-        JNAUtils.setWindowAtLocation(window, 0, 0);
-    }
-
-    public static void runTest(){
-        categories.forEach((_, textCases) ->{
-            for(TestCase testCase : textCases){
-                try{
-                    SikulixUtils.setImagePath(testCase.getName());
-                    testCase.getSteps().forEach(testStep ->
-                    {
-                        StepState state = StepExecutor.execute(testStep);
-                        if (state == StepState.FAIL){
-                            throw new TestStepFailedException("Defined error detected");
-                        }
-                        if (state == StepState.NO_MATCH) {
-                            throw new TestStepFailedException("Expected result is not detected");
-                        }
-                    });
-                }catch (TestStepFailedException e){
-                    System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
-                }
-            }
-        });
     }
 
     public static TestCase testCaseOne(){

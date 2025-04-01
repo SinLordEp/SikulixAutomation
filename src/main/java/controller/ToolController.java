@@ -1,7 +1,7 @@
 package controller;
 
 import com.sun.jna.platform.win32.WinDef;
-import dao.TestCaseDAO;
+import data.TestCaseDAO;
 import exceptions.OperationCancelException;
 import exceptions.TestStepFailedException;
 import gui.TestStepGUI;
@@ -99,7 +99,7 @@ public class ToolController {
     public void addTestStep(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestStep testStep = new TestStep();
-            //new TestStepGUI(testStep, newTestStep -> dao.addTestStep(category, caseIndex, newTestStep));
+            new TestStepGUI(testStep, newTestStep -> dao.addTestStep(category, caseIndex, newTestStep));
             notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
@@ -113,7 +113,7 @@ public class ToolController {
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
-            //new TestStepGUI(dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTessStep(category, caseIndex, stepIndex, newTestStep));
+            new TestStepGUI(dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTessStep(category, caseIndex, stepIndex, newTestStep));
             notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }

@@ -5,5 +5,5 @@ package model;
  */
 
 public enum DataSource {
-    IMAGE, TEXT, JSON
+    NONE, IMAGE, TEXT, JSON
 }
