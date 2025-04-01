@@ -1,0 +1,18 @@
+
+## General
+1. Exception handler needs to be done
+2. 
+
+
+## ToolGUI
+1. ToolGUI lost focus after any operation, should at least stay on the first one or the chosen one
+2. Result table data is not center alignment
+3. Add way to edit step, such as double click it
+
+
+## TestStepGUI
+1. TestStep region toggle will not change by changing stats in step info panel
+2. Image preview border
+3. Compiled TestStep
+4. Element toggle button will move after panel is visible
+5. Extract the huge ass element panel creation method to smaller methods
