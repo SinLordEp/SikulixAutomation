@@ -37,10 +37,10 @@ public class TestCaseDAO {
         }
     }
 
-    public boolean testCaseCategoryToJson(HashMap<String, ArrayList<TestCase>> category) {
+    public boolean testCaseCategoryToJson(String path, HashMap<String, ArrayList<TestCase>> category) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get("TestCases.json").toFile(), category);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(path).toFile(), category);
             return true;
         } catch (IOException e) {
             return false;
@@ -54,7 +54,7 @@ public class TestCaseDAO {
 
     public boolean saveConfig(String path){
         this.configPath = path;
-        return testCaseCategoryToJson(categories);
+        return testCaseCategoryToJson(path, categories);
     }
 
     public void addCategory(String category){

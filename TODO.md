@@ -1,7 +1,6 @@
 
 ## General
 1. Exception handler needs to be done
-2. 
 
 
 ## ToolGUI
@@ -14,7 +13,7 @@
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in step info panel~~
 2. ~~Image preview border~~
-3. Compiled TestStep
+3. ~~Compiled TestStep~~
 4. ~~Element toggle button will move after panel is visible~~
 5. ~~Extract the huge ass element panel creation method to smaller methods~~
 6. ~~Image name or text label should add a listener linked to radiobutton(Canceled)~~
