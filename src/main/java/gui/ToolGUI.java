@@ -170,6 +170,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private JTable testResultTable(){
         JTable table = new JTable(resultModel);
+        table.getColumnModel().getColumns().asIterator().forEachRemaining(column -> column.setCellRenderer(resultModel.getColorRenderer()));
         table.setPreferredScrollableViewportSize(new Dimension(100, 150));
         return table;
     }

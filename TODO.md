@@ -17,3 +17,5 @@
 4. ~~Element toggle button will move after panel is visible~~
 5. ~~Extract the huge ass element panel creation method to smaller methods~~
 6. ~~Image name or text label should add a listener linked to radiobutton(Canceled)~~
+7. Add a timeoutSec text field
+8. Add a similarity text field
