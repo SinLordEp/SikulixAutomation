@@ -62,11 +62,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private JPanel configButtonsPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton load = new JButton("Load Testcase");
+        JButton load = new JButton("Load Test Case");
         load.addActionListener(_ -> controller.loadConfig());
         panel.add(load);
 
-        JButton save = new JButton("Save Testcases");
+        JButton save = new JButton("Save Test Case");
         save.addActionListener(_ -> {
             if(controller.saveConfig()){
                 JOptionPane.showMessageDialog(this, "Successfully saved config");

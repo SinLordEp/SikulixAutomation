@@ -101,8 +101,10 @@ public class ToolController {
     public void addTestStep(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestStep testStep = new TestStep();
-            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), testStep, newTestStep -> dao.addTestStep(category, caseIndex, newTestStep));
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), testStep, newTestStep -> {
+                dao.addTestStep(category, caseIndex, newTestStep);
+                notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            });
         }
     }
 
