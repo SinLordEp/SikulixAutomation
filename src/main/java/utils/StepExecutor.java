@@ -7,6 +7,7 @@ import model.StepElementType;
 import model.StepState;
 import model.TestStep;
 import org.sikuli.script.FindFailed;
+import org.sikuli.script.Region;
 
 /**
  * @author Sin

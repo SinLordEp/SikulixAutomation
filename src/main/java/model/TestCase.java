@@ -1,7 +1,6 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import utils.SikulixUtils;
 
 import java.util.ArrayList;
 import java.util.List;

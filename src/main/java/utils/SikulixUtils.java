@@ -1,5 +1,6 @@
 package utils;
 
+import exceptions.ImageIOException;
 import model.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
@@ -84,14 +85,13 @@ public class SikulixUtils {
         try {
             return ImageIO.read(new File(fullPath));
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new ImageIOException("Cannot read file - Path: " + fullPath);
         }
     }
 
     public static void saveImage(BufferedImage image, String path) throws IOException {
-        String fullPath = ImagePath.getBundlePath() + File.separator + path;
-        ImageIO.write(image,"PNG", new File(path));
+        String fullPath = ImagePath.getBundlePath() + File.separator + path + ".PNG";
+        ImageIO.write(image,"PNG", new File(fullPath));
     }
 
 }

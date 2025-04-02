@@ -2,6 +2,7 @@ package controller;
 
 import com.sun.jna.platform.win32.WinDef;
 import data.TestCaseDAO;
+import exceptions.FileIOException;
 import exceptions.OperationCancelException;
 import exceptions.TestStepFailedException;
 import gui.TestStepGUI;
@@ -53,7 +54,7 @@ public class ToolController {
         }
     }
 
-    public void saveConfig(){
+    public boolean saveConfig(){
         String path = dao.getConfigPath();
         if(path == null || path.isEmpty()){
             path = dao.getPath(".json");
@@ -61,7 +62,7 @@ public class ToolController {
                 path += ".json";
             }
         }
-        dao.saveConfig(path);
+        return dao.saveConfig(path);
     }
 
     public void addCategory(){
@@ -99,7 +100,7 @@ public class ToolController {
     public void addTestStep(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestStep testStep = new TestStep();
-            new TestStepGUI(testStep, newTestStep -> dao.addTestStep(category, caseIndex, newTestStep));
+            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), testStep, newTestStep -> dao.addTestStep(category, caseIndex, newTestStep));
             notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
@@ -113,7 +114,7 @@ public class ToolController {
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
-            new TestStepGUI(dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTessStep(category, caseIndex, stepIndex, newTestStep));
+            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTestStep(category, caseIndex, stepIndex, newTestStep));
             notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
@@ -163,7 +164,7 @@ public class ToolController {
         try {
             dao.generateTestResult(path);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileIOException("Could not generate test result to target file with cause: " + e.getMessage());
         }
     }
 

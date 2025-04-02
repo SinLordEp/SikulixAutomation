@@ -2,6 +2,7 @@ package data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exceptions.FileIOException;
 import model.CaseState;
 import model.TestCase;
 import model.TestStep;
@@ -27,32 +28,33 @@ public class TestCaseDAO {
     public TestCaseDAO() {
     }
 
-    public static HashMap<String, ArrayList<TestCase>> jsonToTestCaseCategory(String json) {
+    public static HashMap<String, ArrayList<TestCase>> jsonToTestCaseCategory(String path) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.readValue(Paths.get("TestCases.json").toFile(), new TypeReference<>() {});
+            return mapper.readValue(Paths.get(path).toFile(), new TypeReference<>() {});
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileIOException("Could not read json file - Path: " + path);
         }
     }
 
-    public void testCaseCategoryToJson(HashMap<String, ArrayList<TestCase>> category) {
+    public boolean testCaseCategoryToJson(HashMap<String, ArrayList<TestCase>> category) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get("TestCases.json").toFile(), category);
+            return true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return false;
         }
     }
 
     public void loadConfig(String path){
-        categories = TestCaseDAO.jsonToTestCaseCategory("TestCases.json");
+        categories = jsonToTestCaseCategory(path);
         configPath = path;
     }
 
-    public void saveConfig(String path){
+    public boolean saveConfig(String path){
         this.configPath = path;
-        testCaseCategoryToJson(categories);
+        return testCaseCategoryToJson(categories);
     }
 
     public void addCategory(String category){
@@ -83,7 +85,7 @@ public class TestCaseDAO {
         return categories.get(category).get(caseIndex).getSteps().get(stepIndex);
     }
 
-    public void modifyTessStep(String category, int caseIndex, int stepIndex, TestStep testStep){
+    public void modifyTestStep(String category, int caseIndex, int stepIndex, TestStep testStep){
         categories.get(category).get(caseIndex).getSteps().set(stepIndex, testStep);
     }
 

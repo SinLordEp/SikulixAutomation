@@ -1,9 +1,8 @@
 package gui;
 
-import model.DataSource;
-import model.StepAction;
-import model.StepElementType;
-import model.TestStep;
+import exceptions.ImageIOException;
+import exceptions.OperationCancelException;
+import model.*;
 import org.sikuli.script.Region;
 import utils.Callback;
 import utils.Screenshot;
@@ -14,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -22,16 +22,15 @@ import java.util.Objects;
  * @author Sin
  */
 public class TestStepGUI extends JFrame {
-    private final Region region;
+    private final String testCaseName;
     private final TestStep testStep;
-    private Callback<TestStep> callback;
     private final boolean isNewStep;
     private final JTextField stepNameTextField = new JTextField(20);
     private final JTextArea descriptionTextField = new JTextArea(3, 20);
-    private final JTextField xTextField = new JTextField();
-    private final JTextField yTextField = new JTextField();
-    private final JTextField widthTextField = new JTextField("", 3);
-    private final JTextField heightTextField = new JTextField("", 3);
+    private final JTextField xTextField = new JTextField("1");
+    private final JTextField yTextField = new JTextField("1");
+    private final JTextField widthTextField = new JTextField("1399", 3);
+    private final JTextField heightTextField = new JTextField("999", 3);
 
     private final ButtonGroup passMatchTypeGroup = new ButtonGroup();
     private final JTextField passImageOrTextField = new JTextField();
@@ -68,24 +67,99 @@ public class TestStepGUI extends JFrame {
     private final ButtonGroup closeTextSourceGroup = new ButtonGroup();
     private final JTextField closeTextOrJsonTextField = new JTextField();
 
-    public TestStepGUI(TestStep testStep, Callback<TestStep> callback) {
+    public TestStepGUI(String testCaseName, TestStep testStep, Callback<TestStep> callback) {
+        this.testCaseName = testCaseName;
         this.testStep = testStep;
-        this.callback = callback;
-        this.region = testStep.getStepElements().get(StepElementType.PASS) == null ? new Region(1, 1, 1399, 999) : testStep.getStepElements().get(StepElementType.PASS).getRegion();
-        isNewStep = testStep.getStepElements().get(StepElementType.PASS) == null;
+        isNewStep = testStep.getName() == null || testStep.getName().isEmpty();
         setTitle("TestStep Editor");
         setSize(500, 800);
         setResizable(false);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        setMainPanel();
+        setMainPanel(callback);
+        if(!isNewStep){
+            parseTestStep();
+        }
         setVisible(true);
     }
 
-    private void setMainPanel() {
+    private void parseTestStep() {
+        Arrays.stream(StepElementType.values()).forEach(stepElementType -> {
+            if(testStep.getStepElements().get(stepElementType) != null){
+                switch (stepElementType) {
+                    case PASS -> parsePassElement(testStep.getPassElement());
+                    case PRECONDITION -> parsePreconditionElement(testStep.getPreconditionElement());
+                    case FAIL -> parseFailElement(testStep.getFailElement());
+                    case RETRY -> parseRetryElement(testStep.getRetryElement());
+                    case CLOSE -> parseCloseElement(testStep.getCloseElement());
+                }
+            }
+        });
+    }
+
+    private void parsePassElement(StepElement element){
+        xTextField.setText(String.valueOf(element.getX()));
+        yTextField.setText(String.valueOf(element.getY()));
+        widthTextField.setText(String.valueOf(element.getWidth()));
+        heightTextField.setText(String.valueOf(element.getHeight()));
+        passMatchTypeGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getDataSource().name())));
+        passImageOrTextField.setText(element.getPath().replace(".PNG","").replace(".png",""));
+        passActionGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getAction().name())));
+        if(element.getAction() == StepAction.FIND || element.getAction() == StepAction.CLICK){
+            return;
+        }
+        passTextSourceGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getTextDataSource().name())));
+        passTextOrJsonTextField.setText(element.getOutputText());
+    }
+
+    private void parsePreconditionElement(StepElement element){
+        preconditionMatchTypeGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getDataSource().name())));
+        preconditionImageOrTextField.setText(element.getPath().replace(".PNG","").replace(".png",""));
+        preconditionActionGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getAction().name())));
+        if(element.getAction() == StepAction.FIND || element.getAction() == StepAction.CLICK){
+            return;
+        }
+        preconditionTextSourceGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getTextDataSource().name())));
+        preconditionTextOrJsonTextField.setText(element.getOutputText());
+    }
+
+    private void parseFailElement(StepElement element){
+        failMatchTypeGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getDataSource().name())));
+        failImageOrTextField.setText(element.getPath().replace(".PNG","").replace(".png",""));
+        failActionGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getAction().name())));
+        if(element.getAction() == StepAction.FIND || element.getAction() == StepAction.CLICK){
+            return;
+        }
+        failTextSourceGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getTextDataSource().name())));
+        failTextOrJsonTextField.setText(element.getOutputText());
+    }
+
+    private void parseRetryElement(StepElement element){
+        retryMatchTypeGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getDataSource().name())));
+        retryImageOrTextField.setText(element.getPath().replace(".PNG","").replace(".png",""));
+        retryActionGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getAction().name())));
+        if(element.getAction() == StepAction.FIND || element.getAction() == StepAction.CLICK){
+            return;
+        }
+        retryTextSourceGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getTextDataSource().name())));
+        retryTextOrJsonTextField.setText(element.getOutputText());
+    }
+
+    private void parseCloseElement(StepElement element){
+        closeMatchTypeGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getDataSource().name())));
+        closeImageOrTextField.setText(element.getPath().replace(".PNG","").replace(".png",""));
+        closeActionGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getAction().name())));
+        if(element.getAction() == StepAction.FIND || element.getAction() == StepAction.CLICK){
+            return;
+        }
+        closeTextSourceGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getTextDataSource().name())));
+        closeTextOrJsonTextField.setText(element.getOutputText());
+    }
+
+    private void setMainPanel(Callback<TestStep> callback) {
         add(stepInfoPanel(), BorderLayout.NORTH);
         add(stepElementPane(), BorderLayout.CENTER);
-        add(bottomButtonsPanel(), BorderLayout.SOUTH);
+        add(bottomButtonsPanel(callback), BorderLayout.SOUTH);
     }
 
     private JPanel stepInfoPanel() {
@@ -96,6 +170,7 @@ public class TestStepGUI extends JFrame {
         // Step name label and input
         JPanel namePanel = new JPanel(new BorderLayout());
         namePanel.add(new JLabel("Step name:    "), BorderLayout.WEST);
+        stepNameTextField.setText(isNewStep ? "" : testStep.getName());
         namePanel.add(stepNameTextField, BorderLayout.CENTER);
         panel.add(namePanel);
 
@@ -105,9 +180,9 @@ public class TestStepGUI extends JFrame {
         panel.add(descriptionPanel);
 
         // Description input (2 rows height)
-
         descriptionTextField.setLineWrap(true);
         descriptionTextField.setWrapStyleWord(true);
+        descriptionTextField.setText(isNewStep ? "" : testStep.getDescription());
         JScrollPane descScroll = new JScrollPane(descriptionTextField);
         descScroll.setPreferredSize(new Dimension(400, 60));
         panel.add(descScroll);
@@ -115,22 +190,18 @@ public class TestStepGUI extends JFrame {
         // 4 region info labels + 4 inputs
         JPanel regionValuesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         regionValuesPanel.add(new JLabel("X: "));
-        xTextField.setText(String.valueOf(region.getX()));
         SwingUtils.makeTextFieldNumberOnly(xTextField);
         regionValuesPanel.add(xTextField);
 
         regionValuesPanel.add(new JLabel("Y: "));
-        yTextField.setText(String.valueOf(region.getY()));
         SwingUtils.makeTextFieldNumberOnly(yTextField);
         regionValuesPanel.add(yTextField);
 
         regionValuesPanel.add(new JLabel("Width: "));
-        widthTextField.setText(String.valueOf(region.getW()));
         SwingUtils.makeTextFieldNumberOnly(widthTextField);
         regionValuesPanel.add(widthTextField);
 
         regionValuesPanel.add(new JLabel("Height: "));
-        heightTextField.setText(String.valueOf(region.getH()));
         SwingUtils.makeTextFieldNumberOnly(heightTextField);
         regionValuesPanel.add(heightTextField);
         panel.add(regionValuesPanel);
@@ -138,7 +209,7 @@ public class TestStepGUI extends JFrame {
         // Toggle highlight button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton highlightButton = new JButton("Toggle area highlight");
-        highlightButton.addActionListener(_ -> SikulixUtils.highlightRegion(new Region(Integer.parseInt(xTextField.getText()), Integer.parseInt(yTextField.getText()),Integer.parseInt(widthTextField.getText()),Integer.parseInt(heightTextField.getText()))));
+        highlightButton.addActionListener(_ -> SikulixUtils.highlightRegion(buildRegion()));
         buttonPanel.add(highlightButton);
         panel.add(buttonPanel);
 
@@ -336,13 +407,13 @@ public class TestStepGUI extends JFrame {
             panel.repaint();
         };
 
-        for (DataSource ds : DataSource.values()) {
-            if (ds == DataSource.JSON || (ds == DataSource.NONE && element == StepElementType.PASS)) {
+        for (DataSource dataSource : DataSource.values()) {
+            if (dataSource == DataSource.JSON || (dataSource == DataSource.NONE && element == StepElementType.PASS)) {
                 continue;
             }
-            JRadioButton button = new JRadioButton(ds.name());
-            button.setActionCommand(ds.name());
-            button.setSelected(ds == selected);
+            JRadioButton button = new JRadioButton(dataSource.name());
+            button.setActionCommand(dataSource.name());
+            button.setSelected(dataSource == selected);
             button.addActionListener(visibilityUpdater);
             group.add(button);
             matchTypePanel.add(button);
@@ -376,8 +447,8 @@ public class TestStepGUI extends JFrame {
 
         JLabel imageLabel = new JLabel(new ImageIcon());
         imageLabel.setPreferredSize(new Dimension(300, 100));
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        imageLabel.setVerticalAlignment(JLabel.CENTER);
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
 
         JPanel imageContainer = new JPanel();
         imageContainer.setLayout(new BorderLayout());
@@ -387,8 +458,21 @@ public class TestStepGUI extends JFrame {
         ctx.hideOnNonePanel.add(imageContainer);
 
         if (!isNewStep && testStep.getStepElements().get(element) != null) {
-            ctx.image = SikulixUtils.loadImage(testStep.getName() + "/" + testStep.getStepElements().get(element).getPath());
-            setImageToLabel(imageLabel, ctx.image);
+            // Sikulix Robot.class can not be called in a swing awake event
+            new Thread(() -> {
+                BufferedImage img = SikulixUtils.loadImage(testCaseName + "/" + testStep.getStepElements().get(element).getPath());
+                SwingUtilities.invokeLater(() -> {
+                    ctx.image = img;
+                    setImageToLabel(imageLabel, ctx.image);
+                    switch (element){
+                        case PASS -> passImage = ctx.image;
+                        case PRECONDITION -> preconditionImage = ctx.image;
+                        case FAIL -> failImage = ctx.image;
+                        case RETRY -> retryImage = ctx.image;
+                        case CLOSE -> closeImage = ctx.image;
+                    }
+                });
+            }).start();
         }
 
         screenshotButton.addActionListener(_ -> new Screenshot(captured -> {
@@ -443,10 +527,131 @@ public class TestStepGUI extends JFrame {
         label.setIcon(new ImageIcon(scaled));
     }
 
-    private JPanel bottomButtonsPanel() {
+    private JPanel bottomButtonsPanel(Callback<TestStep> callback) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
-        panel.add(new JButton("Save Step"));
-        panel.add(new JButton("Cancel"));
+        JButton saveButton = new JButton("Save Step");
+        saveButton.addActionListener(_ -> {
+            callback.onSubmit(buildTestStep());
+            dispose();
+        });
+        panel.add(saveButton);
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(_ -> {
+            dispose();
+            throw new OperationCancelException();});
+        panel.add(cancelButton);
         return panel;
     }
+
+    private TestStep buildTestStep(){
+        testStep.setName(stepNameTextField.getText());
+        testStep.setDescription(descriptionTextField.getText());
+        Arrays.stream(StepElementType.values()).forEach(stepElementType ->
+        {
+            switch (stepElementType) {
+                case PASS -> testStep.setPassElement(buildPassElement());
+                case PRECONDITION -> testStep.setPreconditionElement(buildPreconditionElement());
+                case FAIL -> testStep.setFailElement(buildFailElement());
+                case RETRY -> testStep.setRetryElement(buildRetryElement());
+                case CLOSE -> testStep.setCloseElement(buildCloseElement());
+            }
+        });
+        return testStep;
+    }
+
+    private Region buildRegion(){
+        return new Region(Integer.parseInt(xTextField.getText()),
+                Integer.parseInt(yTextField.getText()),
+                Integer.parseInt(widthTextField.getText()),
+                Integer.parseInt(heightTextField.getText()));
+    }
+
+    private StepElement buildPassElement() {
+        ElementContext context = new ElementContext();
+        context.matchTypeGroup = passMatchTypeGroup;
+        context.imageOrTextField = passImageOrTextField;
+        context.image = passImage;
+        context.actionGroup = passActionGroup;
+        context.textSourceGroup = passTextSourceGroup;
+        context.textOrJsonTextField = passTextOrJsonTextField;
+        return buildElement(context);
+    }
+
+    private StepElement buildPreconditionElement() {
+        ElementContext context = new ElementContext();
+        context.matchTypeGroup = preconditionMatchTypeGroup;
+        context.imageOrTextField = preconditionImageOrTextField;
+        context.image = preconditionImage;
+        context.actionGroup = preconditionActionGroup;
+        context.textSourceGroup = preconditionTextSourceGroup;
+        context.textOrJsonTextField = preconditionTextOrJsonTextField;
+        return buildElement(context);
+    }
+
+    private StepElement buildFailElement() {
+        ElementContext context = new ElementContext();
+        context.matchTypeGroup = failMatchTypeGroup;
+        context.imageOrTextField = failImageOrTextField;
+        context.image = failImage;
+        context.actionGroup = failActionGroup;
+        context.textSourceGroup = failTextSourceGroup;
+        context.textOrJsonTextField = failTextOrJsonTextField;
+        return buildElement(context);
+    }
+
+    private StepElement buildRetryElement() {
+        ElementContext context = new ElementContext();
+        context.matchTypeGroup = retryMatchTypeGroup;
+        context.imageOrTextField = retryImageOrTextField;
+        context.image = retryImage;
+        context.actionGroup = retryActionGroup;
+        context.textSourceGroup = retryTextSourceGroup;
+        context.textOrJsonTextField = retryTextOrJsonTextField;
+        return buildElement(context);
+    }
+
+    private StepElement buildCloseElement() {
+        ElementContext context = new ElementContext();
+        context.matchTypeGroup = closeMatchTypeGroup;
+        context.imageOrTextField = closeImageOrTextField;
+        context.image = closeImage;
+        context.actionGroup = closeActionGroup;
+        context.textSourceGroup = closeTextSourceGroup;
+        context.textOrJsonTextField = closeTextOrJsonTextField;
+        return buildElement(context);
+    }
+
+    private StepElement buildElement(ElementContext context) {
+        StepElement element = new StepElement();
+        switch (DataSource.valueOf(context.matchTypeGroup.getSelection().getActionCommand())){
+            case IMAGE: element.setDataSource(DataSource.IMAGE);
+                try {
+                    SikulixUtils.saveImage(context.image, testCaseName + "\\" + context.imageOrTextField.getText());
+                } catch (IOException e) {
+                    throw new ImageIOException("Cannot write image to target path");
+                }
+                break;
+            case TEXT: element.setDataSource(DataSource.TEXT);
+                break;
+            default: return null;
+        }
+        element.setPath(context.imageOrTextField.getText() + ".PNG");
+        switch (StepAction.valueOf(context.actionGroup.getSelection().getActionCommand())){
+            case FIND : element.setAction(StepAction.FIND);
+                break;
+            case CLICK : element.setAction(StepAction.CLICK);
+                break;
+            case TYPE : element.setAction(StepAction.TYPE);
+                element.setTextDataSource(DataSource.valueOf(context.textSourceGroup.getSelection().getActionCommand()));
+                element.setOutputText(context.textOrJsonTextField.getText());
+                break;
+            case PASTE: element.setAction(StepAction.PASTE);
+                element.setTextDataSource(DataSource.valueOf(context.textSourceGroup.getSelection().getActionCommand()));
+                element.setOutputText(context.textOrJsonTextField.getText());
+                break;
+        }
+        element.setRegion(buildRegion());
+        return element;
+    }
+
 }

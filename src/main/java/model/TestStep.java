@@ -39,10 +39,6 @@ public class TestStep {
         return stepElements;
     }
 
-    public void setStepElement(StepElementType type, StepElement element){
-        stepElements.put(type, element);
-    }
-
     public void setStepElements(HashMap<StepElementType, StepElement> stepElements) {
         this.stepElements = stepElements;
     }
@@ -73,6 +69,26 @@ public class TestStep {
 
     public StepElement getCloseElement(){
         return stepElements.get(StepElementType.CLOSE);
+    }
+
+    public void setPassElement(StepElement passElement){
+        stepElements.put(StepElementType.PASS, passElement);
+    }
+
+    public void setPreconditionElement(StepElement preconditionElement){
+        stepElements.put(StepElementType.PRECONDITION, preconditionElement);
+    }
+
+    public void setFailElement(StepElement failElement){
+        stepElements.put(StepElementType.FAIL, failElement);
+    }
+
+    public void setRetryElement(StepElement retryElement){
+        stepElements.put(StepElementType.RETRY, retryElement);
+    }
+
+    public void setCloseElement(StepElement closeElement){
+        stepElements.put(StepElementType.CLOSE, closeElement);
     }
 
     @Override

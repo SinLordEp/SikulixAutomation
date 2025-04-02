@@ -2,6 +2,7 @@ package gui;
 
 import controller.ToolController;
 import data.TestResultTableModel;
+import exceptions.UndefinedException;
 import model.CaseState;
 import model.EventPackage;
 import model.TestCase;
@@ -10,6 +11,7 @@ import utils.EventListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
@@ -38,47 +40,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         setLayout(new BorderLayout());
         setResizable(true);
         setMainPanel();
-        categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        caseList.setCellRenderer(new CaseListRenderer());
-        caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        caseList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && caseList.getSelectedValue() != null) {
-                loadTestSteps(caseList.getSelectedValue());
-            }
-        });
-        caseList.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent evt) {
-                int index = caseList.locationToIndex(evt.getPoint());
-                if (index >= 0) {
-                    Rectangle rect = caseList.getCellBounds(index, index);
-                    if (evt.getX() - rect.x < 20) {
-                        TestCase testCase = caseListModel.getElementAt(index);
-                        testCase.setSelected(!testCase.isSelected());
-                        caseList.repaint();
-                    }
-                }
-            }
-        });
-        stepList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
-            JLabel label = new JLabel(value.toString());
-            label.setOpaque(true);
-            label.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
-            label.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
-            return label;
-        });
-
-        categoryList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                String selected = categoryList.getSelectedValue();
-                loadCases(selected);
-            }
-        });
-
-        if (!categoryListModel.isEmpty()) {
-            categoryList.setSelectedIndex(0);
-            loadCases(categoryList.getSelectedValue());
-        }
+        initializeCategoryList();
+        initializeCaseList();
+        initializeStepList();
     }
 
     private void setMainPanel(){
@@ -103,7 +67,13 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.add(load);
 
         JButton save = new JButton("Save Testcases");
-        save.addActionListener(_ -> controller.saveConfig());
+        save.addActionListener(_ -> {
+            if(controller.saveConfig()){
+                JOptionPane.showMessageDialog(this, "Successfully saved config");
+            }else {
+                JOptionPane.showMessageDialog(this, "Error saving config");
+            }
+        });
         panel.add(save);
 
         return panel;
@@ -222,12 +192,74 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         stepListModel.clear();
     }
 
+
     private void loadTestSteps(TestCase testCase) {
         stepListModel.clear();
-        stepListModel.addAll(testCase.getSteps());
-
+        if (testCase != null) {
+            stepListModel.addAll(testCase.getSteps());
+        }
     }
 
+
+    private void initializeCategoryList(){
+        categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        categoryList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                String selected = categoryList.getSelectedValue();
+                loadCases(selected);
+            }
+        });
+        if (!categoryListModel.isEmpty()) {
+            categoryList.setSelectedIndex(0);
+            loadCases(categoryList.getSelectedValue());
+        }
+    }
+
+    private void initializeCaseList(){
+        caseList.setCellRenderer(new CaseListRenderer());
+        caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        caseList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && caseList.getSelectedValue() != null) {
+                loadTestSteps(caseList.getSelectedValue());
+            }
+        });
+        caseList.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                int index = caseList.locationToIndex(evt.getPoint());
+                if (index >= 0) {
+                    Rectangle rect = caseList.getCellBounds(index, index);
+                    if (evt.getX() - rect.x < 20) {
+                        TestCase testCase = caseListModel.getElementAt(index);
+                        testCase.setSelected(!testCase.isSelected());
+                        caseList.repaint();
+                    }
+                }
+            }
+        });
+    }
+
+    private void initializeStepList(){
+        stepList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            JLabel label = new JLabel(value.toString());
+            label.setOpaque(true);
+            label.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+            label.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
+            return label;
+        });
+        stepList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // if double click
+                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                    int index = stepList.locationToIndex(e.getPoint());
+                    if (index != -1) {
+                        controller.modifyTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex(), index);
+                    }
+                }
+            }
+        });
+    }
 
     private static class CaseListRenderer extends JCheckBox implements ListCellRenderer<TestCase> {
         @Override
@@ -259,7 +291,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private LinkedHashMap<String, TestCase> createTestPlan(){
         LinkedHashMap<String, TestCase> testPlan = new LinkedHashMap<>();
-        testCases.forEach((_, testCases) -> testCases.forEach(testCase -> {
+        testCases.forEach((_, cases) -> cases.forEach(testCase -> {
             if(testCase.isSelected()){
                 testPlan.put(testCase.getName(), testCase);
             }
@@ -267,12 +299,14 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         return testPlan;
     }
 
+
+
     @Override
     public void onEvent(EventPackage eventPackage) {
         switch (eventPackage.getCommand()){
             case TESTCASE_CHANGED -> updateTestCases(eventPackage.getTestCases());
             case RESULT_CHANGED -> updateTestResults(eventPackage.getTestResults());
-            default -> throw new RuntimeException("Unknown command (To be perfected)");
+            default -> throw new UndefinedException("Unknown command (To be perfected)");
         }
     }
 

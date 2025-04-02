@@ -81,15 +81,16 @@ public class StepElement {
     }
 
     @JsonIgnore
-    public Region getRegion() {
-        return new Region(x, y, width, height);
-    }
-    @JsonIgnore
     public void setRegion(Region region) {
         this.x = region.x;
         this.y = region.y;
         this.width = region.w;
         this.height = region.h;
+    }
+
+    @JsonIgnore
+    public Region getRegion(){
+        return new Region(x,y,width,height);
     }
 
     public int getX() {
