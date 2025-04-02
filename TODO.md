@@ -8,6 +8,7 @@
 2. ~~Result table data is not center alignment~~
 3. ~~Add way to edit step, such as double click it~~
 4. It should have control of data isChanged to warn user before closing or loading another config
+5. ~~Target window for testing should be set on top / always on top~~
 
 
 ## TestStepGUI
