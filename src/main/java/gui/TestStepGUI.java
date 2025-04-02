@@ -94,7 +94,7 @@ public class TestStepGUI extends JFrame {
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
         // Step name label and input
         JPanel namePanel = new JPanel(new BorderLayout());
-        namePanel.add(new JLabel("Step name: "), BorderLayout.WEST);
+        namePanel.add(new JLabel("Step name:    "), BorderLayout.WEST);
         namePanel.add(stepNameTextField, BorderLayout.CENTER);
         panel.add(namePanel);
 
@@ -308,6 +308,8 @@ public class TestStepGUI extends JFrame {
     private JButton createToggleButton(String title, JPanel elementPanel, JPanel togglePanel) {
         JButton toggleButton = new JButton("▶ " + title);
         toggleButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        toggleButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, toggleButton.getPreferredSize().height));
+        toggleButton.setPreferredSize(new Dimension(0, 30));
         toggleButton.addActionListener(_ -> {
             boolean visible = !togglePanel.isVisible();
             togglePanel.setVisible(visible);
@@ -327,7 +329,9 @@ public class TestStepGUI extends JFrame {
         };
 
         for (DataSource ds : DataSource.values()) {
-            if (ds == DataSource.JSON || (ds == DataSource.NONE && element == StepElementType.PASS)) continue;
+            if (ds == DataSource.JSON || (ds == DataSource.NONE && element == StepElementType.PASS)) {
+                continue;
+            }
             JRadioButton button = new JRadioButton(ds.name());
             button.setActionCommand(ds.name());
             button.setSelected(ds == selected);
@@ -364,7 +368,15 @@ public class TestStepGUI extends JFrame {
 
         JLabel imageLabel = new JLabel(new ImageIcon());
         imageLabel.setPreferredSize(new Dimension(300, 100));
-        ctx.hideOnNonePanel.add(imageLabel);
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        imageLabel.setVerticalAlignment(JLabel.CENTER);
+
+        JPanel imageContainer = new JPanel();
+        imageContainer.setLayout(new BorderLayout());
+        imageContainer.setBorder(BorderFactory.createTitledBorder("Captured Image Preview"));
+        imageContainer.add(imageLabel, BorderLayout.CENTER);
+
+        ctx.hideOnNonePanel.add(imageContainer);
 
         if (!isNewStep && testStep.getStepElements().get(element) != null) {
             ctx.image = SikulixUtils.loadImage(testStep.getName() + "/" + testStep.getStepElements().get(element).getPath());
