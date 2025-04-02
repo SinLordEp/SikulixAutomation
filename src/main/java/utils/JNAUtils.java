@@ -1,21 +1,19 @@
 package utils;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
-import exceptions.WindowErrorException;
+import com.sun.jna.platform.win32.WinUser;
 import org.sikuli.script.Region;
 
 public class JNAUtils {
+    public static final WinDef.HWND HWND_TOPMOST = new WinDef.HWND(Pointer.createConstant(-1));
+    public static final WinDef.HWND HWND_NOTOPMOST = new WinDef.HWND(Pointer.createConstant(-2));
 
     private JNAUtils(){}
 
     public static WinDef.HWND getWindowByTitle(String title){
-        WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, title);
-        if (hwnd != null) {
-            return hwnd;
-        } else {
-            throw new WindowErrorException("No Window with precise title is found");
-        }
+        return User32.INSTANCE.FindWindow(null, title);
     }
 
     public static int getWindowCurrentWidth(WinDef.HWND window){
@@ -52,6 +50,19 @@ public class JNAUtils {
 
     public static Region convertWindowToRegion(WinDef.HWND window){
         return new Region(getWindowCurrentX(window), getWindowCurrentY(window), getWindowCurrentWidth(window), getWindowCurrentHeight(window));
+    }
+
+    public static void bringWindowToFront(WinDef.HWND window){
+        User32 user32 = User32.INSTANCE;
+        user32.ShowWindow(window, WinUser.SW_RESTORE);
+        user32.SetForegroundWindow(window);
+    }
+
+    public static void setWindowAlwaysOnTop(WinDef.HWND window, boolean alwaysOnTop){
+        User32 user32 = User32.INSTANCE;
+        int flags = WinUser.SWP_NOMOVE | WinUser.SWP_NOSIZE;
+        WinDef.HWND insertAfter = alwaysOnTop ? HWND_TOPMOST : HWND_NOTOPMOST;
+        user32.SetWindowPos(window, insertAfter, 0, 0, 0, 0, flags);
     }
 
 }

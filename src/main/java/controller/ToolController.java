@@ -5,6 +5,7 @@ import data.TestCaseDAO;
 import exceptions.FileIOException;
 import exceptions.OperationCancelException;
 import exceptions.TestStepFailedException;
+import exceptions.WindowErrorException;
 import gui.TestStepGUI;
 import gui.ToolGUI;
 import model.*;
@@ -122,32 +123,35 @@ public class ToolController {
     public void startTest(LinkedHashMap<String, TestCase> testCases){
         dao.initializeTestResults(testCases);
         notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-        testThread = new Thread(() -> testCases.forEach((caseName, testCase) -> {
-            dao.updateTestResult(caseName, CaseState.ONGOING);
-            notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-            try{
-                Thread.sleep(500);
-                SikulixUtils.setImagePath(caseName);
-                testCase.getSteps().forEach(testStep ->
-                {
-                    StepState stepState = StepExecutor.execute(testStep);
-                    if (stepState == StepState.FAIL){
-                        throw new TestStepFailedException("Defined error detected");
-                    }
-                    if (stepState == StepState.NO_MATCH) {
-                        throw new TestStepFailedException("Expected result is not detected");
-                    }
-                    dao.updateTestResult(caseName, CaseState.PASS);
-                });
-            }catch (TestStepFailedException e){
-                System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
-                dao.updateTestResult(caseName, CaseState.FAIL);
-            }catch (InterruptedException e){
+        testThread = new Thread(() -> {
+            testCases.forEach((caseName, testCase) -> {
+                dao.updateTestResult(caseName, CaseState.ONGOING);
                 notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-                throw new OperationCancelException();
-            }
-            notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-        }));
+                try {
+                    Thread.sleep(500);
+                    SikulixUtils.setImagePath(caseName);
+                    testCase.getSteps().forEach(testStep ->
+                    {
+                        StepState stepState = StepExecutor.execute(testStep);
+                        if (stepState == StepState.FAIL) {
+                            throw new TestStepFailedException("Defined error detected");
+                        }
+                        if (stepState == StepState.NO_MATCH) {
+                            throw new TestStepFailedException("Expected result is not detected");
+                        }
+                        dao.updateTestResult(caseName, CaseState.PASS);
+                    });
+                } catch (TestStepFailedException e) {
+                    System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
+                    dao.updateTestResult(caseName, CaseState.FAIL);
+                } catch (InterruptedException e) {
+                    notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+                    throw new OperationCancelException();
+                }
+                notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+            });
+            unsetWindowAlwaysOnTop();
+        });
         captureWindow();
         testThread.start();
     }
@@ -168,10 +172,25 @@ public class ToolController {
         }
     }
 
-    private  void captureWindow(){
-        WinDef.HWND window = JNAUtils.getWindowByTitle("Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@");
+    private void captureWindow(){
+        String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
+        WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
+        if(window == null){
+            throw new WindowErrorException("Can not find windows with name: " + windowName);
+        }
         JNAUtils.setWindowSize(window, 1400,1000);
         JNAUtils.setWindowAtLocation(window, 0, 0);
+        JNAUtils.bringWindowToFront(window);
+        JNAUtils.setWindowAlwaysOnTop(window, true);
+    }
+
+    private void unsetWindowAlwaysOnTop(){
+        String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
+        WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
+        if(window == null){
+            throw new WindowErrorException("Can not find windows with name: " + windowName);
+        }
+        JNAUtils.setWindowAlwaysOnTop(window, false);
     }
 
     public String pathChooser(){
