@@ -8,6 +8,7 @@ import org.sikuli.script.Region;
 import utils.Callback;
 import utils.Screenshot;
 import utils.SikulixUtils;
+import utils.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,22 +116,29 @@ public class TestStepGUI extends JFrame {
         JPanel regionValuesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         regionValuesPanel.add(new JLabel("X: "));
         xTextField.setText(String.valueOf(region.getX()));
+        SwingUtils.makeTextFieldNumberOnly(xTextField);
         regionValuesPanel.add(xTextField);
+
         regionValuesPanel.add(new JLabel("Y: "));
         yTextField.setText(String.valueOf(region.getY()));
+        SwingUtils.makeTextFieldNumberOnly(yTextField);
         regionValuesPanel.add(yTextField);
+
         regionValuesPanel.add(new JLabel("Width: "));
         widthTextField.setText(String.valueOf(region.getW()));
+        SwingUtils.makeTextFieldNumberOnly(widthTextField);
         regionValuesPanel.add(widthTextField);
+
         regionValuesPanel.add(new JLabel("Height: "));
         heightTextField.setText(String.valueOf(region.getH()));
+        SwingUtils.makeTextFieldNumberOnly(heightTextField);
         regionValuesPanel.add(heightTextField);
         panel.add(regionValuesPanel);
 
         // Toggle highlight button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton highlightButton = new JButton("Toggle area highlight");
-        highlightButton.addActionListener(_ -> SikulixUtils.highlightRegion(region));
+        highlightButton.addActionListener(_ -> SikulixUtils.highlightRegion(new Region(Integer.parseInt(xTextField.getText()), Integer.parseInt(yTextField.getText()),Integer.parseInt(widthTextField.getText()),Integer.parseInt(heightTextField.getText()))));
         buttonPanel.add(highlightButton);
         panel.add(buttonPanel);
 
