@@ -17,8 +17,11 @@
 7. ~~Add control to prevent multi click on Start test button~~
 8. Add a method to modify TestCase name and its image path along
 9. Add a method to disable delete step when no step is selected
-10. Add a text field for window name
+10. Add a text field or a button for getting window name
 11. ~~Add a progress bar to visualize test plan progress~~
+12. Add a loop testing option
+13. Add a repeat time input field
+14. Add a select all button for TestCase
 
 
 ## TestStepGUI
