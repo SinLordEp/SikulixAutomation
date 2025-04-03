@@ -28,6 +28,7 @@ public class TestCaseService {
                 path += JSON_EXTENSION;
             }
             dao.loadConfig(path);
+            dao.setConfigPath(path);
         }else{
             throw new OperationCancelException();
         }

@@ -29,6 +29,7 @@ public class TestCaseDAO {
     private boolean dataChanged = false;
 
     public TestCaseDAO() {
+        // No parameter needed now
     }
 
     public static HashMap<String, ArrayList<TestCase>> jsonToTestCaseCategory(String path) {
@@ -52,7 +53,6 @@ public class TestCaseDAO {
 
     public void loadConfig(String path){
         categories = jsonToTestCaseCategory(path);
-        configPath = path;
     }
 
     public boolean saveConfig(String path){
@@ -98,8 +98,6 @@ public class TestCaseDAO {
         categories.get(category).get(caseIndex).getSteps().set(stepIndex, testStep);
         dataChanged = true;
     }
-
-
 
     public String getPath(String extension) {
         JFileChooser fileChooser = new JFileChooser(new File("src").getAbsolutePath());
