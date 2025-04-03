@@ -180,7 +180,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             startButton.setEnabled(false);
             controller.startTest(createTestPlan());
         });
-        startButton.addPropertyChangeListener("enabled", e -> stopButton.setEnabled(!startButton.isEnabled()));
+        startButton.addPropertyChangeListener("enabled", _ -> stopButton.setEnabled(!startButton.isEnabled()));
         panel.add(startButton);
 
         stopButton.setEnabled(false);
@@ -272,7 +272,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private void initializeStepList(){
-        stepList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+        stepList.setCellRenderer((list, value, _, isSelected, _) -> {
             JLabel label = new JLabel(value.toString());
             label.setOpaque(true);
             label.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
