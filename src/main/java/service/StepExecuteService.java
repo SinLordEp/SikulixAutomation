@@ -11,7 +11,7 @@ import util.SikulixUtils;
 /**
  * @author Sin
  */
-public class StepExecutor {
+public class StepExecuteService {
 
     @FunctionalInterface
     interface FindFailedReturnBool {

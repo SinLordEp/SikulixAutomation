@@ -30,7 +30,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final DefaultListModel<TestStep> stepListModel = new DefaultListModel<>();
     private final JList<TestStep> stepList = new JList<>(stepListModel);
     private HashMap<String, ArrayList<TestCase>> testCases = new HashMap<>();
-    private boolean dataChanged = false;
 
     private int categoryIndex = 0;
     private int caseIndex = 0;
@@ -173,14 +172,19 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton stopButton = new JButton("Stop");
         startButton.addActionListener(_ -> {
             startButton.setEnabled(false);
+            stopButton.setEnabled(true);
             controller.startTest(createTestPlan());
         });
         panel.add(startButton);
 
-        JButton stopButton = new JButton("Stop");
-        stopButton.addActionListener(_ -> controller.stopTest());
+        stopButton.setEnabled(false);
+        stopButton.addActionListener(_ -> {
+            stopButton.setEnabled(false);
+            controller.stopTest();
+        });
         panel.add(stopButton);
 
         return panel;

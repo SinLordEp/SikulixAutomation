@@ -1,7 +1,7 @@
 
 ## General
 1. Exception handler needs to be done
-2. Divide controller into smaller services
+2. ~~Divide controller into smaller services~~
 3. Extract JOptionPanel methods to a Utils class
 
 
@@ -15,6 +15,7 @@
 7. ~~Add control to prevent multi click on Start test button~~
 8. Add a method to modify TestCase name and its image path along
 9. Add a method to disable delete step when no step is selected
+10. Add a text field for window name
 
 
 ## TestStepGUI

@@ -5,5 +5,5 @@ package model;
  */
 
 public enum CaseState {
-    QUEUED, ONGOING, PASS, FAIL
+    QUEUED, ONGOING, PASS, FAIL, INTERRUPT
 }

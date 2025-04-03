@@ -1,37 +1,24 @@
 package controller;
 
-import com.sun.jna.platform.win32.WinDef;
-import data.TestCaseDAO;
-import exception.FileIOException;
-import exception.OperationCancelException;
-import exception.TestStepFailedException;
-import exception.WindowErrorException;
-import gui.TestStepGUI;
 import gui.ToolGUI;
 import model.*;
+import service.*;
 import util.EventListener;
-import util.JNAUtils;
-import util.SikulixUtils;
-import service.StepExecutor;
 
-import javax.swing.*;
-import java.io.IOException;
 import java.util.*;
 
 /**
  * @author Sin
  */
 public class ToolController {
-    private Thread testThread = null;
-    private TestCaseDAO dao;
     private final List<EventListener<EventPackage>> listeners = new ArrayList<>();
+    private final TestCaseService testCaseService;
+    private final CaseExecuteService caseExecuteService;
+
+
     public ToolController() {
-        initialize();
-    }
-
-    private void initialize(){
-        dao = new TestCaseDAO();
-
+        testCaseService = new TestCaseService(this::notifyEvent);
+        caseExecuteService = new CaseExecuteService(testCaseService, this::notifyEvent);
     }
 
     public void run(){
@@ -41,179 +28,56 @@ public class ToolController {
     }
 
     public void loadConfig(){
-        dao.saveOnDataChanged();
-        String path = dao.getPath(".json");
-        if(path != null){
-            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
-                path += ".json";
-            }
-            dao.loadConfig(path);
-        }else{
-            throw new OperationCancelException();
-        }
-        if(!dao.getCategories().isEmpty()){
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }
+        testCaseService.loadConfig();
     }
 
     public boolean saveConfig(){
-        String path = dao.getConfigPath();
-        if(path == null || path.isEmpty()){
-            path = dao.getPath(".json");
-            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
-                path += ".json";
-            }
-        }
-        return dao.saveConfig(path);
+       return testCaseService.saveConfig();
     }
 
     public void addCategory(){
-        String name = JOptionPane.showInputDialog("Input name of the new category name:");
-        if(name != null && !name.isEmpty()){
-            dao.addCategory(name);
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }else{
-            throw new OperationCancelException();
-        }
+        testCaseService.addCategory();
     }
 
     public void deleteCategory(String category){
-        if(category != null && !category.isEmpty()){
-            dao.deleteCategory(category);
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }
+        testCaseService.deleteCategory(category);
     }
 
     public void addTestCase(String category){
-        String name = JOptionPane.showInputDialog("Input name of the new test case:");
-        if(name != null && !name.isEmpty()){
-            dao.addTestCase(category, new TestCase(name));
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }
+        testCaseService.addTestCase(category);
     }
 
     public void deleteTestCase(String category, int caseIndex){
-        if(category != null && !category.isEmpty() && caseIndex >= 0){
-            dao.deleteTestCase(category, caseIndex);
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }
+        testCaseService.deleteTestCase(category, caseIndex);
     }
 
     public void addTestStep(String category, int caseIndex){
-        if(category != null && !category.isEmpty() && caseIndex >= 0){
-            TestStep testStep = new TestStep();
-            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), testStep, newTestStep -> {
-                dao.addTestStep(category, caseIndex, newTestStep);
-                notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-            });
-        }
+        testCaseService.addTestStep(category, caseIndex);
     }
 
     public void deleteTestStep(String category, int caseIndex, int stepIndex){
-        if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
-            dao.deleteTestStep(category, caseIndex, stepIndex);
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }
+        testCaseService.deleteTestStep(category, caseIndex, stepIndex);
     }
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex){
-        if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
-            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTestStep(category, caseIndex, stepIndex, newTestStep));
-            notifyEvent(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
-        }
+        testCaseService.modifyTestStep(category, caseIndex, stepIndex);
     }
 
     public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
-        dao.setTestResults(currentTestPlan);
-        notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-        testThread = new Thread(() -> {
-            currentTestPlan.forEach((testCase, _) -> {
-                try {
-                    Thread.sleep(500);
-                    SikulixUtils.setImagePath(testCase.getName());
-                    testCase.getSteps().forEach(testStep ->
-                    {
-                        testCase.nextCurrentStep();
-                        dao.updateTestResult(testCase, CaseState.ONGOING);
-                        notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-                        StepState stepState = StepExecutor.execute(testStep);
-                        if (stepState == StepState.FAIL) {
-                            throw new TestStepFailedException("Defined error detected");
-                        }
-                        if (stepState == StepState.NO_MATCH) {
-                            throw new TestStepFailedException("Expected result is not detected");
-                        }
-                        dao.updateTestResult(testCase, CaseState.PASS);
-                    });
-                } catch (TestStepFailedException e) {
-                    System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
-                    dao.updateTestResult(testCase, CaseState.FAIL);
-                } catch (InterruptedException e) {
-                    notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-                    throw new OperationCancelException();
-                }
-                notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
-            });
-            unsetWindowAlwaysOnTop();
-            notifyEvent(new EventPackage(EventCommand.TEST_FINISHED));
-        });
-        captureWindow();
-        testThread.start();
+        caseExecuteService.startTest(currentTestPlan);
     }
 
     public void stopTest(){
-        testThread.interrupt();
-        notifyEvent(new EventPackage(EventCommand.TEST_FINISHED));
+        caseExecuteService.stopTest();
     }
 
     public void generateResult(){
-        String path = dao.getPath(".csv");
-        if (!path.toLowerCase().endsWith(".csv".toLowerCase())) {
-            path += ".csv";
-        }
-        try {
-            dao.generateTestResult(path);
-        } catch (IOException e) {
-            throw new FileIOException("Could not generate test result to target file with cause: " + e.getMessage());
-        }
-    }
-
-    private void captureWindow(){
-        String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
-        WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
-        if(window == null){
-            throw new WindowErrorException("Can not find windows with name: " + windowName);
-        }
-        JNAUtils.setWindowSize(window, 1400,1000);
-        JNAUtils.setWindowAtLocation(window, 0, 0);
-        JNAUtils.bringWindowToFront(window);
-        JNAUtils.setWindowAlwaysOnTop(window, true);
-    }
-
-    private void unsetWindowAlwaysOnTop(){
-        String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
-        WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
-        if(window == null){
-            throw new WindowErrorException("Can not find windows with name: " + windowName);
-        }
-        JNAUtils.setWindowAlwaysOnTop(window, false);
+        testCaseService.generateResult();
     }
 
     public void onWindowClosing() {
-        dao.saveOnDataChanged();
+        testCaseService.saveDataOnChanged();
         System.exit(0);
-    }
-
-    public String pathChooser(){
-        String path = dao.getPath(".json");
-        if(path != null){
-            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
-                path += ".json";
-            }
-            return path;
-        }else{
-            throw new OperationCancelException();
-        }
     }
 
     public void addListener(EventListener<EventPackage> listener){
