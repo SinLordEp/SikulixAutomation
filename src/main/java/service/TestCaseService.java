@@ -13,6 +13,8 @@ import java.util.LinkedHashMap;
 public class TestCaseService {
     private final TestCaseDAO dao = new TestCaseDAO();
     private final Callback<EventPackage> callback;
+    private static final String JSON_EXTENSION = ".json";
+    private static final String CSV_EXTENSION = ".csv";
 
     public TestCaseService(Callback<EventPackage> callback) {
         this.callback = callback;
@@ -20,10 +22,10 @@ public class TestCaseService {
 
     public void loadConfig(){
         dao.saveOnDataChanged();
-        String path = dao.getPath(".json");
+        String path = dao.getPath(JSON_EXTENSION);
         if(path != null){
-            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
-                path += ".json";
+            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
+                path += JSON_EXTENSION;
             }
             dao.loadConfig(path);
         }else{
@@ -38,9 +40,9 @@ public class TestCaseService {
     public boolean saveConfig(){
         String path = dao.getConfigPath();
         if(path == null || path.isEmpty()){
-            path = dao.getPath(".json");
-            if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
-                path += ".json";
+            path = dao.getPath(JSON_EXTENSION);
+            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
+                path += JSON_EXTENSION;
             }
         }
         return dao.saveConfig(path);
@@ -115,9 +117,9 @@ public class TestCaseService {
     }
 
     public void generateResult(){
-        String path = dao.getPath(".csv");
-        if (!path.toLowerCase().endsWith(".csv".toLowerCase())) {
-            path += ".csv";
+        String path = dao.getPath(CSV_EXTENSION);
+        if (!path.toLowerCase().endsWith(CSV_EXTENSION)) {
+            path += CSV_EXTENSION;
         }
         try {
             dao.generateTestResult(path);
