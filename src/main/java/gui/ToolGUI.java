@@ -7,6 +7,7 @@ import model.CaseState;
 import model.EventPackage;
 import model.TestCase;
 import model.TestStep;
+import util.DialogUtils;
 import util.EventListener;
 
 import javax.swing.*;
@@ -84,9 +85,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JButton save = new JButton("Save Test Case");
         save.addActionListener(_ -> {
             if(controller.saveConfig()){
-                JOptionPane.showMessageDialog(this, "Successfully saved config");
+                DialogUtils.showInfoDialog(this,"Save test case", "Successfully saved config");
             }else {
-                JOptionPane.showMessageDialog(this, "Error saving config");
+                DialogUtils.showErrorDialog(this, "Save test case", "Error saving test case");
             }
         });
         panel.add(save);
@@ -111,7 +112,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.add(new JScrollPane(categoryList), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("+");
-        addButton.addActionListener(_ -> controller.addCategory());
+        addButton.addActionListener(_ -> controller.addCategory(DialogUtils.showInputDialog(this, "Add category", "Input the name of the new category:")));
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
@@ -132,7 +133,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.add(new JScrollPane(caseList), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("+");
-        addButton.addActionListener(_ -> controller.addTestCase(categoryList.getSelectedValue()));
+        addButton.addActionListener(_ -> controller.addTestCase(categoryList.getSelectedValue(), DialogUtils.showInputDialog(this, "Add test case", "Input the name of the new case:")));
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
@@ -175,9 +176,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JButton stopButton = new JButton("Stop");
         startButton.addActionListener(_ -> {
             startButton.setEnabled(false);
-            stopButton.setEnabled(true);
             controller.startTest(createTestPlan());
         });
+        startButton.addPropertyChangeListener("enabled", e -> stopButton.setEnabled(!startButton.isEnabled()));
         panel.add(startButton);
 
         stopButton.setEnabled(false);
@@ -215,14 +216,12 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         stepListModel.clear();
     }
 
-
     private void loadTestSteps(TestCase testCase) {
         stepListModel.clear();
         if (testCase != null) {
             stepListModel.addAll(testCase.getSteps());
         }
     }
-
 
     private void initializeCategoryList(){
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

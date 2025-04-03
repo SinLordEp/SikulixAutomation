@@ -2,7 +2,9 @@
 ## General
 1. Exception handler needs to be done
 2. ~~Divide controller into smaller services~~
-3. Extract JOptionPanel methods to a Utils class
+3. ~~Extract JOptionPanel methods to a Utils class~~
+4. Make the GUI more beautiful
+5. Ref
 
 
 ## ToolGUI
@@ -16,6 +18,7 @@
 8. Add a method to modify TestCase name and its image path along
 9. Add a method to disable delete step when no step is selected
 10. Add a text field for window name
+11. Add a progress bar to visualize test plan progress
 
 
 ## TestStepGUI

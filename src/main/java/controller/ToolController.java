@@ -35,16 +35,16 @@ public class ToolController {
        return testCaseService.saveConfig();
     }
 
-    public void addCategory(){
-        testCaseService.addCategory();
+    public void addCategory(String name){
+        testCaseService.addCategory(name);
     }
 
     public void deleteCategory(String category){
         testCaseService.deleteCategory(category);
     }
 
-    public void addTestCase(String category){
-        testCaseService.addTestCase(category);
+    public void addTestCase(String category, String name){
+        testCaseService.addTestCase(category, name);
     }
 
     public void deleteTestCase(String category, int caseIndex){

@@ -7,6 +7,7 @@ import exception.OperationCancelException;
 import model.CaseState;
 import model.TestCase;
 import model.TestStep;
+import util.DialogUtils;
 
 import javax.swing.*;
 import java.io.File;
@@ -143,7 +144,7 @@ public class TestCaseDAO {
 
     public void saveOnDataChanged(){
         if(dataChanged){
-            switch(JOptionPane.showConfirmDialog(null, "TestCase has changes, do you want to save config before proceed?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE)){
+            switch(DialogUtils.showConfirmDialog(null,"TestCase has changes, do you want to save config before proceed?", "Warning")){
                 case JOptionPane.YES_OPTION: saveConfig(configPath);
                     break;
                 case JOptionPane.NO_OPTION: break;

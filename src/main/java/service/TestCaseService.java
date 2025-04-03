@@ -7,7 +7,6 @@ import gui.TestStepGUI;
 import model.*;
 import util.Callback;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
@@ -47,8 +46,7 @@ public class TestCaseService {
         return dao.saveConfig(path);
     }
 
-    public void addCategory(){
-        String name = JOptionPane.showInputDialog("Input name of the new category name:");
+    public void addCategory(String name){
         if(name != null && !name.isEmpty()){
             dao.addCategory(name);
             callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
@@ -64,8 +62,7 @@ public class TestCaseService {
         }
     }
 
-    public void addTestCase(String category){
-        String name = JOptionPane.showInputDialog("Input name of the new test case:");
+    public void addTestCase(String category, String name){
         if(name != null && !name.isEmpty()){
             dao.addTestCase(category, new TestCase(name));
             callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));

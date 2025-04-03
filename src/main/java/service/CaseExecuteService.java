@@ -25,6 +25,7 @@ public class CaseExecuteService {
     public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
         testCaseService.setTestResults(currentTestPlan);
         testThread = new Thread(() -> {
+            windowService.captureWindow();
             currentTestPlan.forEach((testCase, _) -> {
                 try {
                     Thread.sleep(500);

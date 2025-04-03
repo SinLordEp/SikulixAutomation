@@ -25,21 +25,19 @@ public class StepExecuteService {
             executeElement(step.getStepElements().get(StepElementType.PRECONDITION));
         }
         // Pass element check then Retry element check if the first attempt failed (Could add retry times)
-        if(executeElement(step.getStepElements().get(StepElementType.PASS)) == StepState.MATCHED){
+        if(executeElement(step.getStepElements().get(StepElementType.PASS)) == StepState.MATCHED
+                || ((step.getStepElements().get(StepElementType.RETRY) != null && executeElement(step.getStepElements().get(StepElementType.RETRY)) == StepState.MATCHED)
+                && executeElement(step.getStepElements().get(StepElementType.PASS)) == StepState.MATCHED)){
             state = StepState.PASS;
-        }else if(step.getStepElements().get(StepElementType.RETRY) != null){
-            if(executeElement(step.getStepElements().get(StepElementType.RETRY)) == StepState.MATCHED){
-                if(executeElement(step.getStepElements().get(StepElementType.PASS)) == StepState.MATCHED){
-                    state = StepState.PASS;
-                }
-            }
         }
+
         // Fail element check
-        if(state != StepState.PASS && step.getStepElements().get(StepElementType.FAIL) != null){
-            if(executeElement(step.getStepElements().get(StepElementType.FAIL)) == StepState.MATCHED){
-                state = StepState.FAIL;
-            }
+        if(state != StepState.PASS
+                && step.getStepElements().get(StepElementType.FAIL) != null
+                && executeElement(step.getStepElements().get(StepElementType.FAIL)) == StepState.MATCHED){
+            state = StepState.FAIL;
         }
+
         // Close element check
         if(step.getStepElements().get(StepElementType.CLOSE)  != null){
             executeElement(step.getStepElements().get(StepElementType.CLOSE));
