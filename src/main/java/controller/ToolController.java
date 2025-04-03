@@ -22,9 +22,7 @@ public class ToolController {
     }
 
     public void run(){
-        ToolGUI toolGUI = new ToolGUI(this);
-        addListener(toolGUI);
-        toolGUI.run();
+        new ToolGUI(this).run();
     }
 
     public void loadConfig(){
