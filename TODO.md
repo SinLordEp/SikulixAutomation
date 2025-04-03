@@ -18,7 +18,7 @@
 8. Add a method to modify TestCase name and its image path along
 9. Add a method to disable delete step when no step is selected
 10. Add a text field for window name
-11. Add a progress bar to visualize test plan progress
+11. ~~Add a progress bar to visualize test plan progress~~
 
 
 ## TestStepGUI

@@ -41,8 +41,8 @@ public class CaseExecuteService {
                         if (stepState == StepState.NO_MATCH) {
                             throw new TestStepFailedException("Expected result is not detected");
                         }
-                        testCaseService.updateTestResult(testCase, CaseState.PASS);
                     });
+                    testCaseService.updateTestResult(testCase, CaseState.PASS);
                 } catch (TestStepFailedException e) {
                     System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
                     testCaseService.updateTestResult(testCase, CaseState.FAIL);

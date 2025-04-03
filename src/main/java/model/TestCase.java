@@ -51,8 +51,12 @@ public class TestCase {
         this.selected = selected;
     }
 
-    public TestStep getCurrentStep() {
+    public TestStep getCurrentTestStep() {
         return currentStep == -1  ? steps.getFirst() : steps.get(currentStep);
+    }
+
+    public int getCurrentStep() {
+        return currentStep;
     }
 
     public void nextCurrentStep() {

@@ -15,9 +15,7 @@ public class TestResultTableModel extends AbstractTableModel {
     private TestCase[] testCases;
     private final DefaultTableCellRenderer colorRenderer = new DefaultTableCellRenderer() {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             cell.setForeground(Color.BLACK);
             cell.setBackground(Color.WHITE);
@@ -29,10 +27,10 @@ public class TestResultTableModel extends AbstractTableModel {
                     case PASS -> cell.setForeground(Color.GREEN);
                     case FAIL -> cell.setForeground(Color.RED);
                     case QUEUED -> cell.setForeground(Color.ORANGE);
+                    case INTERRUPT -> cell.setForeground(Color.MAGENTA);
                 }
             }
             setHorizontalAlignment(SwingConstants.CENTER);
-
             return cell;
         }
     };
@@ -61,7 +59,7 @@ public class TestResultTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         return switch (col) {
             case 0 -> testCases[row].getName();
-            case 1 -> testCases[row].getCurrentStep().getName();
+            case 1 -> testCases[row].getCurrentTestStep().getName();
             case 2 -> dataMap.get(testCases[row]).toString();
             default -> null;
         };

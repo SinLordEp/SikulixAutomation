@@ -35,6 +35,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private int categoryIndex = 0;
     private int caseIndex = 0;
     private final JButton startButton = new JButton("Start");
+    private final JProgressBar testProgressBar = new JProgressBar();
 
 
     public ToolGUI(ToolController controller) {
@@ -199,10 +200,13 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private JPanel resultButtonPanel(){
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panel = new JPanel(new BorderLayout());
+        testProgressBar.setStringPainted(true);
+        testProgressBar.setMinimum(0);
+        panel.add(testProgressBar, BorderLayout.WEST);
         JButton generateButton = new JButton("Generate result");
         generateButton.addActionListener(_ -> controller.generateResult());
-        panel.add(generateButton);
+        panel.add(generateButton, BorderLayout.EAST);
         return panel;
     }
 
@@ -321,20 +325,32 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     public void updateTestResults(LinkedHashMap<TestCase, CaseState> testResults){
         resultModel.setData(testResults);
+        int[] currentProgress = new int[1];
+        testResults.forEach((testCase, state) -> {
+            if(state == CaseState.PASS || state == CaseState.FAIL){
+                currentProgress[0] += testCase.getSteps().size();
+                return;}
+            if(state == CaseState.ONGOING || state == CaseState.INTERRUPT){
+                currentProgress[0] += testCase.getCurrentStep();
+            }
+        });
+        testProgressBar.setValue(currentProgress[0]);
     }
 
     private LinkedHashMap<TestCase, CaseState> createTestPlan(){
         LinkedHashMap<TestCase, CaseState> testPlan = new LinkedHashMap<>();
+        int[] totalStep = new int[1];
+        testProgressBar.setValue(0);
         testCases.forEach((_, cases) -> cases.forEach(testCase -> {
             if(testCase.isSelected()){
                 testCase.resetCurrentStep();
+                totalStep[0] += testCase.getSteps().size();
                 testPlan.put(testCase, CaseState.QUEUED);
             }
         }));
+        testProgressBar.setMaximum(totalStep[0]);
         return testPlan;
     }
-
-
 
     @Override
     public void onEvent(EventPackage eventPackage) {
