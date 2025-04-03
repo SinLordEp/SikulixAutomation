@@ -31,6 +31,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private int categoryIndex = 0;
     private int caseIndex = 0;
+    private final JButton startButton = new JButton("Start");
 
 
     public ToolGUI(ToolController controller) {
@@ -164,8 +165,10 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton startButton = new JButton("Start");
-        startButton.addActionListener(_ -> controller.startTest(createTestPlan()));
+        startButton.addActionListener(_ -> {
+            startButton.setEnabled(false);
+            controller.startTest(createTestPlan());
+        });
         panel.add(startButton);
 
         JButton stopButton = new JButton("Stop");
@@ -326,6 +329,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         switch (eventPackage.getCommand()){
             case TESTCASE_CHANGED -> updateTestCases(eventPackage.getTestCases());
             case RESULT_CHANGED -> updateTestResults(eventPackage.getTestResults());
+            case TEST_FINISHED -> startButton.setEnabled(true);
             default -> throw new UndefinedException("Unknown command (To be perfected)");
         }
     }

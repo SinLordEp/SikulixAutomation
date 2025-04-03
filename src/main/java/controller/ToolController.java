@@ -154,6 +154,7 @@ public class ToolController {
                 notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
             });
             unsetWindowAlwaysOnTop();
+            notifyEvent(new EventPackage(EventCommand.TEST_FINISHED));
         });
         captureWindow();
         testThread.start();
@@ -161,6 +162,7 @@ public class ToolController {
 
     public void stopTest(){
         testThread.interrupt();
+        notifyEvent(new EventPackage(EventCommand.TEST_FINISHED));
     }
 
     public void generateResult(){

@@ -19,6 +19,10 @@ public class EventPackage {
         this.testResults = testResults;
     }
 
+    public EventPackage(EventCommand command) {
+        this.command = command;
+    }
+
     public EventCommand getCommand() {
         return command;
     }
@@ -30,4 +34,5 @@ public class EventPackage {
     public LinkedHashMap<TestCase, CaseState> getTestResults() {
         return testResults;
     }
+
 }
