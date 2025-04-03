@@ -29,6 +29,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final JList<TestStep> stepList = new JList<>(stepListModel);
     private HashMap<String, ArrayList<TestCase>> testCases = new HashMap<>();
 
+    private int categoryIndex = 0;
+    private int caseIndex = 0;
+
 
     public ToolGUI(ToolController controller) {
         this.controller = controller;
@@ -63,7 +66,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private JPanel configButtonsPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton load = new JButton("Load Test Case");
-        load.addActionListener(_ -> controller.loadConfig());
+        load.addActionListener(_ -> {
+            controller.loadConfig();
+            categoryIndex = 0;
+            caseIndex = 0;
+        });
         panel.add(load);
 
         JButton save = new JButton("Save Test Case");
@@ -206,21 +213,26 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         categoryList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                String selected = categoryList.getSelectedValue();
-                loadCases(selected);
+                if(categoryList.getSelectedIndex() != -1){
+                    categoryIndex = categoryList.getSelectedIndex();
+                }else{
+                    categoryList.setSelectedIndex(categoryIndex);
+                }
+                loadCases(categoryList.getSelectedValue());
             }
         });
-        if (!categoryListModel.isEmpty()) {
-            categoryList.setSelectedIndex(0);
-            loadCases(categoryList.getSelectedValue());
-        }
     }
 
     private void initializeCaseList(){
         caseList.setCellRenderer(new CaseListRenderer());
         caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         caseList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && caseList.getSelectedValue() != null) {
+            if (!e.getValueIsAdjusting()) {
+                if(caseList.getSelectedIndex() != -1){
+                    caseIndex = caseList.getSelectedIndex();
+                }else{
+                    caseList.setSelectedIndex(caseIndex);
+                }
                 loadTestSteps(caseList.getSelectedValue());
             }
         });
@@ -284,6 +296,14 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         this.testCases = testCases;
         categoryListModel.clear();
         categoryListModel.addAll(testCases.keySet());
+        if (!categoryListModel.isEmpty()) {
+            categoryList.setSelectedIndex(categoryIndex);
+            loadCases(categoryList.getSelectedValue());
+        }
+        if(!caseListModel.isEmpty()){
+            caseList.setSelectedIndex(caseIndex);
+            loadTestSteps(caseList.getSelectedValue());
+        }
     }
 
     public void updateTestResults(LinkedHashMap<TestCase, CaseState> testResults){
@@ -300,8 +320,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }));
         return testPlan;
     }
-
-
 
     @Override
     public void onEvent(EventPackage eventPackage) {
