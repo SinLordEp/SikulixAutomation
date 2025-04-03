@@ -2,7 +2,6 @@ package data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import exception.FileIOException;
 import exception.OperationCancelException;
 import model.CaseState;
 import model.TestCase;
@@ -32,30 +31,22 @@ public class TestCaseDAO {
         // No parameter needed now
     }
 
-    public static HashMap<String, ArrayList<TestCase>> jsonToTestCaseCategory(String path) {
+    public static HashMap<String, ArrayList<TestCase>> jsonToTestCaseCategory(String path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(Paths.get(path).toFile(), new TypeReference<>() {});
-        } catch (IOException e) {
-            throw new FileIOException("Could not read json file - Path: " + path);
-        }
+        return mapper.readValue(Paths.get(path).toFile(), new TypeReference<>() {});
     }
 
-    public boolean testCaseCategoryToJson(String path, HashMap<String, ArrayList<TestCase>> category) {
+    public boolean testCaseCategoryToJson(String path, HashMap<String, ArrayList<TestCase>> category) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(path).toFile(), category);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(path).toFile(), category);
+        return true;
     }
 
-    public void loadConfig(String path){
+    public void loadConfig(String path) throws IOException {
         categories = jsonToTestCaseCategory(path);
     }
 
-    public boolean saveConfig(String path){
+    public boolean saveConfig(String path) throws IOException {
         this.configPath = path;
         return testCaseCategoryToJson(path, categories);
     }
@@ -140,7 +131,7 @@ public class TestCaseDAO {
         Files.write(Paths.get(path), output);
     }
 
-    public void saveOnDataChanged(){
+    public void saveOnDataChanged() throws IOException {
         if(dataChanged){
             switch(DialogUtils.showConfirmDialog(null,"TestCase has changes, do you want to save config before proceed?", "Warning")){
                 case JOptionPane.YES_OPTION: saveConfig(configPath);

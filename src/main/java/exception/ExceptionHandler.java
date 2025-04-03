@@ -14,6 +14,7 @@ public interface ExceptionHandler {
         void run() throws Exception;
     }
 
-    <T> T handle(ExceptionWithReturn<T> function, String className, String... text);
-    void handle(ExceptionWithoutReturn function, String className, String... text);
+    <T> T run(ExceptionWithReturn<T> function, String className, String... text);
+    void run(ExceptionWithoutReturn function, String className, String... text);
+    void handleException(Exception e, String className, String... text);
 }

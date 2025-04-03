@@ -20,33 +20,41 @@ public class TestCaseService {
         this.callback = callback;
     }
 
-    public void loadConfig(){
-        dao.saveOnDataChanged();
-        String path = dao.getPath(JSON_EXTENSION);
-        if(path != null){
-            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
-                path += JSON_EXTENSION;
+    public void loadConfig() {
+        try {
+            dao.saveOnDataChanged();
+            String path = dao.getPath(JSON_EXTENSION);
+            if(path != null){
+                if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
+                    path += JSON_EXTENSION;
+                }
+                dao.loadConfig(path);
+                dao.setConfigPath(path);
+            }else{
+                throw new OperationCancelException();
             }
-            dao.loadConfig(path);
-            dao.setConfigPath(path);
-        }else{
-            throw new OperationCancelException();
-        }
-        if(!dao.getCategories().isEmpty()){
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            if(!dao.getCategories().isEmpty()){
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            }
+        } catch (IOException e) {
+            throw new FileIOException(e.getMessage());
         }
     }
 
 
-    public boolean saveConfig(){
-        String path = dao.getConfigPath();
-        if(path == null || path.isEmpty()){
-            path = dao.getPath(JSON_EXTENSION);
-            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
-                path += JSON_EXTENSION;
+    public boolean saveConfig() {
+        try {
+            String path = dao.getConfigPath();
+            if(path == null || path.isEmpty()){
+                path = dao.getPath(JSON_EXTENSION);
+                if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
+                    path += JSON_EXTENSION;
+                }
             }
+            return dao.saveConfig(path);
+        } catch (IOException e) {
+            throw new FileIOException(e.getMessage());
         }
-        return dao.saveConfig(path);
     }
 
     public void addCategory(String name){
@@ -129,7 +137,11 @@ public class TestCaseService {
         }
     }
 
-    public void saveDataOnChanged(){
-        dao.saveOnDataChanged();
+    public void saveDataOnChanged() {
+        try {
+            dao.saveOnDataChanged();
+        } catch (IOException e) {
+            throw new FileIOException(e.getMessage());
+        }
     }
 }
