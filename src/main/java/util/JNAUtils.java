@@ -1,4 +1,4 @@
-package utils;
+package util;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.User32;

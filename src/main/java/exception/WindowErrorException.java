@@ -1,4 +1,4 @@
-package exceptions;
+package exception;
 
 public class WindowErrorException extends RuntimeException {
     public WindowErrorException(String message) {

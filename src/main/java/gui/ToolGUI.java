@@ -2,12 +2,12 @@ package gui;
 
 import controller.ToolController;
 import data.TestResultTableModel;
-import exceptions.UndefinedException;
+import exception.UndefinedException;
 import model.CaseState;
 import model.EventPackage;
 import model.TestCase;
 import model.TestStep;
-import utils.EventListener;
+import util.EventListener;
 
 import javax.swing.*;
 import java.awt.*;

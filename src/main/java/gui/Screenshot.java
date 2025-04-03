@@ -1,4 +1,6 @@
-package utils;
+package gui;
+
+import util.Callback;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

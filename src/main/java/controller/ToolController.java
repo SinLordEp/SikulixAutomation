@@ -2,17 +2,17 @@ package controller;
 
 import com.sun.jna.platform.win32.WinDef;
 import data.TestCaseDAO;
-import exceptions.FileIOException;
-import exceptions.OperationCancelException;
-import exceptions.TestStepFailedException;
-import exceptions.WindowErrorException;
+import exception.FileIOException;
+import exception.OperationCancelException;
+import exception.TestStepFailedException;
+import exception.WindowErrorException;
 import gui.TestStepGUI;
 import gui.ToolGUI;
 import model.*;
-import utils.EventListener;
-import utils.JNAUtils;
-import utils.SikulixUtils;
-import utils.StepExecutor;
+import util.EventListener;
+import util.JNAUtils;
+import util.SikulixUtils;
+import service.StepExecutor;
 
 import javax.swing.*;
 import java.io.IOException;

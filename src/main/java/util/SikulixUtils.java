@@ -1,6 +1,6 @@
-package utils;
+package util;
 
-import exceptions.ImageIOException;
+import exception.ImageIOException;
 import model.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;

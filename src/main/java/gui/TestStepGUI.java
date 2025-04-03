@@ -1,13 +1,12 @@
 package gui;
 
-import exceptions.ImageIOException;
-import exceptions.OperationCancelException;
+import exception.ImageIOException;
+import exception.OperationCancelException;
 import model.*;
 import org.sikuli.script.Region;
-import utils.Callback;
-import utils.Screenshot;
-import utils.SikulixUtils;
-import utils.SwingUtils;
+import util.Callback;
+import util.SikulixUtils;
+import util.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;

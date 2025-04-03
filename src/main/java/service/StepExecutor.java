@@ -1,13 +1,12 @@
-package utils;
+package service;
 
-import com.sun.jna.platform.win32.WinDef;
-import exceptions.UndefinedException;
+import exception.UndefinedException;
 import model.StepElement;
 import model.StepElementType;
 import model.StepState;
 import model.TestStep;
 import org.sikuli.script.FindFailed;
-import org.sikuli.script.Region;
+import util.SikulixUtils;
 
 /**
  * @author Sin

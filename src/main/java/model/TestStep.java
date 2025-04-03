@@ -1,7 +1,6 @@
 package model;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 
 /**
  * @author Sin

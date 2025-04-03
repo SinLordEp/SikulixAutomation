@@ -1,6 +1,8 @@
 
 ## General
 1. Exception handler needs to be done
+2. Divide controller into smaller services
+3. Extract JOptionPanel methods to a Utils class
 
 
 ## ToolGUI
@@ -11,6 +13,8 @@
 5. ~~Target window for testing should be set on top / always on top~~
 6. ~~Add specific step column in result table~~
 7. ~~Add control to prevent multi click on Start test button~~
+8. Add a method to modify TestCase name and its image path along
+9. Add a method to disable delete step when no step is selected
 
 
 ## TestStepGUI
@@ -22,3 +26,5 @@
 6. ~~Image name or text label should add a listener linked to radiobutton(Canceled)~~
 7. Add a timeoutSec text field
 8. Add a similarity text field
+9. Add a read image from file option
+

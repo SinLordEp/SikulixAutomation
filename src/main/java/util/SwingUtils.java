@@ -1,4 +1,4 @@
-package utils;
+package util;
 import javax.swing.*;
 import javax.swing.text.*;
 public class SwingUtils {

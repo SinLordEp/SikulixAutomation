@@ -2,8 +2,8 @@ package data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import exceptions.FileIOException;
-import exceptions.OperationCancelException;
+import exception.FileIOException;
+import exception.OperationCancelException;
 import model.CaseState;
 import model.TestCase;
 import model.TestStep;
