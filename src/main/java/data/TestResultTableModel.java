@@ -1,6 +1,7 @@
 package data;
 
 import model.CaseState;
+import model.TestCase;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -9,10 +10,10 @@ import java.awt.*;
 import java.util.LinkedHashMap;
 
 public class TestResultTableModel extends AbstractTableModel {
-    private final String[] columnNames = {"Test Case", "Status"};
-    private LinkedHashMap<String, CaseState> dataMap;
-    private String[] caseNames;
-    private DefaultTableCellRenderer colorRenderer = new DefaultTableCellRenderer() {
+    private final String[] columnNames = {"Test Case", "Test Step", "Status"};
+    private LinkedHashMap<TestCase, CaseState> dataMap;
+    private TestCase[] testCases;
+    private final DefaultTableCellRenderer colorRenderer = new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
@@ -21,7 +22,7 @@ public class TestResultTableModel extends AbstractTableModel {
             cell.setForeground(Color.BLACK);
             cell.setBackground(Color.WHITE);
 
-            if (column == 1) {
+            if (column == 2) {
                 String state = (String)value;
                 switch (CaseState.valueOf(state)){
                     case ONGOING -> cell.setForeground(Color.BLUE);
@@ -36,13 +37,13 @@ public class TestResultTableModel extends AbstractTableModel {
         }
     };
 
-    public TestResultTableModel(LinkedHashMap<String, CaseState> testResults) {
+    public TestResultTableModel(LinkedHashMap<TestCase, CaseState> testResults) {
         setData(testResults);
     }
 
-    public void setData(LinkedHashMap<String, CaseState> testResults) {
+    public void setData(LinkedHashMap<TestCase, CaseState> testResults) {
         this.dataMap = testResults;
-        this.caseNames = testResults.keySet().toArray(new String[0]);
+        this.testCases = testResults.keySet().toArray(new TestCase[0]);
         fireTableDataChanged();
     }
 
@@ -58,10 +59,10 @@ public class TestResultTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        String key = caseNames[row];
         return switch (col) {
-            case 0 -> key;
-            case 1 -> dataMap.get(key).toString();
+            case 0 -> testCases[row].getName();
+            case 1 -> testCases[row].getCurrentStep().getName();
+            case 2 -> dataMap.get(testCases[row]).toString();
             default -> null;
         };
     }

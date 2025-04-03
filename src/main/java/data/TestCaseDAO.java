@@ -23,7 +23,7 @@ import java.util.List;
 public class TestCaseDAO {
     private String configPath;
     private HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
-    private LinkedHashMap<String, CaseState> testResults;
+    private LinkedHashMap<TestCase, CaseState> testResults;
 
     public TestCaseDAO() {
     }
@@ -111,17 +111,16 @@ public class TestCaseDAO {
         this.configPath = configPath;
     }
 
-    public LinkedHashMap<String, CaseState> getTestResults() {
+    public LinkedHashMap<TestCase, CaseState> getTestResults() {
         return testResults;
     }
 
-    public void initializeTestResults(LinkedHashMap<String, TestCase> testCases) {
-        testResults = new LinkedHashMap<>();
-        testCases.forEach((_, testCase) -> testResults.put(testCase.getName(), CaseState.QUEUED));
+    public void setTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
+        this.testResults = testResults;
     }
 
-    public void updateTestResult(String caseName, CaseState caseState){
-        testResults.put(caseName, caseState);
+    public void updateTestResult(TestCase testCase, CaseState caseState){
+        testResults.put(testCase, caseState);
     }
 
     public void generateTestResult(String path) throws IOException {

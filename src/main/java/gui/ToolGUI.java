@@ -286,15 +286,16 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         categoryListModel.addAll(testCases.keySet());
     }
 
-    public void updateTestResults(LinkedHashMap<String, CaseState> testResults){
+    public void updateTestResults(LinkedHashMap<TestCase, CaseState> testResults){
         resultModel.setData(testResults);
     }
 
-    private LinkedHashMap<String, TestCase> createTestPlan(){
-        LinkedHashMap<String, TestCase> testPlan = new LinkedHashMap<>();
+    private LinkedHashMap<TestCase, CaseState> createTestPlan(){
+        LinkedHashMap<TestCase, CaseState> testPlan = new LinkedHashMap<>();
         testCases.forEach((_, cases) -> cases.forEach(testCase -> {
             if(testCase.isSelected()){
-                testPlan.put(testCase.getName(), testCase);
+                testCase.resetCurrentStep();
+                testPlan.put(testCase, CaseState.QUEUED);
             }
         }));
         return testPlan;

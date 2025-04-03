@@ -13,6 +13,8 @@ public class TestCase {
     private ArrayList<TestStep> steps = new ArrayList<>();
     @JsonIgnore
     private boolean selected = false;
+    @JsonIgnore
+    private int currentStep = -1;
 
     public TestCase() {
     }
@@ -47,6 +49,18 @@ public class TestCase {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public TestStep getCurrentStep() {
+        return currentStep == -1  ? steps.getFirst() : steps.get(currentStep);
+    }
+
+    public void nextCurrentStep() {
+        this.currentStep += 1;
+    }
+
+    public void resetCurrentStep() {
+        this.currentStep = -1;
     }
 
     @Override

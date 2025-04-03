@@ -122,18 +122,19 @@ public class ToolController {
         }
     }
 
-    public void startTest(LinkedHashMap<String, TestCase> testCases){
-        dao.initializeTestResults(testCases);
+    public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
+        dao.setTestResults(currentTestPlan);
         notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
         testThread = new Thread(() -> {
-            testCases.forEach((caseName, testCase) -> {
-                dao.updateTestResult(caseName, CaseState.ONGOING);
-                notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+            currentTestPlan.forEach((testCase, _) -> {
                 try {
                     Thread.sleep(500);
-                    SikulixUtils.setImagePath(caseName);
+                    SikulixUtils.setImagePath(testCase.getName());
                     testCase.getSteps().forEach(testStep ->
                     {
+                        testCase.nextCurrentStep();
+                        dao.updateTestResult(testCase, CaseState.ONGOING);
+                        notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
                         StepState stepState = StepExecutor.execute(testStep);
                         if (stepState == StepState.FAIL) {
                             throw new TestStepFailedException("Defined error detected");
@@ -141,11 +142,11 @@ public class ToolController {
                         if (stepState == StepState.NO_MATCH) {
                             throw new TestStepFailedException("Expected result is not detected");
                         }
-                        dao.updateTestResult(caseName, CaseState.PASS);
+                        dao.updateTestResult(testCase, CaseState.PASS);
                     });
                 } catch (TestStepFailedException e) {
                     System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
-                    dao.updateTestResult(caseName, CaseState.FAIL);
+                    dao.updateTestResult(testCase, CaseState.FAIL);
                 } catch (InterruptedException e) {
                     notifyEvent(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
                     throw new OperationCancelException();
