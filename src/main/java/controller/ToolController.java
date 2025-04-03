@@ -41,6 +41,7 @@ public class ToolController {
     }
 
     public void loadConfig(){
+        dao.saveOnDataChanged();
         String path = dao.getPath(".json");
         if(path != null){
             if (!path.toLowerCase().endsWith(".json".toLowerCase())) {
@@ -196,6 +197,11 @@ public class ToolController {
             throw new WindowErrorException("Can not find windows with name: " + windowName);
         }
         JNAUtils.setWindowAlwaysOnTop(window, false);
+    }
+
+    public void onWindowClosing() {
+        dao.saveOnDataChanged();
+        System.exit(0);
     }
 
     public String pathChooser(){

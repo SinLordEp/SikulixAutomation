@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -28,6 +30,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final DefaultListModel<TestStep> stepListModel = new DefaultListModel<>();
     private final JList<TestStep> stepList = new JList<>(stepListModel);
     private HashMap<String, ArrayList<TestCase>> testCases = new HashMap<>();
+    private boolean dataChanged = false;
 
     private int categoryIndex = 0;
     private int caseIndex = 0;
@@ -39,7 +42,12 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         setTitle("Testing Automation");
         setMinimumSize(new Dimension(400, 800));
         setPreferredSize(new Dimension(400, 800));
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e){
+                controller.onWindowClosing();
+            }
+        });
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         setResizable(true);
@@ -290,7 +298,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }
     }
 
-
     public void run(){
         setVisible(true);
     }
@@ -323,6 +330,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }));
         return testPlan;
     }
+
+
 
     @Override
     public void onEvent(EventPackage eventPackage) {

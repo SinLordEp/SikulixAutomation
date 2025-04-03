@@ -1,5 +1,6 @@
 package model;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 
 /**
@@ -9,7 +10,7 @@ public class TestStep {
     private String name;
     private String description;
     private String jsonPath;
-    private HashMap<StepElementType, StepElement> stepElements = new HashMap<>();
+    private EnumMap<StepElementType, StepElement> stepElements = new EnumMap<>(StepElementType.class);
 
     public TestStep(){
         stepElements.put(StepElementType.PRECONDITION, null);
@@ -35,11 +36,11 @@ public class TestStep {
         this.description = description;
     }
 
-    public HashMap<StepElementType, StepElement> getStepElements() {
+    public EnumMap<StepElementType, StepElement> getStepElements() {
         return stepElements;
     }
 
-    public void setStepElements(HashMap<StepElementType, StepElement> stepElements) {
+    public void setStepElements(EnumMap<StepElementType, StepElement> stepElements) {
         this.stepElements = stepElements;
     }
 

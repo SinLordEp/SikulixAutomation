@@ -7,9 +7,10 @@
 1. ~~ToolGUI lost focus after any operation, should at least stay on the first one or the chosen one~~
 2. ~~Result table data is not center alignment~~
 3. ~~Add way to edit step, such as double click it~~
-4. It should have control of data isChanged to warn user before closing or loading another config
+4. ~~It should have control of data isChanged to warn user before closing or loading another config~~
 5. ~~Target window for testing should be set on top / always on top~~
 6. ~~Add specific step column in result table~~
+7. ~~Add control to prevent multi click on Start test button~~
 
 
 ## TestStepGUI

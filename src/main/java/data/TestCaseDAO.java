@@ -3,6 +3,7 @@ package data;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exceptions.FileIOException;
+import exceptions.OperationCancelException;
 import model.CaseState;
 import model.TestCase;
 import model.TestStep;
@@ -24,6 +25,7 @@ public class TestCaseDAO {
     private String configPath;
     private HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
     private LinkedHashMap<TestCase, CaseState> testResults;
+    private boolean dataChanged = false;
 
     public TestCaseDAO() {
     }
@@ -59,26 +61,32 @@ public class TestCaseDAO {
 
     public void addCategory(String category){
         categories.put(category, new ArrayList<>());
+        dataChanged = true;
     }
 
     public void deleteCategory(String category){
         categories.remove(category);
+        dataChanged = true;
     }
 
     public void addTestCase(String category, TestCase testCase){
         categories.get(category).add(testCase);
+        dataChanged = true;
     }
 
     public void deleteTestCase(String category, int caseIndex){
         categories.get(category).remove(caseIndex);
+        dataChanged = true;
     }
 
     public void addTestStep(String category, int caseIndex, TestStep testStep){
         categories.get(category).get(caseIndex).addStep(testStep);
+        dataChanged = true;
     }
 
     public void deleteTestStep(String category, int caseIndex, int stepIndex){
         categories.get(category).get(caseIndex).getSteps().remove(stepIndex);
+        dataChanged = true;
     }
 
     public TestStep getTestStep(String category, int caseIndex, int stepIndex){
@@ -87,6 +95,7 @@ public class TestCaseDAO {
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex, TestStep testStep){
         categories.get(category).get(caseIndex).getSteps().set(stepIndex, testStep);
+        dataChanged = true;
     }
 
 
@@ -131,4 +140,17 @@ public class TestCaseDAO {
         });
         Files.write(Paths.get(path), output);
     }
+
+    public void saveOnDataChanged(){
+        if(dataChanged){
+            switch(JOptionPane.showConfirmDialog(null, "TestCase has changes, do you want to save config before proceed?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE)){
+                case JOptionPane.YES_OPTION: saveConfig(configPath);
+                    break;
+                case JOptionPane.NO_OPTION: break;
+                default: throw new OperationCancelException();
+            }
+        }
+    }
+
+
 }
