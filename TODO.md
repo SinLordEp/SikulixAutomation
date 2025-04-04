@@ -37,5 +37,4 @@
 7. Add a timeoutSec text field
 8. Add a similarity text field
 9. Add a read image from file option and copy it to target root
-10. Add a text field for NO_MATCHED occasion to indicate what was not found in the result generation
 
