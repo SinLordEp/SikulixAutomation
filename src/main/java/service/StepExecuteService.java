@@ -2,8 +2,8 @@ package service;
 
 import exception.UndefinedException;
 import model.StepElement;
-import model.StepElementType;
-import model.StepState;
+import model.enums.StepElementType;
+import model.enums.StepState;
 import model.TestStep;
 import org.sikuli.script.FindFailed;
 import util.SikulixUtils;

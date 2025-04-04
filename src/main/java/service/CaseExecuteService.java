@@ -4,7 +4,10 @@ package service;
 import exception.OperationCancelException;
 import exception.TestStepFailedException;
 import model.*;
-import util.Callback;
+import model.enums.CaseState;
+import model.enums.EventCommand;
+import model.enums.StepState;
+import interfaces.Callback;
 import util.SikulixUtils;
 
 
@@ -25,7 +28,7 @@ public class CaseExecuteService {
     }
 
     public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
-        testCaseService.setTestResults(currentTestPlan);
+        testCaseService.initializeTestResults(currentTestPlan);
         buildThread(currentTestPlan);
         windowService.captureWindow();
         testThread.start();

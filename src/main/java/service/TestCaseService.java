@@ -1,11 +1,15 @@
 package service;
 
-import data.TestCaseDAO;
+import config.GlobalPaths;
+import data.dao.TestCaseDAO;
 import exception.FileIOException;
 import exception.OperationCancelException;
 import gui.TestStepGUI;
 import model.*;
-import util.Callback;
+import model.enums.CaseState;
+import model.enums.EventCommand;
+import interfaces.Callback;
+import util.FileUtils;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -87,11 +91,23 @@ public class TestCaseService {
         }
     }
 
+    public void modifyTestCase(String category, int caseIndex, String name){
+        TestCase testCase = dao.getTestCase(category, caseIndex);
+        try {
+            FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(name));
+        } catch (IOException e) {
+            throw new FileIOException("Failed to rename folder with cause: " + e.getMessage());
+        }
+        testCase.setName(name);
+    }
+
     public void addTestStep(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
+            TestCase testCase = dao.getTestCase(category, caseIndex);
             TestStep testStep = new TestStep();
-            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), testStep, newTestStep -> {
-                dao.addTestStep(category, caseIndex, newTestStep);
+            new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
+                testCase.addStep(newTestStep);
+                dao.setDataIsChanged();
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
             });
         }
@@ -99,20 +115,27 @@ public class TestCaseService {
 
     public void deleteTestStep(String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
-            dao.deleteTestStep(category, caseIndex, stepIndex);
+            TestCase testCase = dao.getTestCase(category, caseIndex);
+            testCase.getSteps().remove(stepIndex);
+            dao.setDataIsChanged();
             callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
         }
     }
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
-            new TestStepGUI(dao.getCategories().get(category).get(caseIndex).getName(), dao.getTestStep(category, caseIndex, stepIndex), newTestStep -> dao.modifyTestStep(category, caseIndex, stepIndex, newTestStep));
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            TestCase testCase = dao.getTestCase(category, caseIndex);
+            TestStep testStep = testCase.getSteps().get(stepIndex);
+            new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
+                testCase.getSteps().set(stepIndex, newTestStep);
+                dao.setDataIsChanged();
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            });
         }
     }
 
-    public void setTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
-        dao.setTestResults(testResults);
+    public void initializeTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
+        dao.initializeTestResults(testResults);
         callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
     }
 

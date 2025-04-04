@@ -24,13 +24,13 @@ test {
 }
 
 application {
-    mainClass = 'executable.ATPrototype'
+    mainClass = 'executable.ATLauncher'
 }
 
 jar {
     manifest {
         attributes(
-                'Main-Class': 'executable.ATPrototype'
+                'Main-Class': 'executable.ATLauncher'
         )
     }
 

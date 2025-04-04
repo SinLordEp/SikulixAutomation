@@ -4,8 +4,9 @@ import exception.ExceptionHandler;
 import exception.ToolExceptionHandler;
 import gui.ToolGUI;
 import model.*;
+import model.enums.CaseState;
 import service.*;
-import util.EventListener;
+import interfaces.EventListener;
 
 import java.util.*;
 
@@ -51,6 +52,10 @@ public class ToolController {
 
     public void deleteTestCase(String category, int caseIndex){
         exceptionHandler.run(()-> testCaseService.deleteTestCase(category, caseIndex), testCaseService.getClass().getName());
+    }
+
+    public void modifyTestCase(String category, int caseIndex, String name){
+        exceptionHandler.run(()-> testCaseService.modifyTestCase(category, caseIndex, name), testCaseService.getClass().getName());
     }
 
     public void addTestStep(String category, int caseIndex){

@@ -1,6 +1,7 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import model.enums.StepElementType;
 
 import java.util.EnumMap;
 

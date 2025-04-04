@@ -3,7 +3,7 @@ package service;
 import com.sun.jna.platform.win32.WinDef;
 import exception.WindowErrorException;
 import model.EventPackage;
-import util.Callback;
+import interfaces.Callback;
 import util.JNAUtils;
 
 public class WindowService {

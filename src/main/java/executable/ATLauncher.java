@@ -11,8 +11,7 @@ import java.nio.file.Paths;
 /**
  * @author Sin
  */
-public class ATPrototype {
-    public static final Path BASE_DIR = getCurrentParentPath();
+public class ATLauncher {
 
     public static void main(String[] args) {
         loadFlatLightLaf();
@@ -27,9 +26,9 @@ public class ATPrototype {
         }
     }
 
-    private static Path getCurrentParentPath() {
+    public static Path getCurrentParentPath() {
         try {
-            URI uri = ATPrototype.class.getProtectionDomain()
+            URI uri = ATLauncher.class.getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .toURI();

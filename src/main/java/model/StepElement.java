@@ -1,6 +1,8 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import model.enums.DataSource;
+import model.enums.StepAction;
 import org.sikuli.script.Region;
 
 /**

@@ -1,5 +1,8 @@
 package model;
 
+import model.enums.CaseState;
+import model.enums.EventCommand;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

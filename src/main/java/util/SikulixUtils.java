@@ -1,24 +1,22 @@
 package util;
 
+import config.GlobalPaths;
 import exception.ImageIOException;
-import executable.ATPrototype;
-import model.StepAction;
+import model.enums.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * @author Sin
  */
 public class SikulixUtils {
     public static final Screen SCREEN = new Screen();
-    private static final Path IMAGE_ROOT = ATPrototype.BASE_DIR.resolve("image");
     static{
-        ImagePath.setBundlePath(IMAGE_ROOT.toString());
+        ImagePath.setBundlePath(GlobalPaths.IMAGE_ROOT.toString());
         Settings.OcrTextRead = true;
         Settings.OcrTextSearch = true;
     }
@@ -65,24 +63,13 @@ public class SikulixUtils {
 
     public static void setImagePath(String folderName){
         ImagePath.reset();
-        ImagePath.add(ATPrototype.BASE_DIR.resolve(IMAGE_ROOT).resolve("universal").toString());
-        ImagePath.add(ATPrototype.BASE_DIR.resolve(IMAGE_ROOT).resolve(folderName).toString());
+        ImagePath.add(GlobalPaths.IMAGE_ROOT.resolve("universal").toString());
+        ImagePath.add(GlobalPaths.IMAGE_ROOT.resolve(folderName).toString());
     }
 
     public static void highlightRegion(Region region){
         region.highlight();
     }
 
-    public static BufferedImage loadImage(String path) {
-        try {
-            return ImageIO.read(IMAGE_ROOT.resolve(path).toFile());
-        } catch (Exception e) {
-            throw new ImageIOException("Cannot read file - Path: " + IMAGE_ROOT.resolve(path));
-        }
-    }
-
-    public static void saveImage(BufferedImage image, String path) throws IOException {
-        ImageIO.write(image,"PNG", IMAGE_ROOT.resolve(path).toFile());
-    }
 
 }

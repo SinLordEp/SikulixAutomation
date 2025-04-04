@@ -6,7 +6,7 @@
 4. ~~Make the GUI more beautiful~~
 5. ~~Use implemented GraalVM to build a executable(Cancelled, not working well with swing)~~
 6. Build a single jar then pack it with JPackage to a single executable
-7. Modify all file paths based on project or jar parent path to make it more consistent
+7. ~~Modify all file paths based on project or jar parent path to make it more consistent~~
 
 
 ## ToolGUI

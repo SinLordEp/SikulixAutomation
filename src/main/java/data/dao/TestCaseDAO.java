@@ -1,12 +1,11 @@
-package data;
+package data.dao;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import config.GlobalPaths;
 import exception.OperationCancelException;
-import executable.ATPrototype;
-import model.CaseState;
+import model.enums.CaseState;
 import model.TestCase;
-import model.TestStep;
 import util.DialogUtils;
 
 import javax.swing.*;
@@ -14,10 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Sin
@@ -55,45 +51,26 @@ public class TestCaseDAO {
 
     public void addCategory(String category){
         categories.put(category, new ArrayList<>());
-        dataChanged = true;
+        setDataIsChanged();
     }
 
     public void deleteCategory(String category){
         categories.remove(category);
-        dataChanged = true;
+        setDataIsChanged();
     }
 
     public void addTestCase(String category, TestCase testCase){
         categories.get(category).add(testCase);
-        dataChanged = true;
+        setDataIsChanged();
     }
 
     public void deleteTestCase(String category, int caseIndex){
         categories.get(category).remove(caseIndex);
-        dataChanged = true;
-    }
-
-    public void addTestStep(String category, int caseIndex, TestStep testStep){
-        categories.get(category).get(caseIndex).addStep(testStep);
-        dataChanged = true;
-    }
-
-    public void deleteTestStep(String category, int caseIndex, int stepIndex){
-        categories.get(category).get(caseIndex).getSteps().remove(stepIndex);
-        dataChanged = true;
-    }
-
-    public TestStep getTestStep(String category, int caseIndex, int stepIndex){
-        return categories.get(category).get(caseIndex).getSteps().get(stepIndex);
-    }
-
-    public void modifyTestStep(String category, int caseIndex, int stepIndex, TestStep testStep){
-        categories.get(category).get(caseIndex).getSteps().set(stepIndex, testStep);
-        dataChanged = true;
+        setDataIsChanged();
     }
 
     public String getPath(String extension) {
-        JFileChooser fileChooser = new JFileChooser(ATPrototype.BASE_DIR.toFile());
+        JFileChooser fileChooser = new JFileChooser(GlobalPaths.BASE_ROOT.toFile());
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setSelectedFile(new File("New config" + extension));
         int result = fileChooser.showSaveDialog(null);
@@ -101,7 +78,13 @@ public class TestCaseDAO {
     }
 
     public HashMap<String, ArrayList<TestCase>> getCategories() {
-        return categories;
+        HashMap<String, ArrayList<TestCase>> result = new HashMap<>();
+        categories.forEach((k, v) -> result.put(k, new ArrayList<>(v)));
+        return result;
+    }
+
+    public TestCase getTestCase(String category, int caseIndex){
+        return categories.get(category).get(caseIndex);
     }
 
     public String getConfigPath() {
@@ -116,8 +99,8 @@ public class TestCaseDAO {
         return testResults;
     }
 
-    public void setTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
-        this.testResults = testResults;
+    public void initializeTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
+        this.testResults = new LinkedHashMap<>(testResults);
     }
 
     public void updateTestResult(TestCase testCase, CaseState caseState){
@@ -131,6 +114,10 @@ public class TestCaseDAO {
             output.add(line);
         });
         Files.write(Paths.get(path), output);
+    }
+
+    public void setDataIsChanged() {
+        this.dataChanged = true;
     }
 
     public void saveOnDataChanged() throws IOException {

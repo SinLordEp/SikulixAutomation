@@ -3,8 +3,12 @@ package gui;
 import exception.ImageIOException;
 import exception.OperationCancelException;
 import model.*;
+import model.enums.DataSource;
+import model.enums.StepAction;
+import model.enums.StepElementType;
 import org.sikuli.script.Region;
-import util.Callback;
+import interfaces.Callback;
+import util.ImageUtils;
 import util.SikulixUtils;
 import util.SwingUtils;
 
@@ -460,7 +464,7 @@ public class TestStepGUI extends JFrame {
         if (!isNewStep && testStep.getStepElements().get(element) != null) {
             // Sikulix Robot.class can not be called in a swing awake event
             new Thread(() -> {
-                BufferedImage img = SikulixUtils.loadImage(testCaseName + "/" + testStep.getStepElements().get(element).getPath());
+                BufferedImage img = ImageUtils.loadImage(testCaseName + File.separator + testStep.getStepElements().get(element).getPath());
                 SwingUtilities.invokeLater(() -> {
                     ctx.image = img;
                     setImageToLabel(imageLabel, ctx.image);
@@ -626,7 +630,7 @@ public class TestStepGUI extends JFrame {
         switch (DataSource.valueOf(context.matchTypeGroup.getSelection().getActionCommand())){
             case IMAGE: element.setDataSource(DataSource.IMAGE);
                 try {
-                    SikulixUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
+                    ImageUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
                 } catch (IOException e) {
                     throw new ImageIOException("Cannot write image to target path");
                 }

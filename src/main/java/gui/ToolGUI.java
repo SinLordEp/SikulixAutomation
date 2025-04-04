@@ -1,14 +1,14 @@
 package gui;
 
 import controller.ToolController;
-import data.TestResultTableModel;
+import data.model.TestResultTableModel;
 import exception.UndefinedException;
-import model.CaseState;
+import model.enums.CaseState;
 import model.EventPackage;
 import model.TestCase;
 import model.TestStep;
 import util.DialogUtils;
-import util.EventListener;
+import interfaces.EventListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -258,14 +258,16 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         });
         caseList.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent evt) {
-                int index = caseList.locationToIndex(evt.getPoint());
+            public void mouseClicked(MouseEvent e) {
+                int index = caseList.locationToIndex(e.getPoint());
                 if (index >= 0) {
                     Rectangle rect = caseList.getCellBounds(index, index);
-                    if (evt.getX() - rect.x < 20) {
+                    if (e.getX() - rect.x < 20) {
                         TestCase testCase = caseListModel.getElementAt(index);
                         testCase.setSelected(!testCase.isSelected());
                         caseList.repaint();
+                    }else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                        controller.modifyTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex(), DialogUtils.showInputDialog(null, "Modify Test case", "Input new name: "));
                     }
                 }
             }

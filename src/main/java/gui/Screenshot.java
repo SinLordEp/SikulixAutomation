@@ -1,6 +1,6 @@
 package gui;
 
-import util.Callback;
+import interfaces.Callback;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

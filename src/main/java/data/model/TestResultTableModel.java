@@ -1,6 +1,6 @@
-package data;
+package data.model;
 
-import model.CaseState;
+import model.enums.CaseState;
 import model.TestCase;
 
 import javax.swing.*;

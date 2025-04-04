@@ -1,4 +1,4 @@
-package util;
+package interfaces;
 
 
 public interface EventListener<T> {
