@@ -13,19 +13,31 @@ import java.util.LinkedHashMap;
 public class CaseExecuteService {
     private final TestCaseService testCaseService;
     private final WindowService windowService;
+    private final StepExecuteService stepExecuteService;
     private Thread testThread = null;
     private final Callback<EventPackage> callback;
 
     public CaseExecuteService(TestCaseService testCaseService, Callback<EventPackage> callback) {
         this.testCaseService = testCaseService;
         this.windowService = new WindowService(callback);
+        this.stepExecuteService = new StepExecuteService();
         this.callback = callback;
     }
 
     public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
         testCaseService.setTestResults(currentTestPlan);
+        buildThread(currentTestPlan);
+        windowService.captureWindow();
+        testThread.start();
+    }
+
+    public void stopTest(){
+        testThread.interrupt();
+        callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
+    }
+
+    private void buildThread(LinkedHashMap<TestCase, CaseState> currentTestPlan){
         testThread = new Thread(() -> {
-            windowService.captureWindow();
             currentTestPlan.forEach((testCase, _) -> {
                 try {
                     Thread.sleep(500);
@@ -34,7 +46,7 @@ public class CaseExecuteService {
                     {
                         testCase.nextCurrentStep();
                         testCaseService.updateTestResult(testCase, CaseState.ONGOING);
-                        StepState stepState = StepExecuteService.execute(testStep);
+                        StepState stepState = stepExecuteService.execute(testStep);
                         if (stepState == StepState.FAIL) {
                             throw new TestStepFailedException("Defined error detected");
                         }
@@ -52,17 +64,12 @@ public class CaseExecuteService {
                 }
                 testCaseService.updateTestResult();
             });
-            windowService.unsetWindowAlwaysOnTop();
-            callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
+            finishTest();
         });
-        windowService.captureWindow();
-        testThread.start();
     }
 
-    public void stopTest(){
-        testThread.interrupt();
+    private void finishTest(){
+        windowService.unsetWindowAlwaysOnTop();
         callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
     }
-
-
 }
