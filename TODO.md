@@ -1,6 +1,6 @@
 
 ## General
-1. Exception handler needs to be done
+1. ~~Exception handler needs to be done~~
 2. ~~Divide controller into smaller services~~
 3. ~~Extract JOptionPanel methods to a Utils class~~
 4. Make the GUI more beautiful
@@ -32,6 +32,6 @@
 5. ~~Extract the huge ass element panel creation method to smaller methods~~
 6. ~~Image name or text label should add a listener linked to radiobutton(Canceled)~~
 7. Add a timeoutSec text field
-8. Add a similarity text field
-9. Add a read image from file option
+8. ~~Add a similarity text field(Cancelled, should not make it difficult to use)~~
+9. Add a read image from file option and copy it to target root
 
