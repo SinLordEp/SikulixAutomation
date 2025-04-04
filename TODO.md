@@ -17,7 +17,7 @@
 5. ~~Target window for testing should be set on top / always on top~~
 6. ~~Add specific step column in result table~~
 7. ~~Add control to prevent multi click on Start test button~~
-8. Add a method to modify TestCase name and its image path along
+8. ~~Add a method to modify TestCase name and its image path along~~
 9. Add a method to disable delete step when no step is selected
 10. Add a text field or a button for getting window name
 11. ~~Add a progress bar to visualize test plan progress~~
@@ -34,6 +34,6 @@
 5. ~~Extract the huge ass element panel creation method to smaller methods~~
 6. ~~Image name or text label should add a listener linked to radiobutton(Canceled)~~
 7. Add a timeoutSec text field
-8. ~~Add a similarity text field(Cancelled, should not make it difficult to use)~~
+8. Add a similarity text field
 9. Add a read image from file option and copy it to target root
 

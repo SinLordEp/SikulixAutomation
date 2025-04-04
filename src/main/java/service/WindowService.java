@@ -13,7 +13,7 @@ public class WindowService {
         this.callback = callback;
     }
 
-    public void captureWindow(){
+    public boolean captureWindow(){
         String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
         WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
         if(window == null){
@@ -23,6 +23,7 @@ public class WindowService {
         JNAUtils.setWindowAtLocation(window, 0, 0);
         JNAUtils.bringWindowToFront(window);
         JNAUtils.setWindowAlwaysOnTop(window, true);
+        return true;
     }
 
     public void unsetWindowAlwaysOnTop(){

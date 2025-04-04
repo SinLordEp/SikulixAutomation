@@ -30,8 +30,9 @@ public class CaseExecuteService {
     public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
         testCaseService.initializeTestResults(currentTestPlan);
         buildThread(currentTestPlan);
-        windowService.captureWindow();
-        testThread.start();
+        if (windowService.captureWindow()) {
+            testThread.start();
+        }
     }
 
     public void stopTest(){
