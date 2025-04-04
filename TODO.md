@@ -7,6 +7,7 @@
 5. ~~Use implemented GraalVM to build a executable(Cancelled, not working well with swing)~~
 6. Build a single jar then pack it with JPackage to a single executable
 7. ~~Modify all file paths based on project or jar parent path to make it more consistent~~
+8. Generate the test result with specific failed step and info
 
 
 ## ToolGUI
@@ -22,7 +23,7 @@
 10. Add a text field or a button for getting window name
 11. ~~Add a progress bar to visualize test plan progress~~
 12. Add a loop testing option
-13. Add a repeat time input field
+13. Add a repeat time input field for testing
 14. Add a select all button for TestCase
 
 
@@ -36,4 +37,5 @@
 7. Add a timeoutSec text field
 8. Add a similarity text field
 9. Add a read image from file option and copy it to target root
+10. Add a text field for NO_MATCHED occasion to indicate what was not found in the result generation
 
