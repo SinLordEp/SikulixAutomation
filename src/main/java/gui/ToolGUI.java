@@ -208,6 +208,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JButton generateButton = new JButton("Generate result");
         generateButton.addActionListener(_ -> controller.generateResult());
         panel.add(generateButton, BorderLayout.EAST);
+        panel.setBorder(BorderFactory.createEmptyBorder(5,2,5,2));
         return panel;
     }
 

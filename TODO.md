@@ -3,8 +3,10 @@
 1. ~~Exception handler needs to be done~~
 2. ~~Divide controller into smaller services~~
 3. ~~Extract JOptionPanel methods to a Utils class~~
-4. Make the GUI more beautiful
-5. Ref
+4. ~~Make the GUI more beautiful~~
+5. ~~Use implemented GraalVM to build a executable(Cancelled, not working well with swing)~~
+6. Build a single jar then pack it with JPackage to a single executable
+7. Modify all file paths based on project or jar parent path to make it more consistent
 
 
 ## ToolGUI

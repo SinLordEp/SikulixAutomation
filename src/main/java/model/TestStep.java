@@ -1,5 +1,7 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.EnumMap;
 
 /**
@@ -51,42 +53,43 @@ public class TestStep {
         this.jsonPath = jsonPath;
     }
 
+    @JsonIgnore
     public StepElement getPassElement(){
         return stepElements.get(StepElementType.PASS);
     }
-
+    @JsonIgnore
     public StepElement getPreconditionElement(){
         return stepElements.get(StepElementType.PRECONDITION);
     }
-
+    @JsonIgnore
     public StepElement getFailElement(){
         return stepElements.get(StepElementType.FAIL);
     }
-
+    @JsonIgnore
     public StepElement getRetryElement(){
         return stepElements.get(StepElementType.RETRY);
     }
-
+    @JsonIgnore
     public StepElement getCloseElement(){
         return stepElements.get(StepElementType.CLOSE);
     }
-
+    @JsonIgnore
     public void setPassElement(StepElement passElement){
         stepElements.put(StepElementType.PASS, passElement);
     }
-
+    @JsonIgnore
     public void setPreconditionElement(StepElement preconditionElement){
         stepElements.put(StepElementType.PRECONDITION, preconditionElement);
     }
-
+    @JsonIgnore
     public void setFailElement(StepElement failElement){
         stepElements.put(StepElementType.FAIL, failElement);
     }
-
+    @JsonIgnore
     public void setRetryElement(StepElement retryElement){
         stepElements.put(StepElementType.RETRY, retryElement);
     }
-
+    @JsonIgnore
     public void setCloseElement(StepElement closeElement){
         stepElements.put(StepElementType.CLOSE, closeElement);
     }

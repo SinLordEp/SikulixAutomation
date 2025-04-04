@@ -1,23 +1,24 @@
 package util;
 
 import exception.ImageIOException;
+import executable.ATPrototype;
 import model.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * @author Sin
  */
 public class SikulixUtils {
     public static final Screen SCREEN = new Screen();
-    private static final String IMAGE_ROOT = "image/";
+    private static final Path IMAGE_ROOT = ATPrototype.BASE_DIR.resolve("image");
     static{
-        ImagePath.setBundlePath("image");
+        ImagePath.setBundlePath(IMAGE_ROOT.toString());
         Settings.OcrTextRead = true;
         Settings.OcrTextSearch = true;
     }
@@ -64,16 +65,8 @@ public class SikulixUtils {
 
     public static void setImagePath(String folderName){
         ImagePath.reset();
-        ImagePath.add(IMAGE_ROOT + "universal/");
-        ImagePath.add(IMAGE_ROOT + folderName + "/");
-    }
-
-    public static String getImagePath(){
-        return ImagePath.getBundlePath();
-    }
-
-    public static void addImagePath(String path){
-        ImagePath.add(path);
+        ImagePath.add(ATPrototype.BASE_DIR.resolve(IMAGE_ROOT).resolve("universal").toString());
+        ImagePath.add(ATPrototype.BASE_DIR.resolve(IMAGE_ROOT).resolve(folderName).toString());
     }
 
     public static void highlightRegion(Region region){
@@ -81,17 +74,15 @@ public class SikulixUtils {
     }
 
     public static BufferedImage loadImage(String path) {
-        String fullPath = ImagePath.getBundlePath() + File.separator + path;
         try {
-            return ImageIO.read(new File(fullPath));
+            return ImageIO.read(IMAGE_ROOT.resolve(path).toFile());
         } catch (Exception e) {
-            throw new ImageIOException("Cannot read file - Path: " + fullPath);
+            throw new ImageIOException("Cannot read file - Path: " + IMAGE_ROOT.resolve(path));
         }
     }
 
     public static void saveImage(BufferedImage image, String path) throws IOException {
-        String fullPath = ImagePath.getBundlePath() + File.separator + path + ".PNG";
-        ImageIO.write(image,"PNG", new File(fullPath));
+        ImageIO.write(image,"PNG", IMAGE_ROOT.resolve(path).toFile());
     }
 
 }

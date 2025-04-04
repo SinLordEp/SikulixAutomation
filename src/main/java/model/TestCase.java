@@ -43,26 +43,31 @@ public class TestCase {
         this.steps = steps;
     }
 
+    @JsonIgnore
     public boolean isSelected() {
         return selected;
     }
-
+    @JsonIgnore
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
 
+    @JsonIgnore
     public TestStep getCurrentTestStep() {
         return currentStep == -1  ? steps.getFirst() : steps.get(currentStep);
     }
 
+    @JsonIgnore
     public int getCurrentStep() {
         return currentStep;
     }
 
+    @JsonIgnore
     public void nextCurrentStep() {
         this.currentStep += 1;
     }
 
+    @JsonIgnore
     public void resetCurrentStep() {
         this.currentStep = -1;
     }

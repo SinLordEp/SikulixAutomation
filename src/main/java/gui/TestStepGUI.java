@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -625,7 +626,7 @@ public class TestStepGUI extends JFrame {
         switch (DataSource.valueOf(context.matchTypeGroup.getSelection().getActionCommand())){
             case IMAGE: element.setDataSource(DataSource.IMAGE);
                 try {
-                    SikulixUtils.saveImage(context.image, testCaseName + "\\" + context.imageOrTextField.getText());
+                    SikulixUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
                 } catch (IOException e) {
                     throw new ImageIOException("Cannot write image to target path");
                 }

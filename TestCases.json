@@ -6,9 +6,6 @@
       "description" : "",
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
@@ -31,52 +28,21 @@
           "y" : 1,
           "width" : 1399,
           "height" : 999,
-          "similarity" : 0.9,
-          "timeoutSec" : 2,
+          "similarity" : 0.6,
+          "timeoutSec" : 3,
           "textDataSource" : null,
           "outputText" : null,
           "enterKey" : false
-        }
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "CLICK",
-        "path" : "Ventas_button.PNG",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "CLICK",
-        "path" : "flecha_menu_izquiera.PNG",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
+        },
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
       }
     }, {
       "name" : "Step 2",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
@@ -91,34 +57,16 @@
           "outputText" : null,
           "enterKey" : false
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "FIND",
-        "path" : "Ventas_panel.png",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
     }, {
       "name" : "Step 3",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
@@ -133,34 +81,16 @@
           "outputText" : null,
           "enterKey" : false
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "CLICK",
-        "path" : "Buscar_button.png",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
     }, {
       "name" : "Step 4",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
@@ -175,34 +105,16 @@
           "outputText" : null,
           "enterKey" : false
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "FIND",
-        "path" : "Busqueda_panel.png",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
     }, {
       "name" : "Step 5",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
@@ -217,34 +129,16 @@
           "outputText" : null,
           "enterKey" : false
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "CLICK",
-        "path" : "Busqueda_buscar_button.png",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
     }, {
       "name" : "Step 6",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
@@ -259,34 +153,16 @@
           "outputText" : null,
           "enterKey" : false
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "FIND",
-        "path" : "Busqueda_resultado_uno.png",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
     }, {
       "name" : "Step 7",
       "description" : null,
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : null,
-        "CLOSE" : null,
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "TYPE",
@@ -301,60 +177,16 @@
           "outputText" : "aaaaaaa",
           "enterKey" : true
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "TYPE",
-        "path" : "Busqueda_nombreContiene_input.PNG",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : "TEXT",
-        "outputText" : "aaaaaaa",
-        "enterKey" : true
-      },
-      "retryElement" : null,
-      "failElement" : null,
-      "closeElement" : null,
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
     }, {
       "name" : "Step 8",
       "description" : "",
       "jsonPath" : null,
       "stepElements" : {
-        "RETRY" : null,
-        "FAIL" : {
-          "dataSource" : "IMAGE",
-          "action" : "FIND",
-          "path" : "Busqueda_resultado_vacio.PNG",
-          "x" : 1,
-          "y" : 1,
-          "width" : 1399,
-          "height" : 999,
-          "similarity" : 0.9,
-          "timeoutSec" : 2,
-          "textDataSource" : null,
-          "outputText" : null,
-          "enterKey" : false
-        },
-        "CLOSE" : {
-          "dataSource" : "IMAGE",
-          "action" : "CLICK",
-          "path" : "cerrar_buscador_clientes.PNG",
-          "x" : 1,
-          "y" : 1,
-          "width" : 1399,
-          "height" : 999,
-          "similarity" : 0.9,
-          "timeoutSec" : 2,
-          "textDataSource" : null,
-          "outputText" : null,
-          "enterKey" : false
-        },
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
@@ -369,52 +201,37 @@
           "outputText" : null,
           "enterKey" : false
         },
-        "PRECONDITION" : null
-      },
-      "passElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "FIND",
-        "path" : "Busqueda_resultado_uno.PNG",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "retryElement" : null,
-      "failElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "FIND",
-        "path" : "Busqueda_resultado_vacio.PNG",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "closeElement" : {
-        "dataSource" : "IMAGE",
-        "action" : "CLICK",
-        "path" : "cerrar_buscador_clientes.PNG",
-        "x" : 1,
-        "y" : 1,
-        "width" : 1399,
-        "height" : 999,
-        "similarity" : 0.9,
-        "timeoutSec" : 2,
-        "textDataSource" : null,
-        "outputText" : null,
-        "enterKey" : false
-      },
-      "preconditionElement" : null
+        "PRECONDITION" : null,
+        "FAIL" : {
+          "dataSource" : "IMAGE",
+          "action" : "FIND",
+          "path" : "Busqueda_resultado_vacio.PNG",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "textDataSource" : null,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "RETRY" : null,
+        "CLOSE" : {
+          "dataSource" : "IMAGE",
+          "action" : "CLICK",
+          "path" : "cerrar_buscador_clientes.PNG",
+          "x" : 1,
+          "y" : 1,
+          "width" : 1399,
+          "height" : 999,
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "textDataSource" : null,
+          "outputText" : null,
+          "enterKey" : false
+        }
+      }
     } ]
   } ]
 }

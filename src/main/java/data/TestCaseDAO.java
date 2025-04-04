@@ -3,6 +3,7 @@ package data;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.OperationCancelException;
+import executable.ATPrototype;
 import model.CaseState;
 import model.TestCase;
 import model.TestStep;
@@ -39,6 +40,7 @@ public class TestCaseDAO {
     public boolean testCaseCategoryToJson(String path, HashMap<String, ArrayList<TestCase>> category) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(path).toFile(), category);
+        dataChanged = false;
         return true;
     }
 
@@ -91,7 +93,7 @@ public class TestCaseDAO {
     }
 
     public String getPath(String extension) {
-        JFileChooser fileChooser = new JFileChooser(new File("src").getAbsolutePath());
+        JFileChooser fileChooser = new JFileChooser(ATPrototype.BASE_DIR.toFile());
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setSelectedFile(new File("New config" + extension));
         int result = fileChooser.showSaveDialog(null);
@@ -133,7 +135,7 @@ public class TestCaseDAO {
 
     public void saveOnDataChanged() throws IOException {
         if(dataChanged){
-            switch(DialogUtils.showConfirmDialog(null,"TestCase has changes, do you want to save config before proceed?", "Warning")){
+            switch(DialogUtils.showConfirmDialog(null, "Warning", "TestCase has changes, do you want to save config before proceed?")){
                 case JOptionPane.YES_OPTION: saveConfig(configPath);
                     break;
                 case JOptionPane.NO_OPTION: break;
