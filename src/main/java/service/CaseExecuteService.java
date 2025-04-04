@@ -22,7 +22,7 @@ public class CaseExecuteService {
 
     public CaseExecuteService(TestCaseService testCaseService, Callback<EventPackage> callback) {
         this.testCaseService = testCaseService;
-        this.windowService = new WindowService(callback);
+        this.windowService = new WindowService();
         this.stepExecuteService = new StepExecuteService();
         this.callback = callback;
     }
@@ -30,7 +30,11 @@ public class CaseExecuteService {
     public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
         testCaseService.initializeTestResults(currentTestPlan);
         buildThread(currentTestPlan);
-        if (windowService.captureWindow()) {
+        windowService.captureWindow(this::startThread);
+    }
+
+    private void startThread(EventPackage eventPackage){
+        if(eventPackage.getCommand() == EventCommand.WINDOW_CAPTURED){
             testThread.start();
         }
     }

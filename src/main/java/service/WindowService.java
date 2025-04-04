@@ -2,18 +2,18 @@ package service;
 
 import com.sun.jna.platform.win32.WinDef;
 import exception.WindowErrorException;
-import model.EventPackage;
 import interfaces.Callback;
+import model.EventPackage;
+import model.enums.EventCommand;
 import util.JNAUtils;
 
 public class WindowService {
-    private final Callback<EventPackage> callback;
 
-    public WindowService(Callback<EventPackage> callback) {
-        this.callback = callback;
+    public WindowService() {
+        // No parameter needed for now
     }
 
-    public boolean captureWindow(){
+    public void captureWindow(Callback<EventPackage> callback){
         String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
         WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
         if(window == null){
@@ -23,7 +23,7 @@ public class WindowService {
         JNAUtils.setWindowAtLocation(window, 0, 0);
         JNAUtils.bringWindowToFront(window);
         JNAUtils.setWindowAlwaysOnTop(window, true);
-        return true;
+        callback.onSubmit(new EventPackage(EventCommand.WINDOW_CAPTURED));
     }
 
     public void unsetWindowAlwaysOnTop(){
