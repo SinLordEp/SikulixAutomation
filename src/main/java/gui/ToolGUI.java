@@ -118,7 +118,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
-        deleteButton.addActionListener(_ -> controller.deleteCategory(categoryList.getSelectedValue()));
+        deleteButton.addActionListener(_ -> {
+            if(categoryList.getSelectedIndex() != -1){
+                controller.deleteCategory(categoryList.getSelectedValue());
+            }
+        });
         buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
         return panel;
@@ -139,7 +143,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
-        deleteButton.addActionListener(_ -> controller.deleteTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex()));
+        deleteButton.addActionListener(_ -> {
+            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
+                controller.deleteTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex());
+            }
+        });
         buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -156,7 +164,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
-        deleteButton.addActionListener(_ -> controller.deleteTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex()));
+        deleteButton.addActionListener(_ -> {
+            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1 && stepList.getSelectedIndex() != -1){
+                controller.deleteTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex());
+            }
+        });
         buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 

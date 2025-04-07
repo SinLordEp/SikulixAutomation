@@ -19,7 +19,7 @@
 6. ~~Add specific step column in result table~~
 7. ~~Add control to prevent multi click on Start test button~~
 8. ~~Add a method to modify TestCase name and its image path along~~
-9. Add a method to disable delete step when no step is selected
+9. ~~Add a method to disable delete step when no step is selected(done by not working if index is -1)~~
 10. Add a text field or a button for getting window name
 11. ~~Add a progress bar to visualize test plan progress~~
 12. Add a loop testing option
