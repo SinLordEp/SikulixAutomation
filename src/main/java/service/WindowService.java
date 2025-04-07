@@ -19,9 +19,9 @@ public class WindowService {
         if(window == null){
             throw new WindowErrorException("Can not find windows with name: " + windowName);
         }
+        JNAUtils.bringWindowToFront(window);
         JNAUtils.setWindowSize(window, 1400,1000);
         JNAUtils.setWindowAtLocation(window, 1, 1);
-        JNAUtils.bringWindowToFront(window);
         JNAUtils.setWindowAlwaysOnTop(window, true);
         callback.onSubmit(new EventPackage(EventCommand.WINDOW_CAPTURED));
     }
