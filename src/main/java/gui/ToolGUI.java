@@ -7,8 +7,10 @@ import model.enums.CaseState;
 import model.EventPackage;
 import model.TestCase;
 import model.TestStep;
+import service.WindowService;
 import util.DialogUtils;
 import interfaces.EventListener;
+import util.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +37,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private int categoryIndex = 0;
     private int caseIndex = 0;
     private boolean caseAllSelected = false;
+    private final JLabel windowNameLabel = new JLabel();
     private final JButton startButton = new JButton("Start");
     private final JProgressBar testProgressBar = new JProgressBar();
 
@@ -186,6 +189,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private JPanel testProgressPanel(){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(captureWindowPanel());
         panel.add(runTestButtonPanel());
         panel.setBorder(BorderFactory.createTitledBorder("Testing Process"));
         panel.add(new JScrollPane(testResultTable()));
@@ -193,6 +197,41 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         return panel;
     }
 
+    private JPanel captureWindowPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton captureButton = new JButton("Select target window");
+        captureButton.addActionListener(_ -> new WindowSelectorDialog(this, this::captureWindowName));
+        buttonPanel.add(captureButton);
+
+        JPanel windowNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        windowNamePanel.setBorder(BorderFactory.createTitledBorder("Target window name: "));
+        windowNamePanel.add(windowNameLabel);
+
+        JPanel modifyWindowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel widthLabel = new JLabel("Width: ");
+        JTextField widthField = new JTextField("1400",3);
+        SwingUtils.makeTextFieldIntegerWithMax(widthField, 1920);
+        modifyWindowPanel.add(widthLabel);
+        modifyWindowPanel.add(widthField);
+
+        JLabel heightLabel = new JLabel("Height: ");
+        JTextField heightField = new JTextField("1000",3);
+        SwingUtils.makeTextFieldIntegerWithMax(heightField, 1080);
+        modifyWindowPanel.add(heightLabel);
+        modifyWindowPanel.add(heightField);
+
+        JButton captureWindowButton = new JButton("Capture Window");
+        captureWindowButton.addActionListener(_ -> controller.captureWindow(windowNameLabel.getText(), Integer.parseInt(widthField.getText()), Integer.parseInt(heightField.getText()), this::onEvent));
+        modifyWindowPanel.add(captureWindowButton);
+
+        panel.add(buttonPanel);
+        panel.add(windowNamePanel);
+        panel.add(modifyWindowPanel);
+        return panel;
+    }
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton stopButton = new JButton("Stop");
@@ -200,6 +239,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             startButton.setEnabled(false);
             controller.startTest(createTestPlan());
         });
+        startButton.setEnabled(false);
         startButton.addPropertyChangeListener("enabled", _ -> stopButton.setEnabled(!startButton.isEnabled()));
         panel.add(startButton);
 
@@ -376,12 +416,16 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         return testPlan;
     }
 
+    private void captureWindowName(String windowName){
+        windowNameLabel.setText(windowName);
+    }
+
     @Override
     public void onEvent(EventPackage eventPackage) {
         switch (eventPackage.getCommand()){
             case TESTCASE_CHANGED -> updateTestCases(eventPackage.getTestCases());
             case RESULT_CHANGED -> updateTestResults(eventPackage.getTestResults());
-            case TEST_FINISHED -> startButton.setEnabled(true);
+            case TEST_FINISHED, WINDOW_CAPTURED -> startButton.setEnabled(true);
             default -> throw new UndefinedException("Unknown command (To be perfected)");
         }
     }

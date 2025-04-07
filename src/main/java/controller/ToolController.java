@@ -3,6 +3,7 @@ package controller;
 import exception.ExceptionHandler;
 import exception.ToolExceptionHandler;
 import gui.ToolGUI;
+import interfaces.Callback;
 import model.*;
 import model.enums.CaseState;
 import service.*;
@@ -18,12 +19,14 @@ public class ToolController {
     private final TestCaseService testCaseService;
     private final CaseExecuteService caseExecuteService;
     private final ExceptionHandler exceptionHandler;
+    private final WindowService windowService;
 
 
     public ToolController() {
         testCaseService = new TestCaseService(this::notifyEvent);
         caseExecuteService = new CaseExecuteService(testCaseService, this::notifyEvent);
         exceptionHandler = new ToolExceptionHandler();
+        windowService = new WindowService();
     }
 
     public void run(){
@@ -80,6 +83,10 @@ public class ToolController {
 
     public void generateResult(){
         exceptionHandler.run(testCaseService::generateResult, testCaseService.getClass().getName());
+    }
+
+    public void captureWindow(String windowName, int width, int height, Callback<EventPackage> callback){
+        exceptionHandler.run(() -> windowService.captureWindow(windowName, width, height, callback), windowService.getClass().getName());
     }
 
     public void onWindowClosing() {
