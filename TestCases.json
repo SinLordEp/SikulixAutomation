@@ -13,7 +13,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Ventas_button.PNG",
+          "path" : "Ventas_button.PNG.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -23,8 +23,8 @@
         "PRECONDITION" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "flecha_menu_izquiera.PNG",
-          "similarity" : 0.6,
+          "path" : "flecha_menu_izquiera.PNG.PNG",
+          "similarity" : 0.65,
           "timeoutSec" : 3,
           "textDataSource" : null,
           "outputText" : null,

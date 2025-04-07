@@ -235,7 +235,9 @@ public class TestStepGUI extends JFrame {
             context.timeOutTextField.setText(String.valueOf(stepElement.getTimeoutSec()));
             context.similarityTextField.setText(String.valueOf(stepElement.getSimilarity()));
         }
+        timeOutAndSimilarityPanel.add(new JLabel("Time out second(1-60): "));
         timeOutAndSimilarityPanel.add(context.timeOutTextField);
+        timeOutAndSimilarityPanel.add(new JLabel("Similarity(1-100): "));
         timeOutAndSimilarityPanel.add(context.similarityTextField);
         context.hideOnNonePanel.add(timeOutAndSimilarityPanel);
     }
