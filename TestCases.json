@@ -190,7 +190,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_uno.PNG",
+          "path" : "Busqueda_resultado_uno.PNG.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -201,7 +201,7 @@
         "FAIL" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_vacio.PNG",
+          "path" : "Busqueda_resultado_vacio.PNG.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -212,7 +212,7 @@
         "CLOSE" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "cerrar_buscador_clientes.PNG",
+          "path" : "cerrar_buscador_clientes.PNG.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
