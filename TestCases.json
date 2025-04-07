@@ -13,7 +13,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Ventas_button.PNG.PNG",
+          "path" : "Ventas_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -23,8 +23,8 @@
         "PRECONDITION" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "flecha_menu_izquiera.PNG.PNG",
-          "similarity" : 0.65,
+          "path" : "flecha_menu_izquiera.PNG",
+          "similarity" : 0.9,
           "timeoutSec" : 3,
           "textDataSource" : null,
           "outputText" : null,
@@ -36,7 +36,7 @@
       }
     }, {
       "name" : "Step 2",
-      "description" : null,
+      "description" : "",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,
@@ -46,7 +46,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Ventas_panel.png",
+          "path" : "Ventas_panel.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -60,7 +60,7 @@
       }
     }, {
       "name" : "Step 3",
-      "description" : null,
+      "description" : "",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,
@@ -70,7 +70,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Buscar_button.png",
+          "path" : "Buscar_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -84,7 +84,7 @@
       }
     }, {
       "name" : "Step 4",
-      "description" : null,
+      "description" : "",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,
@@ -94,7 +94,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_panel.png",
+          "path" : "Busqueda_panel.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -108,7 +108,7 @@
       }
     }, {
       "name" : "Step 5",
-      "description" : null,
+      "description" : "",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,
@@ -118,7 +118,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Busqueda_buscar_button.png",
+          "path" : "Busqueda_buscar_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -132,7 +132,7 @@
       }
     }, {
       "name" : "Step 6",
-      "description" : null,
+      "description" : "",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,
@@ -142,7 +142,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_uno.png",
+          "path" : "Busqueda_resultado_uno.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -156,7 +156,7 @@
       }
     }, {
       "name" : "Step 7",
-      "description" : null,
+      "description" : "",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,
@@ -190,7 +190,7 @@
         "PASS" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_uno.PNG.PNG",
+          "path" : "Busqueda_resultado_uno.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -201,7 +201,7 @@
         "FAIL" : {
           "dataSource" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_vacio.PNG.PNG",
+          "path" : "Busqueda_resultado_vacio.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,
@@ -212,7 +212,7 @@
         "CLOSE" : {
           "dataSource" : "IMAGE",
           "action" : "CLICK",
-          "path" : "cerrar_buscador_clientes.PNG.PNG",
+          "path" : "cerrar_buscador_clientes.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
           "textDataSource" : null,

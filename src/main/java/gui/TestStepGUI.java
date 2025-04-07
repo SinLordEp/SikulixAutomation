@@ -73,10 +73,7 @@ public class TestStepGUI extends JFrame {
     }
 
     private void parseElement(StepElement element, ElementContext context){
-        context.matchTypeGroup.getElements().asIterator().forEachRemaining(button ->
-                button.setSelected(button.getActionCommand().equals(element.getDataSource().name()))
-        );
-        context.matchSelected = element.getDataSource();
+        context.matchType = element.getDataSource();
         context.timeOutTextField.setText(String.valueOf(element.getTimeoutSec()));
         SwingUtils.makeTextFieldIntegerWithMax(context.timeOutTextField, 60);
 
@@ -84,15 +81,12 @@ public class TestStepGUI extends JFrame {
         SwingUtils.makeTextFieldIntegerWithMax(context.similarityTextField, 100);
         context.imageOrTextField.setText(element.getPath().replace(".PNG", "").replace(".png", ""));
 
-        context.actionGroup.getElements().asIterator().forEachRemaining(button ->
-                button.setSelected(button.getActionCommand().equals(element.getAction().name()))
-        );
+        context.action = element.getAction();
 
-        if (!(element.getAction() == StepAction.FIND || element.getAction() == StepAction.CLICK)) {
-            context.textSourceGroup.getElements().asIterator().forEachRemaining(button ->
-                    button.setSelected(button.getActionCommand().equals(element.getTextDataSource().name()))
-            );
+        if (element.getAction() == StepAction.TYPE || element.getAction() == StepAction.PASTE) {
+            context.action = element.getAction();
             context.textOrJsonTextField.setText(element.getOutputText());
+            context.enterKey = element.isEnterKey();
         }
 
     }
@@ -203,8 +197,8 @@ public class TestStepGUI extends JFrame {
     private void setupMatchTypePanel(ElementContext context) {
         JPanel matchTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ActionListener visibilityUpdater = _ -> {
-            boolean show = !Objects.equals(context.matchTypeGroup.getSelection().getActionCommand(), DataSource.NONE.name());
-            context.hideOnNonePanel.setVisible(show);
+            context.matchType = DataSource.valueOf(context.matchTypeGroup.getSelection().getActionCommand());
+            context.hideOnNonePanel.setVisible(context.matchType != DataSource.NONE);
             context.elementPanel.revalidate();
             context.elementPanel.repaint();
         };
@@ -215,7 +209,7 @@ public class TestStepGUI extends JFrame {
             }
             JRadioButton button = new JRadioButton(dataSource.name());
             button.setActionCommand(dataSource.name());
-            button.setSelected(dataSource == context.matchSelected);
+            button.setSelected(dataSource == context.matchType);
             button.addActionListener(visibilityUpdater);
             context.matchTypeGroup.add(button);
             matchTypePanel.add(button);
@@ -246,10 +240,6 @@ public class TestStepGUI extends JFrame {
         JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         labelPanel.add(new JLabel("Image name or Text:"));
         context.hideOnNonePanel.add(labelPanel);
-
-        if (!isNewStep && testStep.getStepElements().get(context.elementType) != null) {
-            context.imageOrTextField.setText(testStep.getStepElements().get(context.elementType).getPath());
-        }
         context.imageOrTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         context.hideOnNonePanel.add(context.imageOrTextField);
     }
@@ -291,17 +281,6 @@ public class TestStepGUI extends JFrame {
     }
 
     private void setupActionPanel(ElementContext context) {
-        StepAction action = StepAction.FIND;
-        DataSource textSource = DataSource.TEXT;
-        if (!isNewStep && testStep.getStepElements().get(context.elementType) != null) {
-            action = testStep.getStepElements().get(context.elementType).getAction();
-            textSource = testStep.getStepElements().get(context.elementType).getTextDataSource();
-        }
-        JPanel actionPanel = actionTypePanel(action, textSource, context);
-        context.hideOnNonePanel.add(actionPanel);
-    }
-
-    private static JPanel actionTypePanel(StepAction stepAction, DataSource textSource, ElementContext context) {
         JPanel wrapper = new JPanel();
         wrapper.setBorder(BorderFactory.createTitledBorder("Action type"));
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
@@ -309,8 +288,8 @@ public class TestStepGUI extends JFrame {
 
         // Toggle text source panel
         ActionListener typeSwitch = _ -> {
-            boolean visible = Objects.equals(context.actionGroup.getSelection().getActionCommand(), StepAction.TYPE.name()) || Objects.equals(context.actionGroup.getSelection().getActionCommand(), StepAction.PASTE.name());
-            sourcePanel.setVisible(visible);
+            context.action = StepAction.valueOf(context.actionGroup.getSelection().getActionCommand());
+            sourcePanel.setVisible(context.action == StepAction.TYPE || context.action == StepAction.PASTE);
             wrapper.revalidate();
             wrapper.repaint();
         };
@@ -318,7 +297,7 @@ public class TestStepGUI extends JFrame {
         for (StepAction action : StepAction.values()) {
             JRadioButton actionButton = new JRadioButton(action.name());
             actionButton.setActionCommand(action.name());
-            actionButton.setSelected(action == stepAction);
+            actionButton.setSelected(action == context.action);
             actionButton.addActionListener(typeSwitch);
             context.actionGroup.add(actionButton);
             panel.add(actionButton);
@@ -333,7 +312,8 @@ public class TestStepGUI extends JFrame {
         textOption.setActionCommand(String.valueOf(DataSource.TEXT));
         JRadioButton jsonOption = new JRadioButton("JSON");
         jsonOption.setActionCommand(String.valueOf(DataSource.JSON));
-        if (textSource == DataSource.TEXT) {
+        JCheckBox enterKeyCheckbox = new JCheckBox("Enter Key", context.enterKey);
+        if (context.textSource == DataSource.TEXT) {
             textOption.setSelected(true);
         } else {
             jsonOption.setSelected(true);
@@ -342,6 +322,7 @@ public class TestStepGUI extends JFrame {
         context.textSourceGroup.add(jsonOption);
         sourceOptionPanel.add(textOption);
         sourceOptionPanel.add(jsonOption);
+        sourceOptionPanel.add(enterKeyCheckbox);
         sourcePanel.add(sourceOptionPanel);
 
         JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -359,15 +340,19 @@ public class TestStepGUI extends JFrame {
         ActionListener formatSwitch = _ -> sourceLabel.setText(textOption.isSelected() ? "Output Text:" : "Json file path:");
         textOption.addActionListener(formatSwitch);
         jsonOption.addActionListener(formatSwitch);
-
-        return wrapper;
+        if(context.action == StepAction.TYPE || context.action == StepAction.PASTE){
+            SwingUtilities.invokeLater(() -> typeSwitch.actionPerformed(null));
+        }
+        context.hideOnNonePanel.add(wrapper);
     }
 
     protected static class ElementContext {
         StepElementType elementType;
         String title;
-        DataSource matchSelected = DataSource.NONE;
+        DataSource matchType = DataSource.NONE;
         BufferedImage image;
+        StepAction action = StepAction.FIND;
+        DataSource textSource = DataSource.TEXT;
         ButtonGroup matchTypeGroup = new ButtonGroup();
         JTextField imageOrTextField = new JTextField();
         JTextField timeOutTextField = new JTextField("2", 3);
@@ -378,11 +363,12 @@ public class TestStepGUI extends JFrame {
         JPanel elementPanel = new JPanel();
         JPanel hideOnTogglePanel = new JPanel();
         JPanel hideOnNonePanel = new JPanel();
+        boolean enterKey = false;
         public ElementContext(StepElementType elementType, String title) {
             this.elementType = elementType;
             this.title = title;
             if(elementType == StepElementType.PASS){
-                matchSelected = DataSource.IMAGE;
+                matchType = DataSource.IMAGE;
             }
             elementPanel.setLayout(new BoxLayout(elementPanel, BoxLayout.Y_AXIS));
             elementPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -452,35 +438,27 @@ public class TestStepGUI extends JFrame {
     }
 
     private StepElement buildElement(ElementContext context) {
+        if(context.matchType == DataSource.NONE){
+            return null;
+        }
         StepElement element = new StepElement();
-        switch (DataSource.valueOf(context.matchTypeGroup.getSelection().getActionCommand())){
-            case IMAGE: element.setDataSource(DataSource.IMAGE);
-                try {
-                    ImageUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
-                } catch (IOException e) {
-                    throw new ImageIOException("Cannot write image to target path");
-                }
-                break;
-            case TEXT: element.setDataSource(DataSource.TEXT);
-                break;
-            default: return null;
+        element.setDataSource(context.matchType);
+        if(context.matchType == DataSource.IMAGE){
+            try {
+                ImageUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
+            } catch (IOException e) {
+                throw new ImageIOException("Cannot write image to target path");
+            }
         }
         element.setTimeoutSec(Integer.parseInt(context.timeOutTextField.getText()));
         element.setSimilarity(Double.parseDouble(context.similarityTextField.getText())/100);
         element.setPath(context.imageOrTextField.getText() + ".PNG");
-        switch (StepAction.valueOf(context.actionGroup.getSelection().getActionCommand())){
-            case FIND : element.setAction(StepAction.FIND);
-                break;
-            case CLICK : element.setAction(StepAction.CLICK);
-                break;
-            case TYPE : element.setAction(StepAction.TYPE);
-                element.setTextDataSource(DataSource.valueOf(context.textSourceGroup.getSelection().getActionCommand()));
-                element.setOutputText(context.textOrJsonTextField.getText());
-                break;
-            case PASTE: element.setAction(StepAction.PASTE);
-                element.setTextDataSource(DataSource.valueOf(context.textSourceGroup.getSelection().getActionCommand()));
-                element.setOutputText(context.textOrJsonTextField.getText());
-                break;
+        StepAction stepAction = StepAction.valueOf(context.actionGroup.getSelection().getActionCommand());
+        element.setAction(stepAction);
+        if (stepAction == StepAction.TYPE || stepAction == StepAction.PASTE) {
+            element.setTextDataSource(context.textSource);
+            element.setOutputText(context.textOrJsonTextField.getText());
+            element.setEnterKey(context.enterKey);
         }
         return element;
     }
