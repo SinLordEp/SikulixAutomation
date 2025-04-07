@@ -109,8 +109,13 @@ public class TestCaseDAO {
 
     public void generateTestResult(String path) throws IOException {
         List<String> output = new ArrayList<>();
-        testResults.forEach((caseName,caseState) -> {
-            String line = caseName + ";" + caseState.toString();
+        testResults.forEach((testCase,caseState) -> {
+            String line;
+            if(caseState == CaseState.PASS){
+                line = testCase + ";" + caseState + ";;";
+            }else{
+                line = testCase + ";" + caseState + ";" + testCase.getCurrentTestStep().getName() + ";" + testCase.getCurrentTestStep().getDescription();
+            }
             output.add(line);
         });
         Files.write(Paths.get(path), output);
