@@ -128,7 +128,7 @@ public class TestCaseDAO {
 
     public void saveOnDataChanged() throws IOException {
         if(dataChanged){
-            switch(DialogUtils.showConfirmDialog(null, "Warning", "TestCase has changes, do you want to save config before proceed?")){
+            switch(DialogUtils.showConfirmDialog(null, "Warning", "TestCase has changed, do you want to save config before proceed?")){
                 case JOptionPane.YES_OPTION: saveConfig(configPath);
                     break;
                 case JOptionPane.NO_OPTION: break;

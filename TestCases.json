@@ -11,22 +11,22 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Ventas_button.PNG",
+          "imageNameOrText" : "Ventas_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
         "PRECONDITION" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "CLICK",
-          "path" : "flecha_menu_izquiera.PNG",
+          "imageNameOrText" : "flecha_menu_izquiera.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 3,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -44,12 +44,12 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "FIND",
-          "path" : "Ventas_panel.PNG",
+          "imageNameOrText" : "Ventas_panel.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -68,12 +68,12 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Buscar_button.PNG",
+          "imageNameOrText" : "Buscar_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -92,12 +92,12 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_panel.PNG",
+          "imageNameOrText" : "Busqueda_panel.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -116,12 +116,12 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "CLICK",
-          "path" : "Busqueda_buscar_button.PNG",
+          "imageNameOrText" : "Busqueda_buscar_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -140,12 +140,12 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_uno.PNG",
+          "imageNameOrText" : "Busqueda_resultado_uno.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
@@ -164,12 +164,12 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "TYPE",
-          "path" : "Busqueda_nombreContiene_input.PNG",
+          "imageNameOrText" : "Busqueda_nombreContiene_input.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : "TEXT",
+          "textSource" : "TEXT",
           "outputText" : "aaaaaaa",
           "enterKey" : true
         },
@@ -188,34 +188,34 @@
       "height" : 999,
       "stepElements" : {
         "PASS" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_uno.PNG",
+          "imageNameOrText" : "Busqueda_resultado_uno.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
         "PRECONDITION" : null,
         "FAIL" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "FIND",
-          "path" : "Busqueda_resultado_vacio.PNG",
+          "imageNameOrText" : "Busqueda_resultado_vacio.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         },
         "RETRY" : null,
         "CLOSE" : {
-          "dataSource" : "IMAGE",
+          "matchType" : "IMAGE",
           "action" : "CLICK",
-          "path" : "cerrar_buscador_clientes.PNG",
+          "imageNameOrText" : "cerrar_buscador_clientes.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textDataSource" : null,
+          "textSource" : null,
           "outputText" : null,
           "enterKey" : false
         }

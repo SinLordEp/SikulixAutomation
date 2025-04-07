@@ -56,7 +56,7 @@ public class TestStepGUI extends JFrame {
 
     private void initElementContexts() {
         Arrays.stream(StepElementType.values()).forEach(stepElementType -> elementContexts.put(stepElementType,
-                new ElementContext(stepElementType,stepElementType + " element")));
+                new ElementContext(stepElementType, stepElementType.name())));
     }
 
     private void parseTestStep() {
@@ -73,13 +73,13 @@ public class TestStepGUI extends JFrame {
     }
 
     private void parseElement(StepElement element, ElementContext context){
-        context.matchType = element.getDataSource();
+        context.matchType = element.getMatchType();
         context.timeOutTextField.setText(String.valueOf(element.getTimeoutSec()));
         SwingUtils.makeTextFieldIntegerWithMax(context.timeOutTextField, 60);
 
         context.similarityTextField.setText(String.valueOf((int)(element.getSimilarity()*100)));
         SwingUtils.makeTextFieldIntegerWithMax(context.similarityTextField, 100);
-        context.imageOrTextField.setText(element.getPath().replace(".PNG", "").replace(".png", ""));
+        context.imageOrTextField.setText(element.getImageNameOrText().replace(".PNG", "").replace(".png", ""));
 
         context.action = element.getAction();
 
@@ -266,7 +266,7 @@ public class TestStepGUI extends JFrame {
         if (!isNewStep && testStep.getStepElements().get(ctx.elementType) != null) {
             // Sikulix Robot.class can not be called in a swing awake event
             new Thread(() -> {
-                BufferedImage img = ImageUtils.loadImage(testCaseName + File.separator + testStep.getStepElements().get(ctx.elementType).getPath());
+                BufferedImage img = ImageUtils.loadImage(testCaseName + File.separator + testStep.getStepElements().get(ctx.elementType).getImageNameOrText());
                 SwingUtilities.invokeLater(() -> {
                     ctx.image = img;
                     setImageToLabel(imageLabel, ctx.image);
@@ -442,7 +442,7 @@ public class TestStepGUI extends JFrame {
             return null;
         }
         StepElement element = new StepElement();
-        element.setDataSource(context.matchType);
+        element.setMatchType(context.matchType);
         if(context.matchType == DataSource.IMAGE){
             try {
                 ImageUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
@@ -452,11 +452,11 @@ public class TestStepGUI extends JFrame {
         }
         element.setTimeoutSec(Integer.parseInt(context.timeOutTextField.getText()));
         element.setSimilarity(Double.parseDouble(context.similarityTextField.getText())/100);
-        element.setPath(context.imageOrTextField.getText() + ".PNG");
+        element.setImageNameOrText(context.imageOrTextField.getText() + ".PNG");
         StepAction stepAction = StepAction.valueOf(context.actionGroup.getSelection().getActionCommand());
         element.setAction(stepAction);
         if (stepAction == StepAction.TYPE || stepAction == StepAction.PASTE) {
-            element.setTextDataSource(context.textSource);
+            element.setTextSource(context.textSource);
             element.setOutputText(context.textOrJsonTextField.getText());
             element.setEnterKey(context.enterKey);
         }

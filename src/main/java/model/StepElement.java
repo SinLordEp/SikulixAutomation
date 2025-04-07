@@ -7,12 +7,12 @@ import model.enums.StepAction;
  * @author Sin
  */
 public class StepElement {
-    private DataSource dataSource = DataSource.IMAGE;
+    private DataSource matchType = DataSource.IMAGE;
     private StepAction action = StepAction.FIND;
-    private String path;
+    private String imageNameOrText;
     private double similarity = 0.9;
     private int timeoutSec = 2;
-    private DataSource textDataSource = null;
+    private DataSource textSource = null;
     private String outputText = null;
     private boolean enterKey = false;
 
@@ -21,12 +21,12 @@ public class StepElement {
         //No parameter needed for now
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public DataSource getMatchType() {
+        return matchType;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setMatchType(DataSource matchType) {
+        this.matchType = matchType;
     }
 
     public StepAction getAction() {
@@ -37,12 +37,12 @@ public class StepElement {
         this.action = action;
     }
 
-    public String getPath() {
-        return path;
+    public String getImageNameOrText() {
+        return imageNameOrText;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setImageNameOrText(String imageNameOrText) {
+        this.imageNameOrText = imageNameOrText;
     }
 
     public double getSimilarity() {
@@ -77,11 +77,11 @@ public class StepElement {
         this.enterKey = enterKey;
     }
 
-    public DataSource getTextDataSource() {
-        return textDataSource;
+    public DataSource getTextSource() {
+        return textSource;
     }
 
-    public void setTextDataSource(DataSource textDataSource) {
-        this.textDataSource = textDataSource;
+    public void setTextSource(DataSource textSource) {
+        this.textSource = textSource;
     }
 }

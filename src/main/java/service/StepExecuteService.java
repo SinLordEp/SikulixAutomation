@@ -79,15 +79,15 @@ public class StepExecuteService {
     }
 
     private StepState find(Region region, StepElement element){
-        return handleFindFailed(() -> SikulixUtils.findImage(region, element.getPath(), element.getSimilarity(), element.getTimeoutSec()));
+        return handleFindFailed(() -> SikulixUtils.findImage(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec()));
     }
 
     private StepState findAndClick(Region region, StepElement element){
-        return handleFindFailed(() -> SikulixUtils.clickOnFound(region, element.getPath(), element.getSimilarity(), element.getTimeoutSec()));
+        return handleFindFailed(() -> SikulixUtils.clickOnFound(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec()));
     }
 
     private StepState findAndText(Region region, StepElement element){
-        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getPath(), element.getSimilarity(), element.getTimeoutSec(), element.getOutputText(), element.getAction(), element.isEnterKey()));
+        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), element.getOutputText(), element.getAction(), element.isEnterKey()));
     }
 
 
