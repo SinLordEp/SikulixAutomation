@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="SikulixAutomation.main:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/SikulixAutomation_main_jar</output-path>
-    <root id="archive" name="SikulixAutomation.main.jar">
+  <artifact type="jar" build-on-make="true" name="SikulixAutomation:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SikulixAutomation_jar</output-path>
+    <root id="archive" name="SikulixAutomation.jar">
       <element id="module-output" name="SikulixAutomation.main" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.18.3/78f80c259268200e588aa204dd97ecf09b76916e/jackson-core-2.18.3.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar" path-in-jar="/" />

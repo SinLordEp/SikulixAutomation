@@ -9,8 +9,10 @@ import model.*;
 import model.enums.CaseState;
 import model.enums.EventCommand;
 import interfaces.Callback;
+import util.DialogUtils;
 import util.FileUtils;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 
@@ -26,7 +28,7 @@ public class TestCaseService {
 
     public void loadConfig() {
         try {
-            dao.saveOnDataChanged();
+            saveDataOnChanged();
             String path = dao.getPath(JSON_EXTENSION);
             if(path != null){
                 if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
@@ -44,7 +46,6 @@ public class TestCaseService {
             throw new FileIOException(e.getMessage());
         }
     }
-
 
     public boolean saveConfig() {
         try {
@@ -161,10 +162,13 @@ public class TestCaseService {
     }
 
     public void saveDataOnChanged() {
-        try {
-            dao.saveOnDataChanged();
-        } catch (IOException e) {
-            throw new FileIOException(e.getMessage());
+        if(dao.isDataChanged()){
+            switch(DialogUtils.showConfirmDialog(null, "Warning", "TestCase has changed, do you want to save config before proceed?")){
+                case JOptionPane.YES_OPTION: saveConfig();
+                    break;
+                case JOptionPane.NO_OPTION: break;
+                default: throw new OperationCancelException();
+            }
         }
     }
 }

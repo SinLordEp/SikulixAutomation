@@ -6,6 +6,8 @@ import exception.ImageIOException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ImageUtils {
 
@@ -20,6 +22,8 @@ public class ImageUtils {
     }
 
     public static void saveImage(BufferedImage image, String path) throws IOException {
+        Path targetPath = GlobalPaths.IMAGE_ROOT.resolve(path);
+        Files.createDirectories(targetPath.getParent());
         ImageIO.write(image,"PNG", GlobalPaths.IMAGE_ROOT.resolve(path).toFile());
     }
 }

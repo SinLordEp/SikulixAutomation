@@ -122,20 +122,12 @@ public class TestCaseDAO {
         Files.write(Paths.get(path), output);
     }
 
+    public boolean isDataChanged() {
+        return dataChanged;
+    }
+
     public void setDataIsChanged() {
         this.dataChanged = true;
     }
-
-    public void saveOnDataChanged() throws IOException {
-        if(dataChanged){
-            switch(DialogUtils.showConfirmDialog(null, "Warning", "TestCase has changed, do you want to save config before proceed?")){
-                case JOptionPane.YES_OPTION: saveConfig(configPath);
-                    break;
-                case JOptionPane.NO_OPTION: break;
-                default: throw new OperationCancelException();
-            }
-        }
-    }
-
 
 }
