@@ -2,6 +2,7 @@ package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import model.enums.StepElementType;
+import org.sikuli.script.Region;
 
 import java.util.EnumMap;
 
@@ -12,6 +13,10 @@ public class TestStep {
     private String name;
     private String description;
     private String jsonPath;
+    private int x = 0;
+    private int y = 0;
+    private int width = 0;
+    private int height = 0;
     private EnumMap<StepElementType, StepElement> stepElements = new EnumMap<>(StepElementType.class);
 
     public TestStep(){
@@ -94,6 +99,52 @@ public class TestStep {
     public void setCloseElement(StepElement closeElement){
         stepElements.put(StepElementType.CLOSE, closeElement);
     }
+
+    @JsonIgnore
+    public void setRegion(Region region) {
+        this.x = region.x;
+        this.y = region.y;
+        this.width = region.w;
+        this.height = region.h;
+    }
+
+    @JsonIgnore
+    public Region getRegion(){
+        return new Region(x,y,width,height);
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
 
     @Override
     public String toString() {

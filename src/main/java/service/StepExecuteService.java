@@ -6,6 +6,7 @@ import model.enums.StepElementType;
 import model.enums.StepState;
 import model.TestStep;
 import org.sikuli.script.FindFailed;
+import org.sikuli.script.Region;
 import util.SikulixUtils;
 
 /**
@@ -39,11 +40,11 @@ public class StepExecuteService {
     private void executePreconditionElement(TestStep step){
         StepElement element = step.getStepElements().get(StepElementType.PRECONDITION);
         if(element != null){
-            executeElement(element);
+            executeElement(step.getRegion(), element);
         }
     }
     private StepState executePassElement(TestStep step){
-        return executeElement(step.getStepElements().get(StepElementType.PASS));
+        return executeElement(step.getRegion(), step.getStepElements().get(StepElementType.PASS));
     }
 
     private StepState executeRetryElement(TestStep step){
@@ -57,7 +58,7 @@ public class StepExecuteService {
     private StepState executeFailElement(TestStep step){
         StepElement element = step.getStepElements().get(StepElementType.FAIL);
         if(element != null){
-            return executeElement(element);
+            return executeElement(step.getRegion(), element);
         }
         return StepState.NO_MATCH;
     }
@@ -65,28 +66,28 @@ public class StepExecuteService {
     private void executeCloseElement(TestStep step){
         StepElement element = step.getStepElements().get(StepElementType.CLOSE);
         if(element != null){
-            executeElement(element);
+            executeElement(step.getRegion(), element);
         }
     }
 
-    private StepState executeElement(StepElement element){
+    private StepState executeElement(Region region, StepElement element){
         return switch (element.getAction()){
-            case FIND -> find(element);
-            case CLICK -> findAndClick(element);
-            case TYPE, PASTE -> findAndText(element);
+            case FIND -> find(region, element);
+            case CLICK -> findAndClick(region, element);
+            case TYPE, PASTE -> findAndText(region, element);
         };
     }
 
-    private StepState find(StepElement element){
-        return handleFindFailed(() -> SikulixUtils.findImage(element.getRegion(), element.getPath(), element.getSimilarity(), element.getTimeoutSec()));
+    private StepState find(Region region, StepElement element){
+        return handleFindFailed(() -> SikulixUtils.findImage(region, element.getPath(), element.getSimilarity(), element.getTimeoutSec()));
     }
 
-    private StepState findAndClick(StepElement element){
-        return handleFindFailed(() -> SikulixUtils.clickOnFound(element.getRegion(), element.getPath(), element.getSimilarity(), element.getTimeoutSec()));
+    private StepState findAndClick(Region region, StepElement element){
+        return handleFindFailed(() -> SikulixUtils.clickOnFound(region, element.getPath(), element.getSimilarity(), element.getTimeoutSec()));
     }
 
-    private StepState findAndText(StepElement element){
-        return handleFindFailed(() -> SikulixUtils.clickAndText(element.getRegion(), element.getPath(), element.getSimilarity(), element.getTimeoutSec(), element.getOutputText(), element.getAction(), element.isEnterKey()));
+    private StepState findAndText(Region region, StepElement element){
+        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getPath(), element.getSimilarity(), element.getTimeoutSec(), element.getOutputText(), element.getAction(), element.isEnterKey()));
     }
 
 

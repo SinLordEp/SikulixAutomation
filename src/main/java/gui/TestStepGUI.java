@@ -88,6 +88,10 @@ public class TestStepGUI extends JFrame {
     }
 
     private void parseTestStep() {
+        xTextField.setText(String.valueOf(testStep.getX()));
+        yTextField.setText(String.valueOf(testStep.getY()));
+        widthTextField.setText(String.valueOf(testStep.getWidth()));
+        heightTextField.setText(String.valueOf(testStep.getHeight()));
         Arrays.stream(StepElementType.values()).forEach(stepElementType -> {
             if(testStep.getStepElements().get(stepElementType) != null){
                 switch (stepElementType) {
@@ -102,10 +106,6 @@ public class TestStepGUI extends JFrame {
     }
 
     private void parsePassElement(StepElement element){
-        xTextField.setText(String.valueOf(element.getX()));
-        yTextField.setText(String.valueOf(element.getY()));
-        widthTextField.setText(String.valueOf(element.getWidth()));
-        heightTextField.setText(String.valueOf(element.getHeight()));
         passMatchTypeGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getDataSource().name())));
         passImageOrTextField.setText(element.getPath().replace(".PNG","").replace(".png",""));
         passActionGroup.getElements().asIterator().forEachRemaining(button -> button.setSelected(button.getActionCommand().equals(element.getAction().name())));
@@ -550,6 +550,7 @@ public class TestStepGUI extends JFrame {
     private TestStep buildTestStep(){
         testStep.setName(stepNameTextField.getText());
         testStep.setDescription(descriptionTextField.getText());
+        testStep.setRegion(buildRegion());
         Arrays.stream(StepElementType.values()).forEach(stepElementType ->
         {
             switch (stepElementType) {
@@ -654,7 +655,6 @@ public class TestStepGUI extends JFrame {
                 element.setOutputText(context.textOrJsonTextField.getText());
                 break;
         }
-        element.setRegion(buildRegion());
         return element;
     }
 
