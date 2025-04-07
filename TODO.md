@@ -24,7 +24,7 @@
 11. ~~Add a progress bar to visualize test plan progress~~
 12. Add a loop testing option
 13. Add a repeat time input field for testing
-14. Add a select all button for TestCase
+14. ~~Add a select all button for TestCase~~
 
 
 ## TestStepGUI

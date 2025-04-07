@@ -34,6 +34,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private int categoryIndex = 0;
     private int caseIndex = 0;
+    private boolean caseAllSelected = false;
     private final JButton startButton = new JButton("Start");
     private final JProgressBar testProgressBar = new JProgressBar();
 
@@ -138,6 +139,13 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JScrollPane(caseList), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton allButton = new JButton("All");
+        allButton.addActionListener(_ -> {
+            caseAllSelected = !caseAllSelected;
+            caseListModel.elements().asIterator().forEachRemaining(testCase -> testCase.setSelected(caseAllSelected));
+            caseList.repaint();
+        });
+        buttonPanel.add(allButton);
         JButton addButton = new JButton("+");
         addButton.addActionListener(_ -> controller.addTestCase(categoryList.getSelectedValue(), DialogUtils.showInputDialog(this, "Add test case", "Input the name of the new case:")));
         buttonPanel.add(addButton);
