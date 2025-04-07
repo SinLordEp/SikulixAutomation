@@ -7,7 +7,6 @@ import model.enums.CaseState;
 import model.EventPackage;
 import model.TestCase;
 import model.TestStep;
-import service.WindowService;
 import util.DialogUtils;
 import interfaces.EventListener;
 import util.SwingUtils;
