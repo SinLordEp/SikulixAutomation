@@ -1,6 +1,7 @@
 .gradle
 build/
 dist
+logs
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
