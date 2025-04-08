@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set APP_NAME=SikulixAutomation
+set APP_NAME=SikulixAutomation-1.1
 set MAIN_CLASS=executable.ATLauncher
 set MAIN_JAR=%APP_NAME%.jar
 

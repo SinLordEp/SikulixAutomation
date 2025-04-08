@@ -8,6 +8,7 @@
 6. ~~Build a single jar then pack it with JPackage to a single executable~~
 7. ~~Modify all file paths based on project or jar parent path to make it more consistent~~
 8. ~~Generate the test result with specific failed step and info~~
+9. ~~Implement logger~~
 
 
 ## ToolGUI
@@ -28,6 +29,8 @@
 15. ~~Extract buildTestPlan method to service.~~
 16. ~~Add a Build test plan button instead of using Start button to build and run at the same time~~
 17. Add tooltip to disable button
+18. Add control to empty name input and cancel/window closing on rename/create
+19. Make testStepGUI pop up location related to ToolGUI
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in step info panel~~
@@ -40,4 +43,7 @@
 8. ~~Add a similarity text field~~
 9. Add a read image from file option and copy it to target root
 10. ~~Add enter key boolean checkbox~~
+11. Add control to image name and step name
+12. Mark the none null element as green
+13. Auto generate image name by its testCase,step and element type name
 
