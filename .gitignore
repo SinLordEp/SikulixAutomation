@@ -1,5 +1,5 @@
 .gradle
-build/
+build
 dist
 logs
 !gradle/wrapper/gradle-wrapper.jar
