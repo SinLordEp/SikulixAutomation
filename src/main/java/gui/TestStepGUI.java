@@ -1,7 +1,6 @@
 package gui;
 
 import exception.ImageIOException;
-import exception.OperationCancelException;
 import model.*;
 import model.enums.DataSource;
 import model.enums.StepAction;
@@ -30,17 +29,17 @@ public class TestStepGUI extends JFrame {
     private final boolean isNewStep;
     private final JTextField stepNameTextField = new JTextField(20);
     private final JTextArea descriptionTextField = new JTextArea(3, 20);
-    private final JTextField xTextField = new JTextField("1");
-    private final JTextField yTextField = new JTextField("1");
-    private final JTextField widthTextField = new JTextField("1399", 3);
-    private final JTextField heightTextField = new JTextField("999", 3);
+    private final JTextField xTextField = new JTextField("0");
+    private final JTextField yTextField = new JTextField("0");
+    private final JTextField widthTextField = new JTextField("1400", 3);
+    private final JTextField heightTextField = new JTextField("1000", 3);
 
     private final Map<StepElementType, ElementContext> elementContexts = new EnumMap<>(StepElementType.class);
 
     public TestStepGUI(String testCaseName, TestStep testStep, Callback<TestStep> callback) {
         this.testCaseName = testCaseName;
         this.testStep = testStep;
-        isNewStep = testStep.getName() == null || testStep.getName().isEmpty();
+        isNewStep = testStep.getPassElement() == null;
         setTitle("TestStep Editor");
         setSize(500, 800);
         setResizable(false);
@@ -86,7 +85,7 @@ public class TestStepGUI extends JFrame {
         if (element.getAction() == StepAction.TYPE || element.getAction() == StepAction.PASTE) {
             context.action = element.getAction();
             context.textOrJsonTextField.setText(element.getOutputText());
-            context.enterKey = element.isEnterKey();
+            context.enterKey.setSelected(element.isEnterKey());
         }
 
     }
@@ -105,7 +104,7 @@ public class TestStepGUI extends JFrame {
         // Step name label and input
         JPanel namePanel = new JPanel(new BorderLayout());
         namePanel.add(new JLabel("Step name:    "), BorderLayout.WEST);
-        stepNameTextField.setText(isNewStep ? "" : testStep.getName());
+        stepNameTextField.setText(testStep.getName());
         namePanel.add(stepNameTextField, BorderLayout.CENTER);
         panel.add(namePanel);
 
@@ -312,7 +311,7 @@ public class TestStepGUI extends JFrame {
         textOption.setActionCommand(String.valueOf(DataSource.TEXT));
         JRadioButton jsonOption = new JRadioButton("JSON");
         jsonOption.setActionCommand(String.valueOf(DataSource.JSON));
-        JCheckBox enterKeyCheckbox = new JCheckBox("Enter Key", context.enterKey);
+
         if (context.textSource == DataSource.TEXT) {
             textOption.setSelected(true);
         } else {
@@ -322,7 +321,7 @@ public class TestStepGUI extends JFrame {
         context.textSourceGroup.add(jsonOption);
         sourceOptionPanel.add(textOption);
         sourceOptionPanel.add(jsonOption);
-        sourceOptionPanel.add(enterKeyCheckbox);
+        sourceOptionPanel.add(context.enterKey);
         sourcePanel.add(sourceOptionPanel);
 
         JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -363,7 +362,7 @@ public class TestStepGUI extends JFrame {
         JPanel elementPanel = new JPanel();
         JPanel hideOnTogglePanel = new JPanel();
         JPanel hideOnNonePanel = new JPanel();
-        boolean enterKey = false;
+        JCheckBox enterKey = new JCheckBox("Enter Key");
         public ElementContext(StepElementType elementType, String title) {
             this.elementType = elementType;
             this.title = title;
@@ -403,9 +402,7 @@ public class TestStepGUI extends JFrame {
         });
         panel.add(saveButton);
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(_ -> {
-            dispose();
-            throw new OperationCancelException();});
+        cancelButton.addActionListener(_ -> dispose());
         panel.add(cancelButton);
         return panel;
     }
@@ -458,7 +455,7 @@ public class TestStepGUI extends JFrame {
         if (stepAction == StepAction.TYPE || stepAction == StepAction.PASTE) {
             element.setTextSource(context.textSource);
             element.setOutputText(context.textOrJsonTextField.getText());
-            element.setEnterKey(context.enterKey);
+            element.setEnterKey(context.enterKey.isSelected());
         }
         return element;
     }

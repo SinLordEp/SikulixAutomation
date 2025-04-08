@@ -107,7 +107,7 @@ public class TestCaseService {
     public void addTestStep(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
-            TestStep testStep = new TestStep();
+            TestStep testStep = new TestStep("Step " + (testCase.getSteps().size()+1));
             new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
                 testCase.addStep(newTestStep);
                 dao.setDataIsChanged();

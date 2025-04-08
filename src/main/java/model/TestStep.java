@@ -3,7 +3,9 @@ package model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import model.enums.StepElementType;
 import org.sikuli.script.Region;
+import org.stringtemplate.v4.ST;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 
 /**
@@ -20,11 +22,13 @@ public class TestStep {
     private EnumMap<StepElementType, StepElement> stepElements = new EnumMap<>(StepElementType.class);
 
     public TestStep(){
-        stepElements.put(StepElementType.PRECONDITION, null);
-        stepElements.put(StepElementType.PASS, null);
-        stepElements.put(StepElementType.FAIL, null);
-        stepElements.put(StepElementType.RETRY, null);
-        stepElements.put(StepElementType.CLOSE, null);
+        Arrays.stream(StepElementType.values()).forEach(stepElementType -> stepElements.put(stepElementType, null));
+    }
+
+    @JsonIgnore
+    public TestStep(String name){
+        this.name = name;
+        Arrays.stream(StepElementType.values()).forEach(stepElementType -> stepElements.put(stepElementType, null));
     }
 
     public String getName() {

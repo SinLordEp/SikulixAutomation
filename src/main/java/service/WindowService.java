@@ -23,8 +23,7 @@ public class WindowService {
         }
         JNAUtils.bringWindowToFront(window);
         JNAUtils.setWindowSize(window, width, height);
-        JNAUtils.setWindowAtLocation(window, 1, 1);
-        JNAUtils.setWindowAlwaysOnTop(window, true);
+        JNAUtils.setWindowAtLocation(window, 0, 0);
         callback.onSubmit(new EventPackage(EventCommand.WINDOW_CAPTURED));
     }
 

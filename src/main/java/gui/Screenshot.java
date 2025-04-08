@@ -2,13 +2,10 @@ package gui;
 
 import interfaces.Callback;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Sin
@@ -16,7 +13,6 @@ import java.io.IOException;
 public class Screenshot extends JFrame{
     private Point startPoint;
     private Rectangle captureRect;
-    private BufferedImage imageCaptured;
 
     public Screenshot(Callback<BufferedImage> callback) {
         setUndecorated(true);
@@ -86,14 +82,10 @@ public class Screenshot extends JFrame{
     }
 
     private void captureAndSave(Rectangle rect, Callback<BufferedImage> callback) throws Exception {
+        BufferedImage imageCaptured;
         Robot robot = new Robot();
         imageCaptured = robot.createScreenCapture(rect);
         callback.onSubmit(imageCaptured);
     }
 
-    public void saveImage(String fileName, String filePath) throws IOException {
-        if(imageCaptured != null){
-            ImageIO.write(imageCaptured, "png", new File(filePath +  "/" + fileName));
-        }
-    }
 }

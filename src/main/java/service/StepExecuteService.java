@@ -24,14 +24,14 @@ public class StepExecuteService {
     }
 
     public StepState execute(TestStep step){
-        StepState state = StepState.NO_MATCH;
+        StepState state;
         executePreconditionElement(step);
-        state = executePassElement(step) == StepState.MATCHED ? StepState.PASS : state;
+        state = (executePassElement(step) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
         if(state != StepState.PASS){
-            state = executeRetryElement(step) == StepState.MATCHED ? StepState.PASS : state;
+            state = (executeRetryElement(step) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
         }
         if(state != StepState.PASS){
-            state = executeFailElement(step) == StepState.MATCHED ? StepState.FAIL : StepState.NO_MATCH;
+            state = (executeFailElement(step) == StepState.MATCHED) ? StepState.FAIL : StepState.NO_MATCH;
         }
         executeCloseElement(step);
         return state;
