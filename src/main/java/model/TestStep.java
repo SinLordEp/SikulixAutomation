@@ -3,8 +3,6 @@ package model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import model.enums.StepElementType;
 import org.sikuli.script.Region;
-import org.stringtemplate.v4.ST;
-
 import java.util.Arrays;
 import java.util.EnumMap;
 
