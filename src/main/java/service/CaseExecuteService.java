@@ -15,14 +15,12 @@ import java.util.LinkedHashMap;
 
 public class CaseExecuteService {
     private final TestCaseService testCaseService;
-    private final WindowService windowService;
     private final StepExecuteService stepExecuteService;
     private Thread testThread = null;
     private final Callback<EventPackage> callback;
 
     public CaseExecuteService(TestCaseService testCaseService, Callback<EventPackage> callback) {
         this.testCaseService = testCaseService;
-        this.windowService = new WindowService();
         this.stepExecuteService = new StepExecuteService();
         this.callback = callback;
     }
@@ -66,12 +64,8 @@ public class CaseExecuteService {
                 }
                 testCaseService.updateTestResult();
             });
-            finishTest();
+            callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
         });
     }
 
-    private void finishTest(){
-        windowService.unsetWindowAlwaysOnTop();
-        callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
-    }
 }
