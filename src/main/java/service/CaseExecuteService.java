@@ -27,9 +27,8 @@ public class CaseExecuteService {
         this.callback = callback;
     }
 
-    public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
-        testCaseService.initializeTestResults(currentTestPlan);
-        buildThread(currentTestPlan);
+    public void startTest(){
+        buildThread(testCaseService.getTestPlan());
         testThread.start();
     }
 

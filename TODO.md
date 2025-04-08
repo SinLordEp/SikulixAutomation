@@ -5,7 +5,7 @@
 3. ~~Extract JOptionPanel methods to a Utils class~~
 4. ~~Make the GUI more beautiful~~
 5. ~~Use implemented GraalVM to build a executable(Cancelled, not working well with swing)~~
-6. Build a single jar then pack it with JPackage to a single executable
+6. ~~Build a single jar then pack it with JPackage to a single executable~~
 7. ~~Modify all file paths based on project or jar parent path to make it more consistent~~
 8. ~~Generate the test result with specific failed step and info~~
 
@@ -20,11 +20,13 @@
 7. ~~Add control to prevent multi click on Start test button~~
 8. ~~Add a method to modify TestCase name and its image path along~~
 9. ~~Add a method to disable delete step when no step is selected(done by not working if index is -1)~~
-10. Add a text field or a button for getting window name
+10. ~~Add a text field or a button for getting window name~~
 11. ~~Add a progress bar to visualize test plan progress~~
 12. Add a loop testing option
 13. Add a repeat time input field for testing
 14. ~~Add a select all button for TestCase~~
+15. ~~Extract buildTestPlan method to service.~~
+16. ~~Add a Build test plan button instead of using Start button to build and run at the same time~~
 
 
 ## TestStepGUI

@@ -36,8 +36,14 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private int categoryIndex = 0;
     private int caseIndex = 0;
     private boolean caseAllSelected = false;
-    private final JLabel windowNameLabel = new JLabel();
+    private boolean windowCaptured = false;
+    private boolean testPlanBuilt = false;
+    private final JLabel windowNameLabel = new JLabel("No window is selected, please select target window!");
+    private final JButton selectWindowButton = new JButton("Select Window");
+    private final JButton captureWindowButton = new JButton("Capture Window");
+    private final JButton buildPlanButton = new JButton("Build Test Plan");
     private final JButton startButton = new JButton("Start");
+    private final JButton stopButton = new JButton("Stop");
     private final JProgressBar testProgressBar = new JProgressBar();
 
 
@@ -201,12 +207,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton captureButton = new JButton("Select target window");
-        captureButton.addActionListener(_ -> new WindowSelectorDialog(this, this::captureWindowName));
-        buttonPanel.add(captureButton);
+        selectWindowButton.addActionListener(_ -> new WindowSelectorDialog(this, this::captureWindowName));
+        buttonPanel.add(selectWindowButton);
 
         JPanel windowNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        windowNamePanel.setBorder(BorderFactory.createTitledBorder("Target window name: "));
+        windowNamePanel.setBorder(BorderFactory.createTitledBorder("Target window name"));
         windowNamePanel.add(windowNameLabel);
 
         JPanel modifyWindowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -222,7 +227,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         modifyWindowPanel.add(heightLabel);
         modifyWindowPanel.add(heightField);
 
-        JButton captureWindowButton = new JButton("Capture Window");
+        captureWindowButton.setEnabled(false);
         captureWindowButton.addActionListener(_ -> controller.captureWindow(windowNameLabel.getText(), Integer.parseInt(widthField.getText()), Integer.parseInt(heightField.getText()), this::onEvent));
         modifyWindowPanel.add(captureWindowButton);
 
@@ -233,13 +238,15 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton stopButton = new JButton("Stop");
+
+        buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases));
+        panel.add(buildPlanButton);
+
         startButton.addActionListener(_ -> {
-            startButton.setEnabled(false);
-            controller.startTest(createTestPlan());
+            controller.startTest();
+            toggleTestRelatedComponents(false);
         });
         startButton.setEnabled(false);
-        startButton.addPropertyChangeListener("enabled", _ -> stopButton.setEnabled(!startButton.isEnabled()));
         panel.add(startButton);
 
         stopButton.setEnabled(false);
@@ -400,23 +407,37 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         testProgressBar.setValue(currentProgress[0]);
     }
 
-    private LinkedHashMap<TestCase, CaseState> createTestPlan(){
-        LinkedHashMap<TestCase, CaseState> testPlan = new LinkedHashMap<>();
-        int[] totalStep = new int[1];
+    private void testPlanBuilt(int maxValue){
+        if(maxValue < 1){
+            return;
+        }
+        testProgressBar.setMaximum(maxValue);
         testProgressBar.setValue(0);
-        testCases.forEach((_, cases) -> cases.forEach(testCase -> {
-            if(testCase.isSelected()){
-                testCase.resetCurrentStep();
-                totalStep[0] += testCase.getSteps().size();
-                testPlan.put(testCase, CaseState.QUEUED);
-            }
-        }));
-        testProgressBar.setMaximum(totalStep[0]);
-        return testPlan;
+        testPlanBuilt = true;
+        if(windowCaptured){
+            startButton.setEnabled(true);
+        }
+    }
+
+    private void toggleTestRelatedComponents(boolean toggle){
+        selectWindowButton.setEnabled(toggle);
+        captureWindowButton.setEnabled(toggle);
+        buildPlanButton.setEnabled(toggle);
+        startButton.setEnabled(false);
+        stopButton.setEnabled(!toggle);
+        testPlanBuilt = false;
     }
 
     private void captureWindowName(String windowName){
         windowNameLabel.setText(windowName);
+        captureWindowButton.setEnabled(true);
+    }
+
+    private void windowCaptured(){
+        windowCaptured = true;
+        if(testPlanBuilt){
+            startButton.setEnabled(true);
+        }
     }
 
     @Override
@@ -424,7 +445,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         switch (eventPackage.getCommand()){
             case TESTCASE_CHANGED -> updateTestCases(eventPackage.getTestCases());
             case RESULT_CHANGED -> updateTestResults(eventPackage.getTestResults());
-            case TEST_FINISHED, WINDOW_CAPTURED -> startButton.setEnabled(true);
+            case TEST_FINISHED -> toggleTestRelatedComponents(true);
+            case WINDOW_CAPTURED -> windowCaptured();
+            case PLAN_BUILT -> testPlanBuilt(eventPackage.getTotalSteps());
             default -> throw new UndefinedException("Unknown command (To be perfected)");
         }
     }

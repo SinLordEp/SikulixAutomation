@@ -3,10 +3,9 @@ package data.dao;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import config.GlobalPaths;
-import exception.OperationCancelException;
 import model.enums.CaseState;
 import model.TestCase;
-import util.DialogUtils;
+
 
 import javax.swing.*;
 import java.io.File;
@@ -96,7 +95,7 @@ public class TestCaseDAO {
     }
 
     public LinkedHashMap<TestCase, CaseState> getTestResults() {
-        return testResults;
+        return new LinkedHashMap<>(testResults);
     }
 
     public void initializeTestResults(LinkedHashMap<TestCase, CaseState> testResults) {

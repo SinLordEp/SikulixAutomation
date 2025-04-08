@@ -14,7 +14,7 @@ public class WindowService {
     }
 
     public void captureWindow(String windowName, int width, int height, Callback<EventPackage> callback){
-        if(windowName.isEmpty()){
+        if(windowName.isEmpty() || windowName.equals("No window is selected, please select target window!")){
             return;
         }
         WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);

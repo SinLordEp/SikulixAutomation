@@ -5,10 +5,8 @@ import exception.ToolExceptionHandler;
 import gui.ToolGUI;
 import interfaces.Callback;
 import model.*;
-import model.enums.CaseState;
 import service.*;
 import interfaces.EventListener;
-
 import java.util.*;
 
 /**
@@ -73,8 +71,12 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.modifyTestStep(category, caseIndex, stepIndex), testCaseService.getClass().getName());
     }
 
-    public void startTest(LinkedHashMap<TestCase, CaseState> currentTestPlan){
-        exceptionHandler.run(()-> caseExecuteService.startTest(currentTestPlan), testCaseService.getClass().getName());
+    public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
+        exceptionHandler.run(()-> testCaseService.buildTestPlan(testCases), testCaseService.getClass().getName());
+    }
+
+    public void startTest(){
+        exceptionHandler.run(caseExecuteService::startTest, caseExecuteService.getClass().getName());
     }
 
     public void stopTest(){
@@ -99,8 +101,7 @@ public class ToolController {
     }
 
     private void notifyEvent(EventPackage eventPackage){
-        listeners.forEach(listener -> listener.onEvent(eventPackage));
+        listeners.forEach(listener -> exceptionHandler.run(() -> listener.onEvent(eventPackage), listener.getClass().getSimpleName()));
     }
-
 
 }

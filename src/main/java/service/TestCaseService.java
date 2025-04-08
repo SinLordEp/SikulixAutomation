@@ -14,6 +14,8 @@ import util.FileUtils;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class TestCaseService {
@@ -135,9 +137,23 @@ public class TestCaseService {
         }
     }
 
-    public void initializeTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
-        dao.initializeTestResults(testResults);
+    public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
+        LinkedHashMap<TestCase, CaseState> testPlan = new LinkedHashMap<>();
+        int[] totalStep = new int[1];
+        testCases.forEach((_, cases) -> cases.forEach(testCase -> {
+            if(testCase.isSelected()){
+                totalStep[0] += testCase.getSteps().size();
+                testCase.resetCurrentStep();
+                testPlan.put(testCase, CaseState.QUEUED);
+            }
+        }));
+        dao.initializeTestResults(testPlan);
+        callback.onSubmit(new EventPackage(EventCommand.PLAN_BUILT, totalStep[0]));
         callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+    }
+
+    public LinkedHashMap<TestCase, CaseState> getTestPlan(){
+        return dao.getTestResults();
     }
 
     public void updateTestResult(TestCase testCase, CaseState caseState){

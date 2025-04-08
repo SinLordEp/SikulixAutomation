@@ -11,6 +11,7 @@ public class EventPackage {
     private final EventCommand command;
     private HashMap<String, ArrayList<TestCase>> testCases;
     private LinkedHashMap<TestCase, CaseState> testResults;
+    private int totalSteps;
 
     public EventPackage(EventCommand command, HashMap<String, ArrayList<TestCase>> testCases) {
         this.command = command;
@@ -20,6 +21,11 @@ public class EventPackage {
     public EventPackage(EventCommand command, LinkedHashMap<TestCase, CaseState> testResults) {
         this.command = command;
         this.testResults = testResults;
+    }
+
+    public EventPackage(EventCommand command, int totalSteps) {
+        this.command = command;
+        this.totalSteps = totalSteps;
     }
 
     public EventPackage(EventCommand command) {
@@ -38,4 +44,7 @@ public class EventPackage {
         return testResults;
     }
 
+    public int getTotalSteps() {
+        return totalSteps;
+    }
 }

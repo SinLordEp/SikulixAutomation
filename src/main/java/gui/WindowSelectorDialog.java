@@ -16,11 +16,10 @@ public class WindowSelectorDialog extends JDialog {
     private final JList<String> windowList = new JList<>(windowListModel);
 
     public WindowSelectorDialog(JFrame owner, Callback<String> callback) {
-        super(owner, "Select Window", true);
+        super(owner, "Searching window by name", true);
         setLayout(new BorderLayout());
         setSize(400, 300);
         setLocationRelativeTo(owner);
-
         JTextField searchField = new JTextField();
         add(searchField, BorderLayout.NORTH);
 
