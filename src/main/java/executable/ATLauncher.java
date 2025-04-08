@@ -2,6 +2,8 @@ package executable;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import controller.ToolController;
+import org.apache.logging.log4j.core.config.Configurator;
+
 
 import javax.swing.*;
 import java.net.URI;
@@ -15,6 +17,7 @@ public class ATLauncher {
 
     public static void main(String[] args) {
         loadFlatLightLaf();
+        loadLogger();
         new ToolController().run();
     }
 
@@ -24,6 +27,10 @@ public class ATLauncher {
         } catch (Exception e) {
             System.err.println("Cannot setup FlatLaf");
         }
+    }
+
+    private static void loadLogger(){
+        Configurator.initialize(null, "src\\main\\resources\\log4j2.xml");
     }
 
     public static Path getCurrentParentPath() {

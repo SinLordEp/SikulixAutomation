@@ -166,7 +166,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         });
         buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
-
         return panel;
     }
 

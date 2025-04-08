@@ -8,6 +8,10 @@ import model.enums.CaseState;
 import model.enums.EventCommand;
 import model.enums.StepState;
 import interfaces.Callback;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import util.SikulixUtils;
 
 
@@ -18,6 +22,7 @@ public class CaseExecuteService {
     private final StepExecuteService stepExecuteService;
     private Thread testThread = null;
     private final Callback<EventPackage> callback;
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     public CaseExecuteService(TestCaseService testCaseService, Callback<EventPackage> callback) {
         this.testCaseService = testCaseService;
@@ -40,6 +45,7 @@ public class CaseExecuteService {
         testThread = new Thread(() -> {
             currentTestPlan.forEach((testCase, _) -> {
                 try {
+                    logger.debug("Executing TestCase: {}", testCase);
                     Thread.sleep(500);
                     SikulixUtils.setImagePath(testCase.getName());
                     testCase.getSteps().forEach(testStep ->
@@ -47,23 +53,22 @@ public class CaseExecuteService {
                         testCase.nextCurrentStep();
                         testCaseService.updateTestResult(testCase, CaseState.ONGOING);
                         StepState stepState = stepExecuteService.execute(testStep);
-                        if (stepState == StepState.FAIL) {
-                            throw new TestStepFailedException("Defined error detected");
-                        }
-                        if (stepState == StepState.NO_MATCH) {
-                            throw new TestStepFailedException("Expected result is not detected");
+                        if (stepState != StepState.PASS) {
+                            throw new TestStepFailedException(testStep.toString());
                         }
                     });
                     testCaseService.updateTestResult(testCase, CaseState.PASS);
                 } catch (TestStepFailedException e) {
-                    System.err.printf("Test case %s has failed with cause: %s%n", testCase.getName(), e.getMessage());
+                    logger.debug("TestCase: {} failed at TestStep: {}", testCase, e.getMessage());
                     testCaseService.updateTestResult(testCase, CaseState.FAIL);
                 } catch (InterruptedException e) {
                     testCaseService.updateTestResult(testCase, CaseState.INTERRUPT);
                     throw new OperationCancelException();
                 }
+                logger.debug("TestCase: {} executed successfully", testCase);
                 testCaseService.updateTestResult();
             });
+            logger.debug("Test plan is finished");
             callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
         });
     }
