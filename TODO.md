@@ -27,7 +27,7 @@
 14. ~~Add a select all button for TestCase~~
 15. ~~Extract buildTestPlan method to service.~~
 16. ~~Add a Build test plan button instead of using Start button to build and run at the same time~~
-
+17. Add tooltip to disable button
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in step info panel~~
