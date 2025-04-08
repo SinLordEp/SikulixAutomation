@@ -34,6 +34,7 @@ public class CaseExecuteService {
 
     public void stopTest(){
         testThread.interrupt();
+        testCaseService.updateTestResult();
         callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
     }
 
