@@ -9,6 +9,7 @@
 7. ~~Modify all file paths based on project or jar parent path to make it more consistent~~
 8. ~~Generate the test result with specific failed step and info~~
 9. ~~Implement logger~~
+10. Added support for input json then repeat same testStep while data remain
 
 
 ## ToolGUI
@@ -45,7 +46,7 @@
 8. ~~Add a similarity text field~~
 9. Add a read image from file option and copy it to target root
 10. ~~Add enter key boolean checkbox~~
-11. Add control to image name and step name
-12. Mark the none null element as green
-13. Auto generate image name by its testCase,step and element type name
+11. ~~Add control to image name and step name~~
+12. ~~Mark the none null element as green~~
+13. ~~Auto generate image name by its testCase,step and element type name~~
 

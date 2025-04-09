@@ -168,7 +168,6 @@ public class TestStepGUI extends JFrame {
     }
 
     private JPanel createElementPanel(ElementContext context) {
-        setupToggleButton(context);
         setupMatchTypePanel(context);
         setupTimeOutAndSimilarityPanel(context);
         setupMatchInputSection(context);
@@ -178,12 +177,14 @@ public class TestStepGUI extends JFrame {
         context.hideOnTogglePanel.add(context.hideOnNonePanel);
         context.elementPanel.add(context.hideOnTogglePanel);
         context.hideOnTogglePanel.setVisible(false);
+        context.elementPanel.setBorder(BorderFactory.createEmptyBorder(10,5,10,5));
         return context.elementPanel;
     }
 
-    private void setupToggleButton(ElementContext context) {
+    private void setupMatchTypePanel(ElementContext context) {
+        JPanel togglePanel = new JPanel(new GridLayout(1, 1));
+        togglePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         JButton toggleButton = new JButton("▶ " + context.title);
-        toggleButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         toggleButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, toggleButton.getPreferredSize().height));
         toggleButton.setPreferredSize(new Dimension(0, 30));
         toggleButton.addActionListener(_ -> {
@@ -192,14 +193,18 @@ public class TestStepGUI extends JFrame {
             toggleButton.setText((visible ? "▼ " : "▶ ") + context.title);
             context.elementPanel.revalidate();
         });
-        context.elementPanel.add(toggleButton);
-    }
+        togglePanel.add(toggleButton);
+        context.elementPanel.add(togglePanel);
 
-    private void setupMatchTypePanel(ElementContext context) {
         JPanel matchTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ActionListener visibilityUpdater = _ -> {
             context.matchType = DataSource.valueOf(context.matchTypeGroup.getSelection().getActionCommand());
             context.hideOnNonePanel.setVisible(context.matchType != DataSource.NONE);
+            if(context.matchType == DataSource.NONE){
+                toggleButton.setBackground(Color.white);
+            }else {
+                toggleButton.setBackground(new Color(174, 239, 174));
+            }
             context.elementPanel.revalidate();
             context.elementPanel.repaint();
         };
@@ -215,10 +220,8 @@ public class TestStepGUI extends JFrame {
             context.matchTypeGroup.add(button);
             matchTypePanel.add(button);
         }
+        SwingUtilities.invokeLater(() -> visibilityUpdater.actionPerformed(null));
 
-        if (context.elementType != StepElementType.PASS) {
-            SwingUtilities.invokeLater(() -> visibilityUpdater.actionPerformed(null));
-        }
 
         context.hideOnTogglePanel.add(matchTypePanel);
     }
@@ -239,7 +242,7 @@ public class TestStepGUI extends JFrame {
 
     private void setupMatchInputSection(ElementContext context) {
         JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        labelPanel.add(new JLabel("Image name or Text:"));
+        labelPanel.add(new JLabel("Image name / Text to find:"));
         context.hideOnNonePanel.add(labelPanel);
         context.imageOrTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         context.hideOnNonePanel.add(context.imageOrTextField);
