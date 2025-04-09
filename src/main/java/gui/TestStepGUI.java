@@ -1,12 +1,14 @@
 package gui;
 
 import exception.ImageIOException;
+import exception.OperationCancelException;
 import model.*;
 import model.enums.DataSource;
 import model.enums.StepAction;
 import model.enums.StepElementType;
 import org.sikuli.script.Region;
 import interfaces.Callback;
+import util.DialogUtils;
 import util.ImageUtils;
 import util.SikulixUtils;
 import util.SwingUtils;
@@ -276,6 +278,9 @@ public class TestStepGUI extends JFrame {
         screenshotButton.addActionListener(_ -> new Screenshot(captured -> {
             ctx.image = captured;
             setImageToLabel(imageLabel, ctx.image);
+            if(ctx.imageOrTextField.getText().isEmpty()){
+                ctx.imageOrTextField.setText("%s_%s_%s".formatted(testCaseName, stepNameTextField.getText(), ctx.elementType));
+            }
         }));
     }
 
@@ -397,6 +402,19 @@ public class TestStepGUI extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
         JButton saveButton = new JButton("Save Step");
         saveButton.addActionListener(_ -> {
+            if(stepNameTextField.getText().isEmpty()){
+                DialogUtils.showWarningDialog(this, "Field empty", "Step name cannot be empty!");
+                return;
+            }
+            elementContexts.forEach((_, context) -> {
+                if(context.matchType == DataSource.NONE){
+                    return;
+                }
+                if(context.imageOrTextField.getText().isEmpty()){
+                    DialogUtils.showErrorDialog(this, "Field empty", "Image name or Text is empty!");
+                    throw new OperationCancelException();
+                }
+            });
             callback.onSubmit(buildTestStep());
             dispose();
         });
