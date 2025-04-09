@@ -9,7 +9,9 @@
 7. ~~Modify all file paths based on project or jar parent path to make it more consistent~~
 8. ~~Generate the test result with specific failed step and info~~
 9. ~~Implement logger~~
-10. Added support for input json then repeat same testStep while data remain
+10. Add support for input json then repeat same testStep while data remain in CaseExecuteService
+11. Add param for StepExecuteService when json is needed and inject the JsonObject
+
 
 
 ## ToolGUI
@@ -34,6 +36,8 @@
 19. Make testStepGUI pop up location related to ToolGUI
 20. Make getPath pop up location related to ToolGUI and its default name should change by operation
 21. ~~Add function to reorder JList~~
+22. Add a panel to import json
+23. Build plan will check if json is selected and contains all the params for testcase (event)
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in step info panel~~
@@ -49,4 +53,10 @@
 11. ~~Add control to image name and step name~~
 12. ~~Mark the none null element as green~~
 13. ~~Auto generate image name by its testCase,step and element type name~~
+14. Make Frame a Dialog
+
+## TestCaseGUI
+1. Modify name field
+2. JList with step needed params
+
 

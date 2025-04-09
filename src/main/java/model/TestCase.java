@@ -11,6 +11,7 @@ import java.util.List;
 public class TestCase {
     private String name;
     private ArrayList<TestStep> steps = new ArrayList<>();
+    private ArrayList<String> params = new ArrayList<>();
     @JsonIgnore
     private boolean selected = false;
     @JsonIgnore
@@ -41,6 +42,21 @@ public class TestCase {
 
     public void setSteps(ArrayList<TestStep> steps) {
         this.steps = steps;
+    }
+
+    public ArrayList<String> getParams() {
+        return params;
+    }
+    public void setParams(ArrayList<String> params) {
+        this.params = params;
+    }
+
+    @JsonIgnore
+    public int getStepCount() {
+        return steps.size();
+    }
+    public void addParam(String param) {
+        this.params.add(param);
     }
 
     @JsonIgnore
@@ -76,4 +92,6 @@ public class TestCase {
     public String toString() {
         return name;
     }
+
+
 }

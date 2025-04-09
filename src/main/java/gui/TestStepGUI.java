@@ -26,7 +26,7 @@ import java.util.*;
  * @author Sin
  */
 public class TestStepGUI extends JFrame {
-    private final String testCaseName;
+    private final TestCase testCase;
     private final TestStep testStep;
     private final boolean isNewStep;
     private final JTextField stepNameTextField = new JTextField(20);
@@ -38,8 +38,8 @@ public class TestStepGUI extends JFrame {
 
     private final Map<StepElementType, ElementContext> elementContexts = new EnumMap<>(StepElementType.class);
 
-    public TestStepGUI(String testCaseName, TestStep testStep, Callback<TestStep> callback) {
-        this.testCaseName = testCaseName;
+    public TestStepGUI(TestCase testCase, TestStep testStep, Callback<TestStep> callback) {
+        this.testCase = testCase;
         this.testStep = testStep;
         isNewStep = testStep.getPassElement() == null;
         setTitle("TestStep Editor");
@@ -270,7 +270,7 @@ public class TestStepGUI extends JFrame {
         if (!isNewStep && testStep.getStepElements().get(ctx.elementType) != null) {
             // Sikulix Robot.class can not be called in a swing awake event
             new Thread(() -> {
-                BufferedImage img = ImageUtils.loadImage(testCaseName + File.separator + testStep.getStepElements().get(ctx.elementType).getImageNameOrText());
+                BufferedImage img = ImageUtils.loadImage(testCase + File.separator + testStep.getStepElements().get(ctx.elementType).getImageNameOrText());
                 SwingUtilities.invokeLater(() -> {
                     ctx.image = img;
                     setImageToLabel(imageLabel, ctx.image);
@@ -282,7 +282,7 @@ public class TestStepGUI extends JFrame {
             ctx.image = captured;
             setImageToLabel(imageLabel, ctx.image);
             if(ctx.imageOrTextField.getText().isEmpty()){
-                ctx.imageOrTextField.setText("%s_%s_%s".formatted(testCaseName, stepNameTextField.getText(), ctx.elementType));
+                ctx.imageOrTextField.setText("%s_%s_%s".formatted(testCase, stepNameTextField.getText(), ctx.elementType));
             }
         }));
     }
@@ -344,7 +344,7 @@ public class TestStepGUI extends JFrame {
         wrapper.add(sourcePanel);
 
         // Toggle label and input field
-        ActionListener formatSwitch = _ -> sourceLabel.setText(textOption.isSelected() ? "Output Text:" : "Json file path:");
+        ActionListener formatSwitch = _ -> sourceLabel.setText(textOption.isSelected() ? "Output Text:" : "Json field:");
         textOption.addActionListener(formatSwitch);
         jsonOption.addActionListener(formatSwitch);
         if(context.action == StepAction.TYPE || context.action == StepAction.PASTE){
@@ -463,7 +463,7 @@ public class TestStepGUI extends JFrame {
         element.setMatchType(context.matchType);
         if(context.matchType == DataSource.IMAGE){
             try {
-                ImageUtils.saveImage(context.image, testCaseName + File.separator + context.imageOrTextField.getText() + ".PNG");
+                ImageUtils.saveImage(context.image, testCase + File.separator + context.imageOrTextField.getText() + ".PNG");
             } catch (IOException e) {
                 throw new ImageIOException("Cannot write image to target path");
             }
@@ -477,6 +477,9 @@ public class TestStepGUI extends JFrame {
             element.setTextSource(context.textSource);
             element.setOutputText(context.textOrJsonTextField.getText());
             element.setEnterKey(context.enterKey.isSelected());
+            if(context.textSource == DataSource.JSON){
+                testCase.addParam(context.textOrJsonTextField.getText());
+            }
         }
         return element;
     }

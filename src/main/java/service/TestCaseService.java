@@ -114,7 +114,7 @@ public class TestCaseService {
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
             TestStep testStep = new TestStep("Step " + (testCase.getSteps().size()+1));
-            new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
+            new TestStepGUI(testCase, testStep, newTestStep -> {
                 testCase.addStep(newTestStep);
                 dao.setDataIsChanged();
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
@@ -135,7 +135,7 @@ public class TestCaseService {
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
             TestStep testStep = testCase.getSteps().get(stepIndex);
-            new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
+            new TestStepGUI(testCase, testStep, newTestStep -> {
                 testCase.getSteps().set(stepIndex, newTestStep);
                 dao.setDataIsChanged();
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
