@@ -152,6 +152,30 @@ public class TestStep implements Serializable {
         this.height = height;
     }
 
+    @JsonIgnore
+    public TestStep deepCopy() {
+        TestStep copy = new TestStep();
+        copy.setName(this.name);
+        copy.setDescription(this.description);
+        copy.setJsonPath(this.jsonPath);
+        copy.setX(this.x);
+        copy.setY(this.y);
+        copy.setWidth(this.width);
+        copy.setHeight(this.height);
+
+        EnumMap<StepElementType, StepElement> newMap = new EnumMap<>(StepElementType.class);
+        for (StepElementType type : StepElementType.values()) {
+            StepElement original = this.stepElements.get(type);
+            if (original != null) {
+                newMap.put(type, original.deepCopy());
+            } else {
+                newMap.put(type, null);
+            }
+        }
+        copy.setStepElements(newMap);
+
+        return copy;
+    }
 
     @Override
     public String toString() {

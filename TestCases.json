@@ -165,12 +165,12 @@
       "stepElements" : {
         "PASS" : {
           "matchType" : "IMAGE",
-          "action" : "TYPE",
+          "action" : "PASTE",
           "imageNameOrText" : "Busqueda_nombreContiene_input.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
-          "textSource" : "TEXT",
-          "outputText" : "aaaaaaa",
+          "textSource" : "JSON",
+          "outputText" : "nombre",
           "enterKey" : true
         },
         "PRECONDITION" : null,
@@ -220,7 +220,8 @@
           "enterKey" : false
         }
       }
-    } ]
+    } ],
+    "params" : [ "nombre" ]
   } ],
   "Tienda" : [ {
     "name" : "2.1.2.1 Tienda",
@@ -272,7 +273,8 @@
         "RETRY" : null,
         "CLOSE" : null
       }
-    } ]
+    } ],
+    "params" : [ ]
   }, {
     "name" : "2.1.2 Tienda",
     "steps" : [ {
@@ -332,6 +334,7 @@
         "RETRY" : null,
         "CLOSE" : null
       }
-    } ]
+    } ],
+    "params" : [ ]
   } ]
 }

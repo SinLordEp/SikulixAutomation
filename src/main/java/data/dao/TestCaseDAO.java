@@ -1,7 +1,9 @@
 package data.dao;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exception.FileIOException;
 import model.enums.CaseState;
 import model.TestCase;
 
@@ -16,8 +18,10 @@ import java.util.*;
  */
 public class TestCaseDAO {
     private String configPath;
+    private JsonNode jsonNode = null;
     private HashMap<String, ArrayList<TestCase>> categories = new HashMap<>();
-    private LinkedHashMap<TestCase, CaseState> testResults;
+    private List<String> testResults;
+    private List<TestCase> testPlan;
     private boolean dataChanged = false;
 
     public TestCaseDAO() {
@@ -87,31 +91,36 @@ public class TestCaseDAO {
         this.configPath = configPath;
     }
 
-    public LinkedHashMap<TestCase, CaseState> getTestResults() {
-        return new LinkedHashMap<>(testResults);
+    public List<TestCase> getTestPlan() {
+        return new ArrayList<>(testPlan);
     }
 
-    public void initializeTestResults(LinkedHashMap<TestCase, CaseState> testResults) {
-        this.testResults = new LinkedHashMap<>(testResults);
+    public void initializeTestPlan(List<TestCase> testPlan){
+        this.testPlan = new ArrayList<>(testPlan);
     }
 
-    public void updateTestResult(TestCase testCase, CaseState caseState){
-        testResults.put(testCase, caseState);
+    public void updateTestPlan(int index, TestCase testCase) {
+        testPlan.set(index, testCase);
+    }
+
+    public void initializeTestResults() {
+        testResults = new ArrayList<>();
+        testResults.add("Test Case;Case State;Failed Step;Failure Description;Json Param");
+    }
+
+    public void updateTestResult(TestCase testCase, String jsonParam){
+        StringBuilder sb = new StringBuilder();
+        sb.append(testCase).append(";").append(testCase.getState()).append(";");
+        if(testCase.getState() == CaseState.FAIL){
+            sb.append(testCase.getCurrentTestStep()).append(";").append(testCase.getCurrentTestStep().getDescription()).append(";").append(jsonParam);
+        }else{
+            sb.append("NONE").append(";").append("NONE").append(";").append(jsonParam);
+        }
+        testResults.add(sb.toString());
     }
 
     public void generateTestResult(String path) throws IOException {
-        List<String> output = new ArrayList<>();
-        output.add("Test Case;Case State;Test Step;Step Description");
-        testResults.forEach((testCase,caseState) -> {
-            String line;
-            if(caseState == CaseState.PASS){
-                line = testCase + ";" + caseState + ";None;None";
-            }else{
-                line = testCase + ";" + caseState + ";" + testCase.getCurrentTestStep().getName() + ";" + testCase.getCurrentTestStep().getDescription();
-            }
-            output.add(line);
-        });
-        Files.write(Paths.get(path), output);
+        Files.write(Paths.get(path), testResults);
     }
 
     public boolean isDataChanged() {
@@ -122,4 +131,21 @@ public class TestCaseDAO {
         this.dataChanged = true;
     }
 
+    public void setupJsonNode(String path) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        this.jsonNode = mapper.readTree(Paths.get(path).toFile());
+    }
+
+    public JsonNode getJsonByCaseAndIndex(String caseName, int iterateIndex){
+        if(jsonNode.has(caseName)){
+            JsonNode testCaseNode = jsonNode.get(caseName);
+            return testCaseNode.get(iterateIndex);
+        }else{
+            throw new FileIOException("No json param for case: %s".formatted(caseName));
+        }
+    }
+
+    public JsonNode getJsonNode() {
+        return jsonNode;
+    }
 }

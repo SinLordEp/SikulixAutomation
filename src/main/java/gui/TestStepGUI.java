@@ -85,7 +85,7 @@ public class TestStepGUI extends JFrame {
         context.action = element.getAction();
 
         if (element.getAction() == StepAction.TYPE || element.getAction() == StepAction.PASTE) {
-            context.action = element.getAction();
+            context.textSource = element.getTextSource();
             context.textOrJsonTextField.setText(element.getOutputText());
             context.enterKey.setSelected(element.isEnterKey());
         }
@@ -474,10 +474,11 @@ public class TestStepGUI extends JFrame {
         StepAction stepAction = StepAction.valueOf(context.actionGroup.getSelection().getActionCommand());
         element.setAction(stepAction);
         if (stepAction == StepAction.TYPE || stepAction == StepAction.PASTE) {
-            element.setTextSource(context.textSource);
+            DataSource textSource = DataSource.valueOf(context.textSourceGroup.getSelection().getActionCommand());
+            element.setTextSource(textSource);
             element.setOutputText(context.textOrJsonTextField.getText());
             element.setEnterKey(context.enterKey.isSelected());
-            if(context.textSource == DataSource.JSON){
+            if(textSource == DataSource.JSON){
                 testCase.addParam(context.textOrJsonTextField.getText());
             }
         }

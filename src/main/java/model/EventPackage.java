@@ -1,16 +1,16 @@
 package model;
 
-import model.enums.CaseState;
 import model.enums.EventCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
+
 
 public class EventPackage {
     private final EventCommand command;
     private HashMap<String, ArrayList<TestCase>> testCases;
-    private LinkedHashMap<TestCase, CaseState> testResults;
+    private List<TestCase> testPlan;
     private int totalSteps;
 
     public EventPackage(EventCommand command, HashMap<String, ArrayList<TestCase>> testCases) {
@@ -18,9 +18,9 @@ public class EventPackage {
         this.testCases = testCases;
     }
 
-    public EventPackage(EventCommand command, LinkedHashMap<TestCase, CaseState> testResults) {
+    public EventPackage(EventCommand command, List<TestCase> testPlan) {
         this.command = command;
-        this.testResults = testResults;
+        this.testPlan = testPlan;
     }
 
     public EventPackage(EventCommand command, int totalSteps) {
@@ -40,8 +40,8 @@ public class EventPackage {
         return testCases;
     }
 
-    public LinkedHashMap<TestCase, CaseState> getTestResults() {
-        return testResults;
+    public List<TestCase> getTestPlan() {
+        return testPlan;
     }
 
     public int getTotalSteps() {

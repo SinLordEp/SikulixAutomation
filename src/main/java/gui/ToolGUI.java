@@ -19,13 +19,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author Sin
  */
 public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final ToolController controller;
-    private final TestResultTableModel resultModel = new TestResultTableModel(new LinkedHashMap<>());
+    private final TestResultTableModel resultModel = new TestResultTableModel(new ArrayList<>());
     private final DefaultListModel<String> categoryListModel = new DefaultListModel<>();
     private final JList<String> categoryList = new JList<>(categoryListModel);
     private final DefaultListModel<TestCase> caseListModel = new DefaultListModel<>();
@@ -87,7 +88,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton load = new JButton("Load Test Case");
         load.addActionListener(_ -> {
-            controller.loadConfig();
+            controller.loadTestCases();
             categoryIndex = 0;
             caseIndex = 0;
         });
@@ -95,7 +96,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
         JButton save = new JButton("Save Test Case");
         save.addActionListener(_ -> {
-            if(controller.saveConfig()){
+            if(controller.saveTestCases()){
                 DialogUtils.showInfoDialog(this,"Save test case", "Successfully saved config");
             }else {
                 DialogUtils.showErrorDialog(this, "Save test case", "Error saving test case");
@@ -237,6 +238,10 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        JButton jsonButton = new JButton("Load Json");
+        panel.add(jsonButton);
+        jsonButton.addActionListener(_ -> controller.loadJson());
 
         buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases));
         panel.add(buildPlanButton);
@@ -407,10 +412,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }
     }
 
-    private void updateUITestResults(LinkedHashMap<TestCase, CaseState> testResults){
-        resultModel.setData(testResults);
+    private void repaintTestPlan(List<TestCase> testPlan){
+        resultModel.setData(testPlan);
         int[] currentProgress = new int[1];
-        testResults.forEach((testCase, state) -> {
+        testPlan.forEach(testCase -> {
+            CaseState state = testCase.getState();
             if(state == CaseState.PASS || state == CaseState.FAIL){
                 currentProgress[0] += testCase.getSteps().size();
                 return;}
@@ -458,7 +464,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     public void onEvent(EventPackage eventPackage) {
         switch (eventPackage.getCommand()){
             case TESTCASE_CHANGED -> updateUITestCases(eventPackage.getTestCases());
-            case RESULT_CHANGED -> updateUITestResults(eventPackage.getTestResults());
+            case RESULT_CHANGED -> repaintTestPlan(eventPackage.getTestPlan());
             case TEST_FINISHED -> toggleTestRelatedComponents(true);
             case WINDOW_CAPTURED -> windowCaptured();
             case PLAN_BUILT -> testPlanBuilt(eventPackage.getTotalSteps());

@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import model.enums.DataSource;
 import model.enums.StepAction;
 
@@ -89,4 +90,19 @@ public class StepElement implements Serializable {
     public void setTextSource(DataSource textSource) {
         this.textSource = textSource;
     }
+
+    @JsonIgnore
+    public StepElement deepCopy() {
+        StepElement copy = new StepElement();
+        copy.setMatchType(this.matchType);
+        copy.setAction(this.action);
+        copy.setImageNameOrText(this.imageNameOrText);
+        copy.setSimilarity(this.similarity);
+        copy.setTimeoutSec(this.timeoutSec);
+        copy.setTextSource(this.textSource);
+        copy.setOutputText(this.outputText);
+        copy.setEnterKey(this.enterKey);
+        return copy;
+    }
+
 }

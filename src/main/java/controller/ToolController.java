@@ -31,11 +31,11 @@ public class ToolController {
         new ToolGUI(this).run();
     }
 
-    public void loadConfig(){
+    public void loadTestCases(){
         exceptionHandler.run(testCaseService::loadConfig, testCaseService.getClass().getName());
     }
 
-    public boolean saveConfig(){
+    public boolean saveTestCases(){
         return exceptionHandler.run(testCaseService::saveConfig, testCaseService.getClass().getName());
     }
 
@@ -77,6 +77,10 @@ public class ToolController {
 
     public void modifyTestStepOrder(String category, int caseIndex, int oldStepIndex, int newStepIndex){
         exceptionHandler.run(()-> testCaseService.modifyTestStepOrder( category, caseIndex, oldStepIndex, newStepIndex), testCaseService.getClass().getName());
+    }
+
+    public void loadJson(){
+        exceptionHandler.run(testCaseService::loadJson, testCaseService.getClass().getName());
     }
 
     public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){

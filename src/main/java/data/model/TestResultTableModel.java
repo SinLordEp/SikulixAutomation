@@ -7,12 +7,11 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
-import java.util.LinkedHashMap;
+import java.util.List;
 
 public class TestResultTableModel extends AbstractTableModel {
     private final String[] columnNames = {"Test Case", "Test Step", "Status"};
-    private LinkedHashMap<TestCase, CaseState> dataMap;
-    private TestCase[] testCases;
+    private List<TestCase> testPlan;
     private final DefaultTableCellRenderer colorRenderer = new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -35,19 +34,18 @@ public class TestResultTableModel extends AbstractTableModel {
         }
     };
 
-    public TestResultTableModel(LinkedHashMap<TestCase, CaseState> testResults) {
-        setData(testResults);
+    public TestResultTableModel(List<TestCase> testPlan) {
+        setData(testPlan);
     }
 
-    public void setData(LinkedHashMap<TestCase, CaseState> testResults) {
-        this.dataMap = testResults;
-        this.testCases = testResults.keySet().toArray(new TestCase[0]);
+    public void setData(List<TestCase> testPlan) {
+        this.testPlan = testPlan;
         fireTableDataChanged();
     }
 
     @Override
     public int getRowCount() {
-        return dataMap.size();
+        return testPlan.size();
     }
 
     @Override
@@ -58,9 +56,9 @@ public class TestResultTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         return switch (col) {
-            case 0 -> testCases[row].getName();
-            case 1 -> testCases[row].getCurrentTestStep().getName();
-            case 2 -> dataMap.get(testCases[row]).toString();
+            case 0 -> testPlan.get(row).getName();
+            case 1 -> testPlan.get(row).getCurrentTestStep().getName();
+            case 2 -> testPlan.get(row).getState().name();
             default -> null;
         };
     }

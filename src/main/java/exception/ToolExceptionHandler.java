@@ -12,7 +12,8 @@ public class ToolExceptionHandler implements ExceptionHandler {
             UndefinedException.class, "Undefined exception has occurred.",
             FileIOException.class, "Failed to read or write file.",
             UnknownElementException.class, "Not supported step element was found.",
-            WindowErrorException.class, "Failed to manage target window frame.");
+            WindowErrorException.class, "Failed to manage target window frame.",
+            ConfigMissingException.class, "Cannot proceed. ");
 
     @Override
     public <T> T run(ExceptionWithReturn<T> function, String className, String... text) {

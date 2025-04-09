@@ -1,12 +1,13 @@
 package service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import config.GlobalPaths;
 import data.dao.TestCaseDAO;
+import exception.ConfigMissingException;
 import exception.FileIOException;
 import exception.OperationCancelException;
 import gui.TestStepGUI;
 import model.*;
-import model.enums.CaseState;
 import model.enums.EventCommand;
 import interfaces.Callback;
 import util.CollectionUtils;
@@ -17,7 +18,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import static config.GlobalExtensions.CSV_EXTENSION;
@@ -150,32 +150,56 @@ public class TestCaseService {
         callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
     }
 
+    public void loadJson(){
+        try {
+            String path = FileUtils.getPath(JSON_EXTENSION);
+            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
+                path += JSON_EXTENSION;
+            }
+            dao.setupJsonNode(path);
+        } catch (IOException e) {
+            throw new FileIOException("Cannot read json file: " + e.getMessage());
+        }
+    }
+
+    public JsonNode getJsonByCaseAndIndex(String caseName, int iterateIndex){
+        return dao.getJsonByCaseAndIndex(caseName, iterateIndex);
+    }
+
     public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
-        LinkedHashMap<TestCase, CaseState> testPlan = new LinkedHashMap<>();
+        List<TestCase> testPlan = new ArrayList<>();
         int[] totalStep = new int[1];
         testCases.forEach((_, cases) -> cases.forEach(testCase -> {
             if(testCase.isSelected()){
+                if(!testCase.getParams().isEmpty() && dao.getJsonNode() == null){
+                    throw new ConfigMissingException("TestCase: " + testCase.getName() + " has parameters but no json file is loaded, please load json file first before building test plan");
+                }
                 totalStep[0] += testCase.getSteps().size();
                 testCase.resetCurrentStep();
-                testPlan.put(testCase, CaseState.QUEUED);
+                testPlan.add(testCase.deepCopy());
             }
         }));
-        dao.initializeTestResults(testPlan);
+        dao.initializeTestPlan(testPlan);
+        dao.initializeTestResults();
         callback.onSubmit(new EventPackage(EventCommand.PLAN_BUILT, totalStep[0]));
-        callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+        callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestPlan()));
     }
 
-    public LinkedHashMap<TestCase, CaseState> getTestPlan(){
-        return dao.getTestResults();
+    public List<TestCase> getTestPlan(){
+        return dao.getTestPlan();
     }
 
-    public void updateTestResult(TestCase testCase, CaseState caseState){
-        dao.updateTestResult(testCase, caseState);
-        callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+    public void updateTestPlan(int index, TestCase testCase){
+        dao.updateTestPlan(index, testCase);
+        callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestPlan()));
     }
 
-    public void updateTestResult(){
-        callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestResults()));
+    public void updateTestResult(TestCase testCase, String jsonParam){
+        dao.updateTestResult(testCase, jsonParam);
+    }
+
+    public void repaintTestResult(){
+        callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestPlan()));
     }
 
     public void generateResult(){

@@ -1,6 +1,7 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import model.enums.CaseState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,10 @@ public class TestCase {
     private boolean selected = false;
     @JsonIgnore
     private int currentStep = -1;
+    @JsonIgnore
+    private boolean iterating = false;
+    @JsonIgnore
+    private CaseState state = CaseState.QUEUED;
 
     public TestCase() {
     }
@@ -87,6 +92,41 @@ public class TestCase {
     public void resetCurrentStep() {
         this.currentStep = -1;
     }
+
+    @JsonIgnore
+    public boolean isIterating() {
+        return iterating;
+    }
+
+    @JsonIgnore
+    public void setIterating(boolean iterating) {
+        this.iterating = iterating;
+    }
+
+    @JsonIgnore
+    public CaseState getState() {
+        return state;
+    }
+
+    @JsonIgnore
+    public void setState(CaseState state) {
+        this.state = state;
+    }
+
+    @JsonIgnore
+    public TestCase deepCopy() {
+        TestCase copy = new TestCase(this.name);
+        copy.setParams(new ArrayList<>(this.params));
+
+        ArrayList<TestStep> copiedSteps = new ArrayList<>();
+        for (TestStep step : this.steps) {
+            copiedSteps.add(step.deepCopy());
+        }
+        copy.setSteps(copiedSteps);
+        copy.iterating = this.iterating;
+        return copy;
+    }
+
 
     @Override
     public String toString() {

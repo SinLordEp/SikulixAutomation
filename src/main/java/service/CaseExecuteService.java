@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import util.SikulixUtils;
 
 
-import java.util.LinkedHashMap;
+import java.util.List;
 
 public class CaseExecuteService {
     private final TestCaseService testCaseService;
@@ -37,40 +37,68 @@ public class CaseExecuteService {
 
     public void stopTest(){
         testThread.interrupt();
-        testCaseService.updateTestResult();
+        testCaseService.repaintTestResult();
         callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
     }
 
-    private void buildThread(LinkedHashMap<TestCase, CaseState> currentTestPlan){
+    private void buildThread(List<TestCase> currentTestPlan){
         testThread = new Thread(() -> {
-            currentTestPlan.forEach((testCase, _) -> {
+            int[] caseIndex = new int[1];
+            int[] paramIndex = new int[1];
+            String[] caseName = new String[1];
+            currentTestPlan.forEach(testCase -> {
                 try {
                     logger.debug("Executing TestCase: {}", testCase);
                     Thread.sleep(500);
                     SikulixUtils.setImagePath(testCase.getName());
-                    testCase.getSteps().forEach(testStep ->
-                    {
+                    testCase.getSteps().forEach(testStep -> {
                         testCase.nextCurrentStep();
-                        testCaseService.updateTestResult(testCase, CaseState.ONGOING);
-                        StepState stepState = stepExecuteService.execute(testStep);
+                        testCase.setState(CaseState.ONGOING);
+                        testCaseService.updateTestPlan(caseIndex[0], testCase);
+                        StepState stepState = StepState.NO_MATCH;
+                        if(paramCheck(testCase, caseName, caseIndex)){
+                            stepState = testCase.isIterating() ?
+                                    stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(caseName[0], paramIndex[0]++))
+                                    : stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(caseName[0], paramIndex[0]));
+                        }else{
+                            stepExecuteService.execute(testStep);
+                        }
                         if (stepState != StepState.PASS) {
                             throw new TestStepFailedException(testStep.toString());
                         }
                     });
-                    testCaseService.updateTestResult(testCase, CaseState.PASS);
+                    testCase.setState(CaseState.PASS);
+                    testCaseService.updateTestPlan(caseIndex[0]++ ,testCase);
                 } catch (TestStepFailedException e) {
                     logger.debug("TestCase: {} failed at TestStep: {}", testCase, e.getMessage());
-                    testCaseService.updateTestResult(testCase, CaseState.FAIL);
+                    testCase.setState(CaseState.FAIL);
+                    testCaseService.updateTestPlan(caseIndex[0]++, testCase);
                 } catch (InterruptedException e) {
-                    testCaseService.updateTestResult(testCase, CaseState.INTERRUPT);
+                    testCase.setState(CaseState.INTERRUPT);
+                    testCaseService.updateTestPlan(caseIndex[0]++, testCase);
                     throw new OperationCancelException();
                 }
                 logger.debug("TestCase: {} executed successfully", testCase);
-                testCaseService.updateTestResult();
+                testCaseService.repaintTestResult();
+                testCaseService.updateTestResult(testCase, "");
             });
             logger.debug("Test plan is finished");
             callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
         });
     }
+
+    private boolean paramCheck(TestCase testCase, String[] caseName, int[] index){
+        if(testCase.getParams().isEmpty()){
+            caseName[0] = null;
+            index[0] = 0;
+        }else{
+            if(!testCase.isIterating()){
+                index[0] = 0;
+            }
+            caseName[0] = testCase.getName();
+        }
+        return caseName[0] != null;
+    }
+
 
 }

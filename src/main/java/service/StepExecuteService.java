@@ -1,7 +1,9 @@
 package service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import exception.UndefinedException;
 import model.StepElement;
+import model.enums.DataSource;
 import model.enums.StepElementType;
 import model.enums.StepState;
 import model.TestStep;
@@ -26,66 +28,68 @@ public class StepExecuteService {
         //No parameter needed for now
     }
 
-    public StepState execute(TestStep step){
+    public StepState execute(TestStep step, JsonNode... params){
         logger.debug("Executing TestStep {}", step);
         StepState state;
-        executePreconditionElement(step);
-        state = (executePassElement(step) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
+        executePreconditionElement(step, params);
+        state = (executePassElement(step, params) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
         if(state != StepState.PASS){
-            state = (executeRetryElement(step) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
+            state = (executeRetryElement(step, params) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
         }
         if(state != StepState.PASS){
-            state = (executeFailElement(step) == StepState.MATCHED) ? StepState.FAIL : StepState.NO_MATCH;
+            state = (executeFailElement(step, params) == StepState.MATCHED) ? StepState.FAIL : StepState.NO_MATCH;
         }
-        executeCloseElement(step);
+        executeCloseElement(step, params);
         logger.debug("TestStep {} executed successfully with State {}", step, state);
         return state;
     }
 
-    private void executePreconditionElement(TestStep step){
+    private void executePreconditionElement(TestStep step, JsonNode... params){
         StepElement element = step.getStepElements().get(StepElementType.PRECONDITION);
         if(element != null){
             logger.debug("Precondition element found, executing...");
-            executeElement(step.getRegion(), element);
+            executeElement(step.getRegion(), element, params);
         }
     }
-    private StepState executePassElement(TestStep step){
+    private StepState executePassElement(TestStep step, JsonNode... params){
         logger.debug("Executing pass element...");
-        return executeElement(step.getRegion(), step.getStepElements().get(StepElementType.PASS));
+        return executeElement(step.getRegion(), step.getStepElements().get(StepElementType.PASS), params);
     }
 
-    private StepState executeRetryElement(TestStep step){
+    private StepState executeRetryElement(TestStep step, JsonNode... params){
         StepElement element = step.getStepElements().get(StepElementType.RETRY);
         if(element != null){
             logger.debug("Retry element found, executing...");
-            return executePassElement(step);
+            if(executeElement(step.getRegion(), element, params) == StepState.MATCHED){
+                return executePassElement(step, params);
+            }
         }
         return StepState.NO_MATCH;
     }
 
-    private StepState executeFailElement(TestStep step){
+    private StepState executeFailElement(TestStep step, JsonNode... params){
         StepElement element = step.getStepElements().get(StepElementType.FAIL);
         if(element != null){
             logger.debug("Fail element found, executing...");
-            return executeElement(step.getRegion(), element);
+            return executeElement(step.getRegion(), element, params);
         }
         return StepState.NO_MATCH;
     }
 
-    private void executeCloseElement(TestStep step){
+    private void executeCloseElement(TestStep step, JsonNode... params){
         StepElement element = step.getStepElements().get(StepElementType.CLOSE);
         if(element != null){
             logger.debug("Close element found, executing...");
-            executeElement(step.getRegion(), element);
+            executeElement(step.getRegion(), element, params);
         }
     }
 
-    private StepState executeElement(Region region, StepElement element){
+    private StepState executeElement(Region region, StepElement element, JsonNode... params){
         logger.debug("Executing operation {} in Region: x:{} y: {} width:{} height:{}", element.getAction(), region.getX(), region.getY(), region.getW(), region.getH());
         return switch (element.getAction()){
             case FIND -> find(region, element);
             case CLICK -> findAndClick(region, element);
-            case TYPE, PASTE -> findAndText(region, element);
+            case TYPE, PASTE -> findAndText(region, element, params);
         };
     }
 
@@ -97,8 +101,14 @@ public class StepExecuteService {
         return handleFindFailed(() -> SikulixUtils.clickOnFound(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec()));
     }
 
-    private StepState findAndText(Region region, StepElement element){
-        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), element.getOutputText(), element.getAction(), element.isEnterKey()));
+    private StepState findAndText(Region region, StepElement element, JsonNode... params){
+        String output;
+        if(params.length != 0 && element.getTextSource() == DataSource.JSON){
+            output = params[0].get(element.getOutputText()).textValue();
+        }else{
+            output = element.getOutputText();
+        }
+        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), output, element.getAction(), element.isEnterKey()));
     }
 
 
