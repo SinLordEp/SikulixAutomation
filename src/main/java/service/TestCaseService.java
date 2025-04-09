@@ -9,6 +9,7 @@ import model.*;
 import model.enums.CaseState;
 import model.enums.EventCommand;
 import interfaces.Callback;
+import util.CollectionUtils;
 import util.DialogUtils;
 import util.FileUtils;
 
@@ -17,12 +18,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+
+import static config.GlobalExtensions.CSV_EXTENSION;
+import static config.GlobalExtensions.JSON_EXTENSION;
 
 public class TestCaseService {
     private final TestCaseDAO dao = new TestCaseDAO();
     private final Callback<EventPackage> callback;
-    private static final String JSON_EXTENSION = ".json";
-    private static final String CSV_EXTENSION = ".csv";
 
     public TestCaseService(Callback<EventPackage> callback) {
         this.callback = callback;
@@ -31,18 +34,14 @@ public class TestCaseService {
     public void loadConfig() {
         try {
             saveDataOnChanged();
-            String path = dao.getPath(JSON_EXTENSION);
-            if(path != null){
-                if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
-                    path += JSON_EXTENSION;
-                }
-                dao.loadConfig(path);
-                dao.setConfigPath(path);
-            }else{
-                throw new OperationCancelException();
+            String path = FileUtils.getPath(JSON_EXTENSION);
+            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
+                path += JSON_EXTENSION;
             }
-            if(!dao.getCategories().isEmpty()){
-                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            dao.loadConfig(path);
+            dao.setConfigPath(path);
+            if(!dao.getCategoryCopy().isEmpty()){
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
             }
         } catch (IOException e) {
             throw new FileIOException(e.getMessage());
@@ -53,7 +52,7 @@ public class TestCaseService {
         try {
             String path = dao.getConfigPath();
             if(path == null || path.isEmpty()){
-                path = dao.getPath(JSON_EXTENSION);
+                path = FileUtils.getPath(JSON_EXTENSION);
                 if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
                     path += JSON_EXTENSION;
                 }
@@ -67,7 +66,7 @@ public class TestCaseService {
     public void addCategory(String name){
         if(name != null && !name.isEmpty()){
             dao.addCategory(name);
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }else{
             throw new OperationCancelException();
         }
@@ -76,21 +75,21 @@ public class TestCaseService {
     public void deleteCategory(String category){
         if(category != null && !category.isEmpty()){
             dao.deleteCategory(category);
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }
     }
 
     public void addTestCase(String category, String name){
         if(name != null && !name.isEmpty()){
             dao.addTestCase(category, new TestCase(name));
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }
     }
 
     public void deleteTestCase(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             dao.deleteTestCase(category, caseIndex);
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }
     }
 
@@ -104,6 +103,13 @@ public class TestCaseService {
         testCase.setName(name);
     }
 
+    public void modifyTestCaseOrder(String category, int oldIndex, int newIndex){
+        ArrayList<TestCase> testCases = dao.getCategories().get(category);
+        CollectionUtils.moveElementInList(testCases, oldIndex, newIndex);
+        dao.setDataIsChanged();
+        callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+    }
+
     public void addTestStep(String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
@@ -111,7 +117,7 @@ public class TestCaseService {
             new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
                 testCase.addStep(newTestStep);
                 dao.setDataIsChanged();
-                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
             });
         }
     }
@@ -121,7 +127,7 @@ public class TestCaseService {
             TestCase testCase = dao.getTestCase(category, caseIndex);
             testCase.getSteps().remove(stepIndex);
             dao.setDataIsChanged();
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }
     }
 
@@ -132,9 +138,16 @@ public class TestCaseService {
             new TestStepGUI(testCase.getName(), testStep, newTestStep -> {
                 testCase.getSteps().set(stepIndex, newTestStep);
                 dao.setDataIsChanged();
-                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategories()));
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
             });
         }
+    }
+
+    public void modifyTestStepOrder(String category, int caseIndex, int oldStepIndex, int newStepIndex){
+        List<TestStep> testSteps = dao.getTestCase(category,caseIndex).getSteps();
+        CollectionUtils.moveElementInList(testSteps, oldStepIndex, newStepIndex);
+        dao.setDataIsChanged();
+        callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
     }
 
     public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
@@ -166,7 +179,7 @@ public class TestCaseService {
     }
 
     public void generateResult(){
-        String path = dao.getPath(CSV_EXTENSION);
+        String path = FileUtils.getPath(CSV_EXTENSION);
         if (!path.toLowerCase().endsWith(CSV_EXTENSION)) {
             path += CSV_EXTENSION;
         }

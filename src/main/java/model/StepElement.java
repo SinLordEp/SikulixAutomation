@@ -3,10 +3,15 @@ package model;
 import model.enums.DataSource;
 import model.enums.StepAction;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * @author Sin
  */
-public class StepElement {
+public class StepElement implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private DataSource matchType = DataSource.IMAGE;
     private StepAction action = StepAction.FIND;
     private String imageNameOrText;

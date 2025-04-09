@@ -3,13 +3,18 @@ package model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import model.enums.StepElementType;
 import org.sikuli.script.Region;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.EnumMap;
 
 /**
  * @author Sin
  */
-public class TestStep {
+public class TestStep implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String name;
     private String description;
     private String jsonPath;

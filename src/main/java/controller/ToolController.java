@@ -59,6 +59,10 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.modifyTestCase(category, caseIndex, name), testCaseService.getClass().getName());
     }
 
+    public void modifyTestCaseOrder(String category, int oldCaseIndex, int newCaseIndex){
+        exceptionHandler.run(()-> testCaseService.modifyTestCaseOrder(category, oldCaseIndex, newCaseIndex), testCaseService.getClass().getName());
+    }
+
     public void addTestStep(String category, int caseIndex){
         exceptionHandler.run(()-> testCaseService.addTestStep(category, caseIndex), testCaseService.getClass().getName());
     }
@@ -69,6 +73,10 @@ public class ToolController {
 
     public void modifyTestStep(String category, int caseIndex, int stepIndex){
         exceptionHandler.run(()-> testCaseService.modifyTestStep(category, caseIndex, stepIndex), testCaseService.getClass().getName());
+    }
+
+    public void modifyTestStepOrder(String category, int caseIndex, int oldStepIndex, int newStepIndex){
+        exceptionHandler.run(()-> testCaseService.modifyTestStepOrder( category, caseIndex, oldStepIndex, newStepIndex), testCaseService.getClass().getName());
     }
 
     public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){

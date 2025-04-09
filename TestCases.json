@@ -223,6 +223,57 @@
     } ]
   } ],
   "Tienda" : [ {
+    "name" : "2.1.2.1 Tienda",
+    "steps" : [ {
+      "name" : "Step 1",
+      "description" : "Click referencia y introducir tres espacios luego Enter",
+      "jsonPath" : null,
+      "x" : 1,
+      "y" : 1,
+      "width" : 1399,
+      "height" : 999,
+      "stepElements" : {
+        "PASS" : {
+          "matchType" : "IMAGE",
+          "action" : "TYPE",
+          "imageNameOrText" : "1.PNG",
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "textSource" : "TEXT",
+          "outputText" : "   ",
+          "enterKey" : false
+        },
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    }, {
+      "name" : "Step 2",
+      "description" : "comprobar si sale panel de busqueda",
+      "jsonPath" : null,
+      "x" : 1,
+      "y" : 1,
+      "width" : 1399,
+      "height" : 999,
+      "stepElements" : {
+        "PASS" : {
+          "matchType" : "IMAGE",
+          "action" : "FIND",
+          "imageNameOrText" : "2.PNG",
+          "similarity" : 0.9,
+          "timeoutSec" : 2,
+          "textSource" : null,
+          "outputText" : null,
+          "enterKey" : false
+        },
+        "PRECONDITION" : null,
+        "FAIL" : null,
+        "RETRY" : null,
+        "CLOSE" : null
+      }
+    } ]
+  }, {
     "name" : "2.1.2 Tienda",
     "steps" : [ {
       "name" : "Step 1",
@@ -260,57 +311,6 @@
     }, {
       "name" : "Step 2",
       "description" : "Comprobar si el panel de venta ha salido",
-      "jsonPath" : null,
-      "x" : 1,
-      "y" : 1,
-      "width" : 1399,
-      "height" : 999,
-      "stepElements" : {
-        "PASS" : {
-          "matchType" : "IMAGE",
-          "action" : "FIND",
-          "imageNameOrText" : "2.PNG",
-          "similarity" : 0.9,
-          "timeoutSec" : 2,
-          "textSource" : null,
-          "outputText" : null,
-          "enterKey" : false
-        },
-        "PRECONDITION" : null,
-        "FAIL" : null,
-        "RETRY" : null,
-        "CLOSE" : null
-      }
-    } ]
-  }, {
-    "name" : "2.1.2.1 Tienda",
-    "steps" : [ {
-      "name" : "Step 1",
-      "description" : "Click referencia y introducir tres espacios luego Enter",
-      "jsonPath" : null,
-      "x" : 1,
-      "y" : 1,
-      "width" : 1399,
-      "height" : 999,
-      "stepElements" : {
-        "PASS" : {
-          "matchType" : "IMAGE",
-          "action" : "TYPE",
-          "imageNameOrText" : "1.PNG",
-          "similarity" : 0.9,
-          "timeoutSec" : 2,
-          "textSource" : "TEXT",
-          "outputText" : "   ",
-          "enterKey" : false
-        },
-        "PRECONDITION" : null,
-        "FAIL" : null,
-        "RETRY" : null,
-        "CLOSE" : null
-      }
-    }, {
-      "name" : "Step 2",
-      "description" : "comprobar si sale panel de busqueda",
       "jsonPath" : null,
       "x" : 1,
       "y" : 1,

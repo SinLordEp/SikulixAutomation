@@ -2,6 +2,7 @@ package gui;
 
 import controller.ToolController;
 import data.model.TestResultTableModel;
+import data.model.JListDragActionHandler;
 import exception.UndefinedException;
 import model.enums.CaseState;
 import model.EventPackage;
@@ -45,7 +46,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final JButton startButton = new JButton("Start");
     private final JButton stopButton = new JButton("Stop");
     private final JProgressBar testProgressBar = new JProgressBar();
-
 
     public ToolGUI(ToolController controller) {
         this.controller = controller;
@@ -325,18 +325,27 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             @Override
             public void mouseClicked(MouseEvent e) {
                 int index = caseList.locationToIndex(e.getPoint());
-                if (index >= 0) {
-                    Rectangle rect = caseList.getCellBounds(index, index);
-                    if (e.getX() - rect.x < 20) {
-                        TestCase testCase = caseListModel.getElementAt(index);
-                        testCase.setSelected(!testCase.isSelected());
-                        caseList.repaint();
-                    }else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-                        controller.modifyTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex(), DialogUtils.showInputDialog(null, "Modify Test case", "Input new name: "));
-                    }
+                if(index < 0){
+                    return;
+                }
+                Rectangle rect = caseList.getCellBounds(index, index);
+                if (e.getX() - rect.x < 20) {
+                    TestCase testCase = caseListModel.getElementAt(index);
+                    testCase.setSelected(!testCase.isSelected());
+                    caseList.repaint();
+                }else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                    controller.modifyTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex(), DialogUtils.showInputDialog(null, "Modify Test case", "Input new name: "));
+                }else{
+                    loadTestSteps(caseList.getSelectedValue());
                 }
             }
         });
+        caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        caseList.setDragEnabled(true);
+        caseList.setDropMode(DropMode.INSERT);
+        JListDragActionHandler dragHandler = new JListDragActionHandler();
+        dragHandler.setOrderChangeListener(((oldIndex, newIndex) -> controller.modifyTestCaseOrder(categoryList.getSelectedValue(), oldIndex, newIndex)));
+        caseList.setTransferHandler(dragHandler);
     }
 
     private void initializeStepList(){
@@ -359,6 +368,12 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 }
             }
         });
+        stepList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        stepList.setDragEnabled(true);
+        stepList.setDropMode(DropMode.INSERT);
+        JListDragActionHandler dragHandler = new JListDragActionHandler();
+        dragHandler.setOrderChangeListener((oldIndex, newIndex) -> controller.modifyTestStepOrder(categoryList.getSelectedValue(), caseList.getSelectedIndex(), oldIndex, newIndex));
+        stepList.setTransferHandler(dragHandler);
     }
 
     private static class CaseListRenderer extends JCheckBox implements ListCellRenderer<TestCase> {
@@ -378,7 +393,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         setVisible(true);
     }
 
-    public void updateTestCases(HashMap<String, ArrayList<TestCase>> testCases){
+    private void updateUITestCases(HashMap<String, ArrayList<TestCase>> testCases){
         this.testCases = testCases;
         categoryListModel.clear();
         categoryListModel.addAll(testCases.keySet());
@@ -392,7 +407,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }
     }
 
-    public void updateTestResults(LinkedHashMap<TestCase, CaseState> testResults){
+    private void updateUITestResults(LinkedHashMap<TestCase, CaseState> testResults){
         resultModel.setData(testResults);
         int[] currentProgress = new int[1];
         testResults.forEach((testCase, state) -> {
@@ -442,8 +457,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     @Override
     public void onEvent(EventPackage eventPackage) {
         switch (eventPackage.getCommand()){
-            case TESTCASE_CHANGED -> updateTestCases(eventPackage.getTestCases());
-            case RESULT_CHANGED -> updateTestResults(eventPackage.getTestResults());
+            case TESTCASE_CHANGED -> updateUITestCases(eventPackage.getTestCases());
+            case RESULT_CHANGED -> updateUITestResults(eventPackage.getTestResults());
             case TEST_FINISHED -> toggleTestRelatedComponents(true);
             case WINDOW_CAPTURED -> windowCaptured();
             case PLAN_BUILT -> testPlanBuilt(eventPackage.getTotalSteps());

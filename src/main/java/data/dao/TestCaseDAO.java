@@ -2,13 +2,10 @@ package data.dao;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import config.GlobalPaths;
 import model.enums.CaseState;
 import model.TestCase;
 
 
-import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -68,15 +65,11 @@ public class TestCaseDAO {
         setDataIsChanged();
     }
 
-    public String getPath(String extension) {
-        JFileChooser fileChooser = new JFileChooser(GlobalPaths.BASE_ROOT.toFile());
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setSelectedFile(new File("New config" + extension));
-        int result = fileChooser.showSaveDialog(null);
-        return result == JFileChooser.APPROVE_OPTION ? fileChooser.getSelectedFile().getAbsolutePath() : null;
+    public HashMap<String, ArrayList<TestCase>> getCategories() {
+        return categories;
     }
 
-    public HashMap<String, ArrayList<TestCase>> getCategories() {
+    public HashMap<String, ArrayList<TestCase>> getCategoryCopy() {
         HashMap<String, ArrayList<TestCase>> result = new HashMap<>();
         categories.forEach((k, v) -> result.put(k, new ArrayList<>(v)));
         return result;

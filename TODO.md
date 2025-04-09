@@ -31,6 +31,8 @@
 17. Add tooltip to disable button
 18. Add control to empty name input and cancel/window closing on rename/create
 19. Make testStepGUI pop up location related to ToolGUI
+20. Make getPath pop up location related to ToolGUI and its default name should change by operation
+21. ~~Add function to reorder JList~~
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in step info panel~~
