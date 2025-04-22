@@ -52,16 +52,19 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final JProgressBar testProgressBar = new JProgressBar();
 
     public ToolGUI(ToolController controller) {
+
         this.controller = controller;
         controller.addListener(this);
         setTitle("Testing Automation");
         setMinimumSize(new Dimension(400, 800));
         setPreferredSize(new Dimension(800, 800));
         setSize(new Dimension(800, 800));
+        JFrame parent = this;
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e){
-                controller.onWindowClosing();
+                controller.onWindowClosing(parent);
             }
         });
         setLocationRelativeTo(null);
@@ -92,7 +95,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton load = new JButton("Load Test Case");
         load.addActionListener(_ -> {
-            controller.loadTestCases();
+            controller.loadTestCases(this);
             categoryIndex = 0;
             caseIndex = 0;
         });
@@ -100,14 +103,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
         saveConfigButton.setEnabled(false);
         saveConfigButton.setBackground(Color.ORANGE);
-        saveConfigButton.addActionListener(_ -> {
-            if(controller.saveTestCases()){
-                DialogUtils.showInfoDialog(this,"Save test case", "Successfully saved config");
-                saveConfigButton.setEnabled(false);
-            }else {
-                DialogUtils.showErrorDialog(this, "Save test case", "Error saving test case");
-            }
-        });
+        saveConfigButton.addActionListener(_ -> controller.saveTestCases(this));
         panel.add(saveConfigButton);
 
         return panel;
@@ -250,7 +246,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         panel.add(jsonButton);
-        jsonButton.addActionListener(_ -> controller.loadJson());
+        jsonButton.addActionListener(_ -> controller.loadJson(this));
 
         buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases));
         panel.add(buildPlanButton);
@@ -286,7 +282,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         testProgressBar.setMinimum(0);
         panel.add(testProgressBar, BorderLayout.WEST);
         JButton generateButton = new JButton("Generate result");
-        generateButton.addActionListener(_ -> controller.generateResult());
+        generateButton.addActionListener(_ -> controller.generateResult(this));
         panel.add(generateButton, BorderLayout.EAST);
         panel.setBorder(BorderFactory.createEmptyBorder(5,2,5,2));
         return panel;
@@ -350,6 +346,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private void setupCaseListMouseListener(){
+        JFrame parent = this;
         caseList.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -366,7 +363,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                     }
                     caseList.repaint();
                 }else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-                    controller.modifyTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex(), DialogUtils.showInputDialog(null, "Modify Test case", "Input new name: "));
+                    controller.modifyTestCase(parent, categoryList.getSelectedValue(), caseList.getSelectedIndex());
                 }else{
                     loadTestSteps(caseList.getSelectedValue());
                 }
@@ -427,6 +424,11 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     public void run(){
         setVisible(true);
+    }
+
+    private void testCaseSaved(){
+        DialogUtils.showInfoDialog(this,"Save test case", "Successfully saved config");
+        saveConfigButton.setEnabled(false);
     }
 
     private void updateUITestCases(HashMap<String, ArrayList<TestCase>> testCases){
@@ -504,6 +506,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     @Override
     public void onEvent(EventPackage eventPackage) {
         switch (eventPackage.getCommand()){
+            case TESTCASE_SAVED -> testCaseSaved();
             case TESTCASE_CHANGED -> updateUITestCases(eventPackage.getTestCases());
             case RESULT_CHANGED -> repaintTestPlan(eventPackage.getTestPlan());
             case TEST_FINISHED -> toggleTestRelatedComponents(true);
