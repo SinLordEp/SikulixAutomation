@@ -103,6 +103,7 @@ public class TestCaseService {
         try {
             FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(input));
             testCase.setName(input);
+            dao.setDataIsChanged();
         } catch (IOException e) {
             throw new FileIOException("Failed to rename folder with cause: " + e.getMessage());
         }

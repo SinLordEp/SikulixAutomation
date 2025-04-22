@@ -41,6 +41,7 @@
 22. ~~Add a panel to import json~~
 23. ~~Build plan will check if JSON is selected and contains all the params for testcase (event)~~
 24. ~~Add a color indicator to all the functional buttons~~
+25. Redo the interaction with JList, use right-click event instead of double click
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in the step info panel~~

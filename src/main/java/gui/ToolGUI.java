@@ -159,15 +159,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         buttonPanel.add(allButton);
         JButton addButton = new JButton("+");
         addButton.addActionListener(_ -> controller.addTestCase(categoryList.getSelectedValue(), DialogUtils.showInputDialog(this, "Add test case", "Input the name of the new case:")));
-        buttonPanel.add(addButton);
-
-        JButton deleteButton = new JButton("-");
-        deleteButton.addActionListener(_ -> {
-            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
-                controller.deleteTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex());
-            }
-        });
-        buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
         return panel;
     }
@@ -325,12 +316,32 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setupCaseListSelectionListener();
         setupCaseListMouseListener();
+        setupCaseListMouseMotionListener();
         caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         caseList.setDragEnabled(true);
         caseList.setDropMode(DropMode.INSERT);
         JListDragActionHandler dragHandler = new JListDragActionHandler();
         dragHandler.setOrderChangeListener(((oldIndex, newIndex) -> controller.modifyTestCaseOrder(categoryList.getSelectedValue(), oldIndex, newIndex)));
         caseList.setTransferHandler(dragHandler);
+    }
+
+    private JPopupMenu setupCaseListPopupMenu(){
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem editItem = new JMenuItem("Edit");
+        editItem.addActionListener(e -> {
+            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
+                controller.modifyTestCase(this, categoryList.getSelectedValue(), caseList.getSelectedIndex());
+            }
+        });
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        deleteItem.addActionListener(_ -> {
+            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
+                controller.deleteTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex());
+            }
+        });
+        popupMenu.add(editItem);
+        popupMenu.add(deleteItem);
+        return popupMenu;
     }
 
     private void setupCaseListSelectionListener(){
@@ -347,7 +358,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private void setupCaseListMouseListener(){
-        JFrame parent = this;
+        JPopupMenu menu = setupCaseListPopupMenu();
         caseList.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -355,7 +366,13 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 if(index < 0){
                     return;
                 }
+                caseList.requestFocusInWindow();
+                caseList.setSelectedIndex(index);
                 Rectangle rect = caseList.getCellBounds(index, index);
+                if(SwingUtilities.isRightMouseButton(e) && e.getY() - rect.y < 20){
+                    menu.show(caseList, e.getX(), e.getY());
+                    return;
+                }
                 if (e.getX() - rect.x < 20) {
                     TestCase testCase = caseListModel.getElementAt(index);
                     testCase.setSelected(!testCase.isSelected());
@@ -363,11 +380,27 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                         jsonParamCheck(testCase);
                     }
                     caseList.repaint();
-                }else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-                    controller.modifyTestCase(parent, categoryList.getSelectedValue(), caseList.getSelectedIndex());
                 }else{
                     loadTestSteps(caseList.getSelectedValue());
                 }
+            }
+        });
+    }
+
+    private void setupCaseListMouseMotionListener(){
+        caseList.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int index = caseList.locationToIndex(e.getPoint());
+                if(index < 0 || index >= caseListModel.size()){
+                    return;
+                }
+                Rectangle rect = caseList.getCellBounds(index, index);
+                if (e.getX() - rect.x < 20 && e.getY() - rect.y < 20) {
+                    caseList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    return;
+                }
+                caseList.setCursor(Cursor.getDefaultCursor());
             }
         });
     }
