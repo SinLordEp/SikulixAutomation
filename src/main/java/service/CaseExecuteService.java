@@ -54,7 +54,8 @@ public class CaseExecuteService {
                         testCase.nextCurrentStep();
                         testCase.setState(CaseState.ONGOING);
                         testCaseService.updateTestPlan(caseIndex[0], testCase);
-                        StepState stepState = stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(testCase.getName(), paramIndex[0]));
+                        StepState stepState = testStep.getJsonParams().isEmpty() ? stepExecuteService.execute(testStep)
+                                : stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(testCase.getName(), paramIndex[0]));
                         if(testCase.isIterating()){
                             paramIndex[0]++;
                         }
@@ -81,5 +82,6 @@ public class CaseExecuteService {
             callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
         });
     }
+
 
 }

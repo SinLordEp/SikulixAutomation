@@ -33,11 +33,10 @@ public class TestCaseDAO {
         return mapper.readValue(Paths.get(path).toFile(), new TypeReference<>() {});
     }
 
-    public boolean testCaseCategoryToJson(String path, HashMap<String, ArrayList<TestCase>> category) throws IOException {
+    public void testCaseCategoryToJson(String path, HashMap<String, ArrayList<TestCase>> category) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get(path).toFile(), category);
         dataChanged = false;
-        return true;
     }
 
     public void loadConfig(String path) throws IOException {
