@@ -234,6 +234,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         windowInfoPanel.add(windowNamePanel);
 
         captureWindowButton.setEnabled(false);
+        captureWindowButton.setBackground(Color.ORANGE);
         captureWindowButton.addActionListener(_ -> controller.captureWindow(windowNameLabel.getText(), Integer.parseInt(widthField.getText()), Integer.parseInt(heightField.getText()), this::onEvent));
         buttonPanel.add(captureWindowButton);
 
