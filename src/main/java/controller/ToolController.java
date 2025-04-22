@@ -41,20 +41,20 @@ public class ToolController {
         exceptionHandler.run(() -> testCaseService.saveConfig(parent), testCaseService.getClass().getName());
     }
 
-    public void addCategory(String name){
-        exceptionHandler.run(()-> testCaseService.addCategory(name), testCaseService.getClass().getName());
+    public void addCategory(JFrame parent){
+        exceptionHandler.run(()-> testCaseService.addCategory(parent), testCaseService.getClass().getName());
     }
 
-    public void deleteCategory(String category){
-        exceptionHandler.run(()-> testCaseService.deleteCategory(category), testCaseService.getClass().getName());
+    public void deleteCategory(JFrame parent, String category){
+        exceptionHandler.run(()-> testCaseService.deleteCategory(parent, category), testCaseService.getClass().getName());
     }
 
-    public void addTestCase(String category, String name){
-        exceptionHandler.run(()-> testCaseService.addTestCase(category, name), testCaseService.getClass().getName());
+    public void addTestCase(JFrame parent, String category){
+        exceptionHandler.run(()-> testCaseService.addTestCase(parent, category), testCaseService.getClass().getName());
     }
 
-    public void deleteTestCase(String category, int caseIndex){
-        exceptionHandler.run(()-> testCaseService.deleteTestCase(category, caseIndex), testCaseService.getClass().getName());
+    public void deleteTestCase(JFrame parent, String category, int caseIndex){
+        exceptionHandler.run(()-> testCaseService.deleteTestCase(parent, category, caseIndex), testCaseService.getClass().getName());
     }
 
     public void modifyTestCase(JFrame parent, String category, int caseIndex){
@@ -69,8 +69,8 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.addTestStep(parent, category, caseIndex), testCaseService.getClass().getName());
     }
 
-    public void deleteTestStep(String category, int caseIndex, int stepIndex){
-        exceptionHandler.run(()-> testCaseService.deleteTestStep(category, caseIndex, stepIndex), testCaseService.getClass().getName());
+    public void deleteTestStep(JFrame parent, String category, int caseIndex, int stepIndex){
+        exceptionHandler.run(()-> testCaseService.deleteTestStep(parent, category, caseIndex, stepIndex), testCaseService.getClass().getName());
     }
 
     public void modifyTestStep(JFrame parent, String category, int caseIndex, int stepIndex){

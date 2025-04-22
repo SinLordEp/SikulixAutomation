@@ -126,13 +126,13 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.add(new JScrollPane(categoryList), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("+");
-        addButton.addActionListener(_ -> controller.addCategory(DialogUtils.showInputDialog(this, "Add category", "Input the name of the new category:")));
+        addButton.addActionListener(_ -> controller.addCategory(this));
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
         deleteButton.addActionListener(_ -> {
             if(categoryList.getSelectedIndex() != -1){
-                controller.deleteCategory(categoryList.getSelectedValue());
+                controller.deleteCategory(this, categoryList.getSelectedValue());
             }
         });
         buttonPanel.add(deleteButton);
@@ -158,7 +158,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         });
         buttonPanel.add(allButton);
         JButton addButton = new JButton("+");
-        addButton.addActionListener(_ -> controller.addTestCase(categoryList.getSelectedValue(), DialogUtils.showInputDialog(this, "Add test case", "Input the name of the new case:")));
+        addButton.addActionListener(_ -> controller.addTestCase(this, categoryList.getSelectedValue()));
+        buttonPanel.add(addButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
         return panel;
     }
@@ -175,7 +176,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JButton deleteButton = new JButton("-");
         deleteButton.addActionListener(_ -> {
             if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1 && stepList.getSelectedIndex() != -1){
-                controller.deleteTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex());
+                controller.deleteTestStep(this, categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex());
             }
         });
         buttonPanel.add(deleteButton);
@@ -328,7 +329,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private JPopupMenu setupCaseListPopupMenu(){
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem editItem = new JMenuItem("Edit");
-        editItem.addActionListener(e -> {
+        editItem.addActionListener(_ -> {
             if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
                 controller.modifyTestCase(this, categoryList.getSelectedValue(), caseList.getSelectedIndex());
             }
@@ -336,7 +337,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JMenuItem deleteItem = new JMenuItem("Delete");
         deleteItem.addActionListener(_ -> {
             if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
-                controller.deleteTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex());
+                controller.deleteTestCase(this, categoryList.getSelectedValue(), caseList.getSelectedIndex());
             }
         });
         popupMenu.add(editItem);

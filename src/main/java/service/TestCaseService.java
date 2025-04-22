@@ -64,33 +64,46 @@ public class TestCaseService {
         }
     }
 
-    public void addCategory(String name){
-        if(name != null && !name.isEmpty()){
-            dao.addCategory(name);
+    public void addCategory(JFrame parent){
+        String input = DialogUtils.showInputDialog(parent, "Add category", "Input the name of the new category:");
+        if(!input.isEmpty()){
+            dao.addCategory(input);
             callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }else{
             throw new OperationCancelException();
         }
     }
 
-    public void deleteCategory(String category){
+    public void deleteCategory(JFrame parent, String category){
         if(category != null && !category.isEmpty()){
-            dao.deleteCategory(category);
+            if(DialogUtils.showConfirmDialog(parent, "Deleting category", "Delete Category: \"%s\"?".formatted(category)) == JOptionPane.YES_OPTION){
+                dao.deleteCategory(category);
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+            }else {
+                throw new OperationCancelException();
+            }
+        }
+    }
+
+    public void addTestCase(JFrame parent, String category){
+        if(category == null || category.isEmpty()){
+            return;
+        }
+        String input = DialogUtils.showInputDialog(parent, "Add test case", "Input the name of the new case:");
+        if(!input.isEmpty()){
+            dao.addTestCase(category, new TestCase(input));
             callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
         }
     }
 
-    public void addTestCase(String category, String name){
-        if(name != null && !name.isEmpty()){
-            dao.addTestCase(category, new TestCase(name));
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
-        }
-    }
-
-    public void deleteTestCase(String category, int caseIndex){
+    public void deleteTestCase(JFrame parent, String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
-            dao.deleteTestCase(category, caseIndex);
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+            if(DialogUtils.showConfirmDialog(parent, "Deleting test case", "Delete TestCase: \"%s\"?".formatted(dao.getTestCase(category, caseIndex).getName()) ) == JOptionPane.YES_OPTION){
+                dao.deleteTestCase(category, caseIndex);
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+            }else{
+                throw new OperationCancelException();
+            }
         }
     }
 
@@ -100,13 +113,15 @@ public class TestCaseService {
         if(input.isEmpty()){
             throw new OperationCancelException();
         }
-        try {
-            FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(input));
-            testCase.setName(input);
-            dao.setDataIsChanged();
-        } catch (IOException e) {
-            throw new FileIOException("Failed to rename folder with cause: " + e.getMessage());
+        if(!testCase.getSteps().isEmpty()){
+            try {
+                FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(input));
+            } catch (IOException e) {
+                throw new FileIOException("Failed to rename folder with cause: " + e.getMessage());
+            }
         }
+        testCase.setName(input);
+        dao.setDataIsChanged();
     }
 
     public void modifyTestCaseOrder(String category, int oldIndex, int newIndex){
@@ -128,12 +143,16 @@ public class TestCaseService {
         }
     }
 
-    public void deleteTestStep(String category, int caseIndex, int stepIndex){
+    public void deleteTestStep(JFrame parent, String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
-            testCase.getSteps().remove(stepIndex);
-            dao.setDataIsChanged();
-            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+            if(DialogUtils.showConfirmDialog(parent, "Deleting test step", "Delete TestStep: \"%s\"?".formatted(testCase.getSteps().get(stepIndex).getName()) ) == JOptionPane.YES_OPTION){
+                testCase.getSteps().remove(stepIndex);
+                dao.setDataIsChanged();
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+            }else{
+                throw new OperationCancelException();
+            }
         }
     }
 
@@ -223,7 +242,7 @@ public class TestCaseService {
 
     public void saveDataOnChanged(JFrame parent) {
         if(dao.isDataChanged()){
-            switch(DialogUtils.showConfirmDialog(parent, "Warning", "TestCase has changed, do you want to save config before proceed?")){
+            switch(DialogUtils.showCancelableConfirmDialog(parent, "Warning", "TestCase has changed, do you want to save config before proceed?")){
                 case JOptionPane.YES_OPTION: saveConfig(parent);
                     break;
                 case JOptionPane.NO_OPTION: break;

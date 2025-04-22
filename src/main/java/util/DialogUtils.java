@@ -8,7 +8,7 @@ import java.awt.*;
 public class DialogUtils {
     private DialogUtils() {}
 
-    public static int showConfirmDialog(Component parent, String title, String message) {
+    public static int showCancelableConfirmDialog(Component parent, String title, String message) {
         return JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
     }
 
@@ -25,10 +25,10 @@ public class DialogUtils {
     }
 
     public static String showInputDialog(Component parent, String title, String message) {
-        String input = JOptionPane.showInputDialog(parent, message, title, JOptionPane.PLAIN_MESSAGE);
-        if(input == null){
-            throw new OperationCancelException();
-        }
-        return input;
+        return JOptionPane.showInputDialog(parent, message, title, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    public static int showConfirmDialog(Component parent, String title, String message) {
+        return JOptionPane.showConfirmDialog(parent, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
     }
 }
