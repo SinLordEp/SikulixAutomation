@@ -56,7 +56,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         controller.addListener(this);
         setTitle("Testing Automation");
         setMinimumSize(new Dimension(400, 800));
-        setPreferredSize(new Dimension(400, 800));
+        setPreferredSize(new Dimension(800, 800));
+        setSize(new Dimension(800, 800));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e){
@@ -181,7 +182,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("+");
-        addButton.addActionListener(_ -> controller.addTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex()));
+        addButton.addActionListener(_ -> controller.addTestStep(this, categoryList.getSelectedValue(), caseList.getSelectedIndex()));
         buttonPanel.add(addButton);
 
         JButton deleteButton = new JButton("-");
@@ -390,6 +391,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             label.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
             return label;
         });
+        JFrame parent = this;
         stepList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -397,7 +399,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
                     int index = stepList.locationToIndex(e.getPoint());
                     if (index != -1) {
-                        controller.modifyTestStep(categoryList.getSelectedValue(), caseList.getSelectedIndex(), index);
+                        controller.modifyTestStep(parent, categoryList.getSelectedValue(), caseList.getSelectedIndex(), index);
                     }
                 }
             }

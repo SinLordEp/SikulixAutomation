@@ -110,11 +110,11 @@ public class TestCaseService {
         callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
     }
 
-    public void addTestStep(String category, int caseIndex){
+    public void addTestStep(JFrame parent, String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
             TestStep testStep = new TestStep("Step " + (testCase.getSteps().size()+1));
-            new TestStepGUI(testCase, testStep, newTestStep -> {
+            new TestStepGUI(parent, testCase, testStep, newTestStep -> {
                 testCase.addStep(newTestStep);
                 dao.setDataIsChanged();
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
@@ -131,11 +131,11 @@ public class TestCaseService {
         }
     }
 
-    public void modifyTestStep(String category, int caseIndex, int stepIndex){
+    public void modifyTestStep(JFrame parent, String category, int caseIndex, int stepIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
             TestStep testStep = testCase.getSteps().get(stepIndex);
-            new TestStepGUI(testCase, testStep, newTestStep -> {
+            new TestStepGUI(parent, testCase, testStep, newTestStep -> {
                 testCase.getSteps().set(stepIndex, newTestStep);
                 dao.setDataIsChanged();
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));

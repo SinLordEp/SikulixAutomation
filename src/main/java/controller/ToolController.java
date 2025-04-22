@@ -7,6 +7,8 @@ import interfaces.Callback;
 import model.*;
 import service.*;
 import interfaces.EventListener;
+
+import javax.swing.*;
 import java.util.*;
 
 /**
@@ -63,16 +65,16 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.modifyTestCaseOrder(category, oldCaseIndex, newCaseIndex), testCaseService.getClass().getName());
     }
 
-    public void addTestStep(String category, int caseIndex){
-        exceptionHandler.run(()-> testCaseService.addTestStep(category, caseIndex), testCaseService.getClass().getName());
+    public void addTestStep(JFrame parent, String category, int caseIndex){
+        exceptionHandler.run(()-> testCaseService.addTestStep(parent, category, caseIndex), testCaseService.getClass().getName());
     }
 
     public void deleteTestStep(String category, int caseIndex, int stepIndex){
         exceptionHandler.run(()-> testCaseService.deleteTestStep(category, caseIndex, stepIndex), testCaseService.getClass().getName());
     }
 
-    public void modifyTestStep(String category, int caseIndex, int stepIndex){
-        exceptionHandler.run(()-> testCaseService.modifyTestStep(category, caseIndex, stepIndex), testCaseService.getClass().getName());
+    public void modifyTestStep(JFrame parent, String category, int caseIndex, int stepIndex){
+        exceptionHandler.run(()-> testCaseService.modifyTestStep(parent, category, caseIndex, stepIndex), testCaseService.getClass().getName());
     }
 
     public void modifyTestStepOrder(String category, int caseIndex, int oldStepIndex, int newStepIndex){

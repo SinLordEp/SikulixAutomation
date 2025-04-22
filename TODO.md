@@ -12,7 +12,7 @@
 10. ~~Add support for input JSON, then repeat the same testStep while data remain in CaseExecuteService~~
 11. ~~Add param for StepExecuteService when JSON is needed and inject the JsonObject~~
 12. ~~Add a control for eliminating the last space char in a path if it exists~~
-13. Move region from step to element so the matching will be more precise and accurate
+13. Move Region from step to element so the matching will be more precise and accurate
 
 
 
@@ -35,12 +35,12 @@
 16. ~~Add a Build test plan button instead of using the Start button to build and run at the same time~~
 17. Add tooltip to disable button
 18. Add control to empty name input and cancel/window closing on rename/create
-19. Make testStepGUI pop up location related to ToolGUI
+19. ~~Make testStepGUI pop up location related to ToolGUI~~
 20. Make getPath pop up location related to ToolGUI and its default name should change by operation
 21. ~~Add function to reorder JList~~
 22. ~~Add a panel to import json~~
 23. ~~Build plan will check if JSON is selected and contains all the params for testcase (event)~~
-24. Add a color indicator to all the functional buttons
+24. ~~Add a color indicator to all the functional buttons~~
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in the step info panel~~
@@ -56,6 +56,7 @@
 11. ~~Add control to image name and step name~~
 12. ~~Mark the none-null element as green~~
 13. ~~Auto generate image name by its testCase, step and element type name~~
+14. Add a text field for clicking times
 
 
 ## TestCaseGUI

@@ -38,14 +38,14 @@ public class TestStepGUI extends JFrame {
 
     private final Map<StepElementType, ElementContext> elementContexts = new EnumMap<>(StepElementType.class);
 
-    public TestStepGUI(TestCase testCase, TestStep testStep, Callback<TestStep> callback) {
+    public TestStepGUI(JFrame parent, TestCase testCase, TestStep testStep, Callback<TestStep> callback) {
         this.testCase = testCase;
         this.testStep = testStep;
         isNewStep = testStep.getPassElement() == null;
         setTitle("TestStep Editor");
         setSize(500, 800);
         setResizable(false);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         initElementContexts();
         if(!isNewStep){
@@ -370,7 +370,7 @@ public class TestStepGUI extends JFrame {
         JPanel elementPanel = new JPanel();
         JPanel hideOnTogglePanel = new JPanel();
         JPanel hideOnNonePanel = new JPanel();
-        JCheckBox enterKey = new JCheckBox("Enter Key");
+        JCheckBox enterKey = new JCheckBox("Finish with \"Enter\" Key");
         public ElementContext(StepElementType elementType, String title) {
             this.elementType = elementType;
             this.title = title;
