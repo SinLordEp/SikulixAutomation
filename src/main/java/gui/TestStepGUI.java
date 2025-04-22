@@ -464,7 +464,7 @@ public class TestStepGUI extends JFrame {
         element.setMatchType(context.matchType);
         if(context.matchType == DataSource.IMAGE){
             try {
-                ImageUtils.saveImage(context.image, testCase + File.separator + context.imageOrTextField.getText() + ".PNG");
+                ImageUtils.saveImage(context.image, testCase + File.separator + context.imageOrTextField.getText().strip() + ".PNG");
             } catch (IOException e) {
                 throw new ImageIOException("Cannot write image to target path");
             }

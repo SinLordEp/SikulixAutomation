@@ -11,7 +11,8 @@
 9. ~~Implement logger~~
 10. ~~Add support for input JSON, then repeat the same testStep while data remain in CaseExecuteService~~
 11. ~~Add param for StepExecuteService when JSON is needed and inject the JsonObject~~
-12. Add a control for eliminating the last space char in a path if it exists
+12. ~~Add a control for eliminating the last space char in a path if it exists~~
+13. Move region from step to element so the matching will be more precise and accurate
 
 
 

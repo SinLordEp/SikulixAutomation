@@ -325,6 +325,17 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private void initializeCaseList(){
         caseList.setCellRenderer(new CaseListRenderer());
         caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setupCaseListSelectionListener();
+        setupCaseListMouseListener();
+        caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        caseList.setDragEnabled(true);
+        caseList.setDropMode(DropMode.INSERT);
+        JListDragActionHandler dragHandler = new JListDragActionHandler();
+        dragHandler.setOrderChangeListener(((oldIndex, newIndex) -> controller.modifyTestCaseOrder(categoryList.getSelectedValue(), oldIndex, newIndex)));
+        caseList.setTransferHandler(dragHandler);
+    }
+
+    private void setupCaseListSelectionListener(){
         caseList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 if(caseList.getSelectedIndex() != -1){
@@ -335,6 +346,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 loadTestSteps(caseList.getSelectedValue());
             }
         });
+    }
+
+    private void setupCaseListMouseListener(){
         caseList.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -346,6 +360,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 if (e.getX() - rect.x < 20) {
                     TestCase testCase = caseListModel.getElementAt(index);
                     testCase.setSelected(!testCase.isSelected());
+                    if(testCase.isSelected() && !jsonLoaded){
+                        jsonParamCheck(testCase);
+                    }
                     caseList.repaint();
                 }else if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
                     controller.modifyTestCase(categoryList.getSelectedValue(), caseList.getSelectedIndex(), DialogUtils.showInputDialog(null, "Modify Test case", "Input new name: "));
@@ -354,12 +371,15 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 }
             }
         });
-        caseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        caseList.setDragEnabled(true);
-        caseList.setDropMode(DropMode.INSERT);
-        JListDragActionHandler dragHandler = new JListDragActionHandler();
-        dragHandler.setOrderChangeListener(((oldIndex, newIndex) -> controller.modifyTestCaseOrder(categoryList.getSelectedValue(), oldIndex, newIndex)));
-        caseList.setTransferHandler(dragHandler);
+    }
+
+    private void jsonParamCheck(TestCase testCase){
+        for(TestStep testStep : testCase.getSteps()){
+            if(!testStep.getJsonParams().isEmpty()){
+                jsonButton.setBackground(Color.ORANGE);
+                break;
+            }
+        }
     }
 
     private void initializeStepList(){
