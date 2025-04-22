@@ -33,8 +33,8 @@ public class StepExecuteService {
         StepState state;
         executePreconditionElement(step, params);
         state = (executePassElement(step, params) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
-        if(state != StepState.PASS){
-            state = (executeRetryElement(step, params) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
+        if(state != StepState.PASS && executeRetryElement(step, params) == StepState.MATCHED){
+            state = (executePassElement(step, params) == StepState.MATCHED) ? StepState.PASS : StepState.NO_MATCH;
         }
         if(state != StepState.PASS){
             state = (executeFailElement(step, params) == StepState.MATCHED) ? StepState.FAIL : StepState.NO_MATCH;
@@ -108,6 +108,7 @@ public class StepExecuteService {
         }else{
             output = element.getOutputText();
         }
+        logger.debug("JSON param : {} - Output text: {}",element.getOutputText(), output);
         return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), output, element.getAction(), element.isEnterKey()));
     }
 

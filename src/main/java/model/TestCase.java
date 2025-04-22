@@ -12,7 +12,7 @@ import java.util.List;
 public class TestCase {
     private String name;
     private ArrayList<TestStep> steps = new ArrayList<>();
-    private ArrayList<String> params = new ArrayList<>();
+
     @JsonIgnore
     private boolean selected = false;
     @JsonIgnore
@@ -49,19 +49,16 @@ public class TestCase {
         this.steps = steps;
     }
 
-    public ArrayList<String> getParams() {
+    @JsonIgnore
+    public List<String> getParams() {
+        List<String> params = new ArrayList<>();
+        steps.forEach(step -> params.addAll(step.getJsonParams()));
         return params;
-    }
-    public void setParams(ArrayList<String> params) {
-        this.params = params;
     }
 
     @JsonIgnore
     public int getStepCount() {
         return steps.size();
-    }
-    public void addParam(String param) {
-        this.params.add(param);
     }
 
     @JsonIgnore
@@ -116,8 +113,6 @@ public class TestCase {
     @JsonIgnore
     public TestCase deepCopy() {
         TestCase copy = new TestCase(this.name);
-        copy.setParams(new ArrayList<>(this.params));
-
         ArrayList<TestStep> copiedSteps = new ArrayList<>();
         for (TestStep step : this.steps) {
             copiedSteps.add(step.deepCopy());

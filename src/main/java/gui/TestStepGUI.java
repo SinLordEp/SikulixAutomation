@@ -435,6 +435,7 @@ public class TestStepGUI extends JFrame {
         testStep.setY(Integer.parseInt(yTextField.getText()));
         testStep.setWidth(Integer.parseInt(widthTextField.getText()));
         testStep.setHeight(Integer.parseInt(heightTextField.getText()));
+        testStep.clearJsonParams();
         Arrays.stream(StepElementType.values()).forEach(stepElementType ->
         {
             switch (stepElementType) {
@@ -479,7 +480,7 @@ public class TestStepGUI extends JFrame {
             element.setOutputText(context.textOrJsonTextField.getText());
             element.setEnterKey(context.enterKey.isSelected());
             if(textSource == DataSource.JSON){
-                testCase.addParam(context.textOrJsonTextField.getText());
+                testStep.addJsonParam(context.textOrJsonTextField.getText());
             }
         }
         return element;

@@ -6,8 +6,10 @@ import org.sikuli.script.Region;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 
 /**
  * @author Sin
@@ -23,6 +25,7 @@ public class TestStep implements Serializable {
     private int width = 0;
     private int height = 0;
     private EnumMap<StepElementType, StepElement> stepElements = new EnumMap<>(StepElementType.class);
+    private List<String> jsonParams = new ArrayList<>();
 
     public TestStep(){
         Arrays.stream(StepElementType.values()).forEach(stepElementType -> stepElements.put(stepElementType, null));
@@ -150,6 +153,22 @@ public class TestStep implements Serializable {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public List<String> getJsonParams() {
+        return jsonParams;
+    }
+
+    public void setJsonParams(List<String> jsonParams) {
+        this.jsonParams = jsonParams;
+    }
+
+    public void addJsonParam(String param){
+        jsonParams.add(param);
+    }
+
+    public void clearJsonParams(){
+        jsonParams.clear();
     }
 
     @JsonIgnore

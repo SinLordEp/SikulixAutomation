@@ -44,24 +44,19 @@ public class CaseExecuteService {
     private void buildThread(List<TestCase> currentTestPlan){
         testThread = new Thread(() -> {
             int[] caseIndex = new int[1];
-            int[] paramIndex = new int[1];
-            String[] caseName = new String[1];
             currentTestPlan.forEach(testCase -> {
                 try {
                     logger.debug("Executing TestCase: {}", testCase);
+                    int[] paramIndex = new int[1];
                     Thread.sleep(500);
                     SikulixUtils.setImagePath(testCase.getName());
                     testCase.getSteps().forEach(testStep -> {
                         testCase.nextCurrentStep();
                         testCase.setState(CaseState.ONGOING);
                         testCaseService.updateTestPlan(caseIndex[0], testCase);
-                        StepState stepState = StepState.NO_MATCH;
-                        if(paramCheck(testCase, caseName, caseIndex)){
-                            stepState = testCase.isIterating() ?
-                                    stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(caseName[0], paramIndex[0]++))
-                                    : stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(caseName[0], paramIndex[0]));
-                        }else{
-                            stepExecuteService.execute(testStep);
+                        StepState stepState = stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(testCase.getName(), paramIndex[0]));
+                        if(testCase.isIterating()){
+                            paramIndex[0]++;
                         }
                         if (stepState != StepState.PASS) {
                             throw new TestStepFailedException(testStep.toString());
@@ -86,19 +81,5 @@ public class CaseExecuteService {
             callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
         });
     }
-
-    private boolean paramCheck(TestCase testCase, String[] caseName, int[] index){
-        if(testCase.getParams().isEmpty()){
-            caseName[0] = null;
-            index[0] = 0;
-        }else{
-            if(!testCase.isIterating()){
-                index[0] = 0;
-            }
-            caseName[0] = testCase.getName();
-        }
-        return caseName[0] != null;
-    }
-
 
 }
