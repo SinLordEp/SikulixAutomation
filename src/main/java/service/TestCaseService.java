@@ -6,10 +6,12 @@ import data.dao.TestCaseDAO;
 import exception.ConfigMissingException;
 import exception.FileIOException;
 import exception.OperationCancelException;
+import exception.UndefinedException;
 import gui.TestStepGUI;
 import model.*;
 import model.enums.EventCommand;
 import interfaces.Callback;
+import model.enums.FileOperation;
 import util.CollectionUtils;
 import util.DialogUtils;
 import util.FileUtils;
@@ -19,9 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static config.GlobalExtensions.CSV_EXTENSION;
-import static config.GlobalExtensions.JSON_EXTENSION;
+import model.enums.FileExtension;
 
 public class TestCaseService {
     private final TestCaseDAO dao = new TestCaseDAO();
@@ -31,12 +31,12 @@ public class TestCaseService {
         this.callback = callback;
     }
 
-    public void loadConfig() {
+    public void loadConfig(JFrame parent) {
         try {
-            saveDataOnChanged();
-            String path = FileUtils.getPath(JSON_EXTENSION);
-            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
-                path += JSON_EXTENSION;
+            saveDataOnChanged(parent);
+            String path = FileUtils.getPath(parent, FileOperation.OPEN, FileExtension.JSON);
+            if (!path.toLowerCase().endsWith(FileExtension.JSON.getExtension())) {
+                path += FileExtension.JSON.getExtension();
             }
             dao.loadConfig(path);
             dao.setConfigPath(path);
@@ -48,16 +48,17 @@ public class TestCaseService {
         }
     }
 
-    public boolean saveConfig() {
+    public void saveConfig(JFrame parent) {
         try {
             String path = dao.getConfigPath();
             if(path == null || path.isEmpty()){
-                path = FileUtils.getPath(JSON_EXTENSION);
-                if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
-                    path += JSON_EXTENSION;
+                path = FileUtils.getPath(parent, FileOperation.SAVE, FileExtension.JSON);
+                if (!path.toLowerCase().endsWith(FileExtension.JSON.getExtension())) {
+                    path += FileExtension.JSON.getExtension();
                 }
             }
-            return dao.saveConfig(path);
+            dao.saveConfig(path);
+            callback.onSubmit(new EventPackage(EventCommand.TESTCASE_SAVED));
         } catch (IOException e) {
             throw new FileIOException(e.getMessage());
         }
@@ -93,14 +94,18 @@ public class TestCaseService {
         }
     }
 
-    public void modifyTestCase(String category, int caseIndex, String name){
+    public void modifyTestCase(JFrame parent, String category, int caseIndex){
         TestCase testCase = dao.getTestCase(category, caseIndex);
+        String input = DialogUtils.showInputDialog(parent, "Modify Test case", "Input new name: ");
+        if(input.isEmpty()){
+            throw new OperationCancelException();
+        }
         try {
-            FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(name));
+            FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(input));
+            testCase.setName(input);
         } catch (IOException e) {
             throw new FileIOException("Failed to rename folder with cause: " + e.getMessage());
         }
-        testCase.setName(name);
     }
 
     public void modifyTestCaseOrder(String category, int oldIndex, int newIndex){
@@ -150,11 +155,11 @@ public class TestCaseService {
         callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
     }
 
-    public void loadJson(){
+    public void loadJson(JFrame parent){
         try {
-            String path = FileUtils.getPath(JSON_EXTENSION);
-            if (!path.toLowerCase().endsWith(JSON_EXTENSION)) {
-                path += JSON_EXTENSION;
+            String path = FileUtils.getPath(parent, FileOperation.OPEN, FileExtension.JSON);
+            if (!path.toLowerCase().endsWith(FileExtension.JSON.getExtension())) {
+                path += FileExtension.JSON.getExtension();
             }
             dao.setupJsonNode(path);
             callback.onSubmit(new EventPackage(EventCommand.JSON_LOADED));
@@ -203,10 +208,10 @@ public class TestCaseService {
         callback.onSubmit(new EventPackage(EventCommand.RESULT_CHANGED, dao.getTestPlan()));
     }
 
-    public void generateResult(){
-        String path = FileUtils.getPath(CSV_EXTENSION);
-        if (!path.toLowerCase().endsWith(CSV_EXTENSION)) {
-            path += CSV_EXTENSION;
+    public void generateResult(JFrame parent){
+        String path = FileUtils.getPath(parent, FileOperation.SAVE, FileExtension.CSV);
+        if (!path.toLowerCase().endsWith(FileExtension.CSV.getExtension())) {
+            path += FileExtension.CSV.getExtension();
         }
         try {
             dao.generateTestResult(path);
@@ -215,13 +220,14 @@ public class TestCaseService {
         }
     }
 
-    public void saveDataOnChanged() {
+    public void saveDataOnChanged(JFrame parent) {
         if(dao.isDataChanged()){
-            switch(DialogUtils.showConfirmDialog(null, "Warning", "TestCase has changed, do you want to save config before proceed?")){
-                case JOptionPane.YES_OPTION: saveConfig();
+            switch(DialogUtils.showConfirmDialog(parent, "Warning", "TestCase has changed, do you want to save config before proceed?")){
+                case JOptionPane.YES_OPTION: saveConfig(parent);
                     break;
                 case JOptionPane.NO_OPTION: break;
-                default: throw new OperationCancelException();
+                case JOptionPane.CANCEL_OPTION: throw new OperationCancelException();
+                default: throw new UndefinedException("Unexpected choice from user");
             }
         }
     }

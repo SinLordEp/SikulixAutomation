@@ -44,9 +44,9 @@ public class TestCaseDAO {
         categories = jsonToTestCaseCategory(path);
     }
 
-    public boolean saveConfig(String path) throws IOException {
+    public void saveConfig(String path) throws IOException {
         this.configPath = path;
-        return testCaseCategoryToJson(path, categories);
+        testCaseCategoryToJson(path, categories);
     }
 
     public void addCategory(String category){

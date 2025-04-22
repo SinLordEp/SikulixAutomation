@@ -33,12 +33,12 @@ public class ToolController {
         new ToolGUI(this).run();
     }
 
-    public void loadTestCases(){
-        exceptionHandler.run(testCaseService::loadConfig, testCaseService.getClass().getName());
+    public void loadTestCases(JFrame parent){
+        exceptionHandler.run(() -> testCaseService.loadConfig(parent), testCaseService.getClass().getName());
     }
 
-    public boolean saveTestCases(){
-        return exceptionHandler.run(testCaseService::saveConfig, testCaseService.getClass().getName());
+    public void saveTestCases(JFrame parent){
+        exceptionHandler.run(() -> testCaseService.saveConfig(parent), testCaseService.getClass().getName());
     }
 
     public void addCategory(String name){
@@ -57,8 +57,8 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.deleteTestCase(category, caseIndex), testCaseService.getClass().getName());
     }
 
-    public void modifyTestCase(String category, int caseIndex, String name){
-        exceptionHandler.run(()-> testCaseService.modifyTestCase(category, caseIndex, name), testCaseService.getClass().getName());
+    public void modifyTestCase(JFrame parent, String category, int caseIndex){
+        exceptionHandler.run(()-> testCaseService.modifyTestCase(parent, category, caseIndex), testCaseService.getClass().getName());
     }
 
     public void modifyTestCaseOrder(String category, int oldCaseIndex, int newCaseIndex){
@@ -81,8 +81,8 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.modifyTestStepOrder( category, caseIndex, oldStepIndex, newStepIndex), testCaseService.getClass().getName());
     }
 
-    public void loadJson(){
-        exceptionHandler.run(testCaseService::loadJson, testCaseService.getClass().getName());
+    public void loadJson(JFrame parent){
+        exceptionHandler.run(()-> testCaseService.loadJson(parent), testCaseService.getClass().getName());
     }
 
     public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
@@ -97,17 +97,20 @@ public class ToolController {
         exceptionHandler.run(caseExecuteService::stopTest, testCaseService.getClass().getName());
     }
 
-    public void generateResult(){
-        exceptionHandler.run(testCaseService::generateResult, testCaseService.getClass().getName());
+    public void generateResult(JFrame parent){
+        exceptionHandler.run(()-> testCaseService.generateResult(parent), testCaseService.getClass().getName());
     }
 
     public void captureWindow(String windowName, int width, int height, Callback<EventPackage> callback){
         exceptionHandler.run(() -> windowService.captureWindow(windowName, width, height, callback), windowService.getClass().getName());
     }
 
-    public void onWindowClosing() {
-        exceptionHandler.run(testCaseService::saveDataOnChanged, testCaseService.getClass().getName());
-        System.exit(0);
+    public void onWindowClosing(JFrame parent) {
+        exceptionHandler.run(()-> {
+            testCaseService.saveDataOnChanged(parent);
+            System.exit(0);
+        }, testCaseService.getClass().getName());
+
     }
 
     public void addListener(EventListener<EventPackage> listener){

@@ -1,5 +1,7 @@
 package util;
 
+import exception.OperationCancelException;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -23,6 +25,10 @@ public class DialogUtils {
     }
 
     public static String showInputDialog(Component parent, String title, String message) {
-        return JOptionPane.showInputDialog(parent, message, title, JOptionPane.PLAIN_MESSAGE);
+        String input = JOptionPane.showInputDialog(parent, message, title, JOptionPane.PLAIN_MESSAGE);
+        if(input == null){
+            throw new OperationCancelException();
+        }
+        return input;
     }
 }
