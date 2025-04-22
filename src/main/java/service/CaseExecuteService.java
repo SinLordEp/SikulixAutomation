@@ -46,9 +46,9 @@ public class CaseExecuteService {
             int[] caseIndex = new int[1];
             currentTestPlan.forEach(testCase -> {
                 try {
+                    Thread.sleep(2000);
                     logger.debug("Executing TestCase: {}", testCase);
                     int[] paramIndex = new int[1];
-                    Thread.sleep(500);
                     SikulixUtils.setImagePath(testCase.getName());
                     testCase.getSteps().forEach(testStep -> {
                         testCase.nextCurrentStep();
