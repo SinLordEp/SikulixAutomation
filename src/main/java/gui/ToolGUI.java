@@ -40,9 +40,12 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private boolean caseAllSelected = false;
     private boolean windowCaptured = false;
     private boolean testPlanBuilt = false;
+    private boolean jsonLoaded = false;
     private final JLabel windowNameLabel = new JLabel("No window is selected, please select target window!");
+    private final JButton saveConfigButton = new JButton("Save Test Case");
     private final JButton selectWindowButton = new JButton("Select Window");
     private final JButton captureWindowButton = new JButton("Capture Window");
+    private final JButton jsonButton = new JButton("Load Json");
     private final JButton buildPlanButton = new JButton("Build Test Plan");
     private final JButton startButton = new JButton("Start");
     private final JButton stopButton = new JButton("Stop");
@@ -74,7 +77,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.setLayout(new BorderLayout());
         // Row 1 Load config, Save config buttons
         panel.add(configButtonsPanel(), BorderLayout.NORTH);
-        // Row 2 Test config panel with category panel, case and step splitPane
+        // Row 2 Test config panel with a category panel, case and step splitPane
         panel.add(testConfigPanel(), BorderLayout.CENTER);
         // Row 3 Testing process panel
         panel.add(testProgressPanel(), BorderLayout.SOUTH);
@@ -94,15 +97,17 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         });
         panel.add(load);
 
-        JButton save = new JButton("Save Test Case");
-        save.addActionListener(_ -> {
+        saveConfigButton.setEnabled(false);
+        saveConfigButton.setBackground(Color.ORANGE);
+        saveConfigButton.addActionListener(_ -> {
             if(controller.saveTestCases()){
                 DialogUtils.showInfoDialog(this,"Save test case", "Successfully saved config");
+                saveConfigButton.setEnabled(false);
             }else {
                 DialogUtils.showErrorDialog(this, "Save test case", "Error saving test case");
             }
         });
-        panel.add(save);
+        panel.add(saveConfigButton);
 
         return panel;
     }
@@ -210,10 +215,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         selectWindowButton.addActionListener(_ -> new WindowSelectorDialog(this, this::captureWindowName));
         buttonPanel.add(selectWindowButton);
 
-        JPanel windowNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        windowNamePanel.setBorder(BorderFactory.createTitledBorder("Target window name"));
-        windowNamePanel.add(windowNameLabel);
-
         JPanel modifyWindowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel widthLabel = new JLabel("Width: ");
         JTextField widthField = new JTextField("1400",3);
@@ -227,25 +228,33 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         modifyWindowPanel.add(heightLabel);
         modifyWindowPanel.add(heightField);
 
+        JPanel windowInfoPanel = new JPanel();
+        windowInfoPanel.setLayout(new BoxLayout(windowInfoPanel, BoxLayout.Y_AXIS));
+        windowInfoPanel.setBorder(BorderFactory.createTitledBorder("Target window info"));
+        windowInfoPanel.add(modifyWindowPanel);
+        JPanel windowNamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        windowNamePanel.add(windowNameLabel);
+        windowInfoPanel.add(windowNamePanel);
+
         captureWindowButton.setEnabled(false);
         captureWindowButton.addActionListener(_ -> controller.captureWindow(windowNameLabel.getText(), Integer.parseInt(widthField.getText()), Integer.parseInt(heightField.getText()), this::onEvent));
-        modifyWindowPanel.add(captureWindowButton);
+        buttonPanel.add(captureWindowButton);
 
         panel.add(buttonPanel);
-        panel.add(windowNamePanel);
-        panel.add(modifyWindowPanel);
+        panel.add(windowInfoPanel);
+
         return panel;
     }
     private JPanel runTestButtonPanel(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton jsonButton = new JButton("Load Json");
         panel.add(jsonButton);
         jsonButton.addActionListener(_ -> controller.loadJson());
 
         buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases));
         panel.add(buildPlanButton);
 
+        startButton.setBackground(Color.ORANGE);
         startButton.addActionListener(_ -> {
             controller.startTest();
             toggleTestRelatedComponents(false);
@@ -400,6 +409,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private void updateUITestCases(HashMap<String, ArrayList<TestCase>> testCases){
         this.testCases = testCases;
+        saveConfigButton.setEnabled(true);
         categoryListModel.clear();
         categoryListModel.addAll(testCases.keySet());
         if (!categoryListModel.isEmpty()) {
@@ -434,6 +444,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         testProgressBar.setMaximum(maxValue);
         testProgressBar.setValue(0);
         testPlanBuilt = true;
+        buildPlanButton.setBackground(new Color(174, 239, 174));
         if(windowCaptured){
             startButton.setEnabled(true);
         }
@@ -442,10 +453,12 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private void toggleTestRelatedComponents(boolean toggle){
         selectWindowButton.setEnabled(toggle);
         captureWindowButton.setEnabled(toggle);
+        jsonButton.setEnabled(toggle);
         buildPlanButton.setEnabled(toggle);
         startButton.setEnabled(false);
         stopButton.setEnabled(!toggle);
         testPlanBuilt = false;
+        buildPlanButton.setBackground(Color.ORANGE);
     }
 
     private void captureWindowName(String windowName){
@@ -455,9 +468,15 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private void windowCaptured(){
         windowCaptured = true;
+        captureWindowButton.setBackground(new Color(174, 239, 174));
         if(testPlanBuilt){
             startButton.setEnabled(true);
         }
+    }
+
+    private void jsonLoaded(){
+        jsonButton.setBackground(new Color(174, 239, 174));
+        jsonLoaded = true;
     }
 
     @Override
@@ -468,6 +487,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             case TEST_FINISHED -> toggleTestRelatedComponents(true);
             case WINDOW_CAPTURED -> windowCaptured();
             case PLAN_BUILT -> testPlanBuilt(eventPackage.getTotalSteps());
+            case JSON_LOADED -> jsonLoaded();
             default -> throw new UndefinedException("Unknown command (To be perfected)");
         }
     }

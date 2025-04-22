@@ -157,6 +157,7 @@ public class TestCaseService {
                 path += JSON_EXTENSION;
             }
             dao.setupJsonNode(path);
+            callback.onSubmit(new EventPackage(EventCommand.JSON_LOADED));
         } catch (IOException e) {
             throw new FileIOException("Cannot read json file: " + e.getMessage());
         }
