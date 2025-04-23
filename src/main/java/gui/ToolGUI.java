@@ -226,13 +226,15 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel preparationButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         preparationButtonPanel.add(jsonButton);
         jsonButton.addActionListener(_ -> controller.loadJson(this));
+
+        iterationCheckBox.setSelected(false);
+        preparationButtonPanel.add(iterationCheckBox);
+        buildPlanButton.setBackground(Color.ORANGE);
         buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases, iterationCheckBox.isSelected()));
         preparationButtonPanel.add(buildPlanButton);
         panel.add(preparationButtonPanel, BorderLayout.WEST);
 
         JPanel testButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        iterationCheckBox.setSelected(false);
-        testButtonPanel.add(iterationCheckBox);
         startButton.setBackground(Color.ORANGE);
         startButton.addActionListener(_ -> {
             controller.startTest(iterationCheckBox.isSelected());

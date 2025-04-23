@@ -271,7 +271,7 @@ public class TestStepGUI extends JFrame {
         ctx.hideOnNonePanel.add(imageContainer);
 
         if (!isNewStep && testStep.getStepElements().get(ctx.elementType) != null) {
-            // Sikulix Robot.class can not be called in a swing awake event
+            // Sikulix Robot.class cannot be called in a swing awake event
             new Thread(() -> {
                 BufferedImage img = ImageUtils.loadImage(testCase + File.separator + testStep.getStepElements().get(ctx.elementType).getImageNameOrText());
                 SwingUtilities.invokeLater(() -> {

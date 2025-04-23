@@ -28,20 +28,20 @@
 9. ~~Add a method to disable the delete step when no step is selected(done by not working if the index is -1)~~
 10. ~~Add a text field or a button for getting the window name~~
 11. ~~Add a progress bar to visualize test plan progress~~
-12. Add a loop testing option
-13. Add a repeat time input field for testing
+12. ~~Add a loop testing option~~
+13. ~~Add a repeat time input field for testing(Canceled, it will repeat as much as the data in the JSON)~~
 14. ~~Add a select all button for TestCase~~
 15. ~~Extract buildTestPlan method to service.~~
 16. ~~Add a Build test plan button instead of using the Start button to build and run at the same time~~
 17. Add tooltip to disable button
-18. Add control to empty name input and cancel/window closing on rename/create
+18. ~~Add control to empty name input and cancel/window closing on rename/create~~
 19. ~~Make testStepGUI pop up location related to ToolGUI~~
 20. Make getPath pop up location related to ToolGUI and its default name should change by operation
 21. ~~Add function to reorder JList~~
 22. ~~Add a panel to import json~~
 23. ~~Build plan will check if JSON is selected and contains all the params for testcase (event)~~
 24. ~~Add a color indicator to all the functional buttons~~
-25. Redo the interaction with JList, use right-click event instead of double click
+25. ~~Redo the interaction with JList, use right-click event instead of double click~~
 
 ## TestStepGUI
 1. ~~TestStep region toggle will not change by changing stats in the step info panel~~
@@ -63,5 +63,7 @@
 ## TestCaseGUI
 1. Modify the name field
 2. JList with step needed params
+3. Add data to params
+4. Save params to file
 
 
