@@ -89,12 +89,12 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.loadJson(parent), testCaseService.getClass().getName());
     }
 
-    public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
-        exceptionHandler.run(()-> testCaseService.buildTestPlan(testCases), testCaseService.getClass().getName());
+    public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases, boolean isIterating){
+        exceptionHandler.run(()-> testCaseService.buildTestPlan(testCases, isIterating), testCaseService.getClass().getName());
     }
 
-    public void startTest(){
-        exceptionHandler.run(caseExecuteService::startTest, caseExecuteService.getClass().getName());
+    public void startTest(boolean isIterating){
+        exceptionHandler.run(()-> caseExecuteService.startTest(isIterating), caseExecuteService.getClass().getName());
     }
 
     public void stopTest(){

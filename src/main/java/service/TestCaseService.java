@@ -200,14 +200,21 @@ public class TestCaseService {
         return dao.getJsonByCaseAndIndex(caseName, iterateIndex);
     }
 
-    public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases){
+    public void buildTestPlan(HashMap<String, ArrayList<TestCase>> testCases, boolean isIterating){
         List<TestCase> testPlan = new ArrayList<>();
         int[] totalStep = new int[1];
         testCases.forEach((_, cases) -> cases.forEach(testCase -> {
-            if(testCase.isSelected()){
-                if(!testCase.getParams().isEmpty() && dao.getJsonNode() == null){
-                    throw new ConfigMissingException("TestCase: " + testCase.getName() + " has parameters but no json file is loaded, please load json file first before building test plan");
-                }
+            if(!testCase.isSelected()){
+                return;
+            }
+            if(!testCase.getParams().isEmpty() && dao.getJsonNode() == null){
+                throw new ConfigMissingException("TestCase: " + testCase.getName() + " has parameters but no json file is loaded, please load json file first before building test plan");
+            }
+            int repeatTime = 1;
+            if(isIterating){
+                repeatTime = dao.getJsonCountByCase(testCase.getName());
+            }
+            for(int i = 0; i < repeatTime; i++){
                 totalStep[0] += testCase.getSteps().size();
                 testCase.resetCurrentStep();
                 testPlan.add(testCase.deepCopy());

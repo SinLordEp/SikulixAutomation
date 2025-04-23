@@ -176,6 +176,15 @@ public class TestCaseDAO {
         this.jsonNode = mapper.readTree(Paths.get(path).toFile());
     }
 
+    public int getJsonCountByCase(String caseName){
+        if(jsonNode.has(caseName)){
+            JsonNode testCaseNode = jsonNode.get(caseName);
+            return testCaseNode.size();
+        }else{
+            return 0;
+        }
+    }
+
     public JsonNode getJsonByCaseAndIndex(String caseName, int iterateIndex){
         if(jsonNode.has(caseName)){
             JsonNode testCaseNode = jsonNode.get(caseName);

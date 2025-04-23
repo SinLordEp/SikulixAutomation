@@ -45,6 +45,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final JButton captureWindowButton = new JButton("Capture Window");
     private final JButton jsonButton = new JButton("Load Json");
     private final JButton buildPlanButton = new JButton("Build Test Plan");
+    private final JCheckBox iterationCheckBox = new JCheckBox("Iteration");
     private final JButton startButton = new JButton("Start");
     private final JButton stopButton = new JButton("Stop");
     private final JProgressBar testProgressBar = new JProgressBar();
@@ -220,28 +221,33 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         return panel;
     }
     private JPanel runTestButtonPanel(){
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panel = new JPanel(new BorderLayout());
 
-        panel.add(jsonButton);
+        JPanel preparationButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        preparationButtonPanel.add(jsonButton);
         jsonButton.addActionListener(_ -> controller.loadJson(this));
+        buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases, iterationCheckBox.isSelected()));
+        preparationButtonPanel.add(buildPlanButton);
+        panel.add(preparationButtonPanel, BorderLayout.WEST);
 
-        buildPlanButton.addActionListener(_ -> controller.buildTestPlan(testCases));
-        panel.add(buildPlanButton);
-
+        JPanel testButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        iterationCheckBox.setSelected(false);
+        testButtonPanel.add(iterationCheckBox);
         startButton.setBackground(Color.ORANGE);
         startButton.addActionListener(_ -> {
-            controller.startTest();
+            controller.startTest(iterationCheckBox.isSelected());
             toggleTestRelatedComponents(false);
         });
         startButton.setEnabled(false);
-        panel.add(startButton);
+        testButtonPanel.add(startButton);
 
         stopButton.setEnabled(false);
         stopButton.addActionListener(_ -> {
             stopButton.setEnabled(false);
             controller.stopTest();
         });
-        panel.add(stopButton);
+        testButtonPanel.add(stopButton);
+        panel.add(testButtonPanel, BorderLayout.EAST);
 
         return panel;
     }
@@ -322,7 +328,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     private void handleDeleteItem(JListType listType) {
         switch (listType) {
-            case JListType type when JListType.CATEGORY == type && categoryList.getSelectedIndex() != -1 ->
+            case JListType type when JListType.CATEGORY == type && isValidCategorySelection() ->
                     controller.deleteCategory(this, categoryList.getSelectedValue());
 
             case JListType type when JListType.CASE == type && isValidCategoryAndCaseSelection() ->
@@ -358,7 +364,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private void setupCategoryListSelectionListener(){
         categoryList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                if(categoryList.getSelectedIndex() != -1){
+                if(isValidCategorySelection()){
                     categoryIndex = categoryList.getSelectedIndex();
                 }else{
                     categoryList.setSelectedIndex(categoryIndex);
@@ -411,7 +417,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private void setupCaseListSelectionListener(){
         caseList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                if(caseList.getSelectedIndex() != -1){
+                if(isValidCategoryAndCaseSelection()){
                     caseIndex = caseList.getSelectedIndex();
                 }else{
                     caseList.setSelectedIndex(caseIndex);
@@ -590,6 +596,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         captureWindowButton.setEnabled(toggle);
         jsonButton.setEnabled(toggle);
         buildPlanButton.setEnabled(toggle);
+        iterationCheckBox.setEnabled(toggle);
         startButton.setEnabled(false);
         stopButton.setEnabled(!toggle);
         testPlanBuilt = false;

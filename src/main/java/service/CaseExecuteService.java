@@ -30,8 +30,8 @@ public class CaseExecuteService {
         this.callback = callback;
     }
 
-    public void startTest(){
-        buildThread(testCaseService.getTestPlan());
+    public void startTest(boolean isIterating){
+        buildThread(testCaseService.getTestPlan(), isIterating);
         testThread.start();
     }
 
@@ -41,7 +41,7 @@ public class CaseExecuteService {
         callback.onSubmit(new EventPackage(EventCommand.TEST_FINISHED));
     }
 
-    private void buildThread(List<TestCase> currentTestPlan){
+    private void buildThread(List<TestCase> currentTestPlan, boolean isIterating){
         testThread = new Thread(() -> {
             int[] caseIndex = new int[1];
             currentTestPlan.forEach(testCase -> {
@@ -56,7 +56,7 @@ public class CaseExecuteService {
                         testCaseService.updateTestPlan(caseIndex[0], testCase);
                         StepState stepState = testStep.getJsonParams().isEmpty() ? stepExecuteService.execute(testStep)
                                 : stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(testCase.getName(), paramIndex[0]));
-                        if(testCase.isIterating()){
+                        if(isIterating){
                             paramIndex[0]++;
                         }
                         if (stepState != StepState.PASS) {
