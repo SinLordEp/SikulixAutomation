@@ -8,16 +8,14 @@ import model.enums.CaseState;
 import model.EventPackage;
 import model.TestCase;
 import model.TestStep;
+import model.enums.JListType;
 import util.DialogUtils;
 import interfaces.EventListener;
 import util.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -125,17 +123,10 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JScrollPane(categoryList), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton addButton = new JButton("+");
+        JButton addButton = new JButton("New");
         addButton.addActionListener(_ -> controller.addCategory(this));
         buttonPanel.add(addButton);
 
-        JButton deleteButton = new JButton("-");
-        deleteButton.addActionListener(_ -> {
-            if(categoryList.getSelectedIndex() != -1){
-                controller.deleteCategory(this, categoryList.getSelectedValue());
-            }
-        });
-        buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
         return panel;
     }
@@ -150,14 +141,14 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JScrollPane(caseList), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton allButton = new JButton("All");
+        JButton allButton = new JButton("Select All");
         allButton.addActionListener(_ -> {
             caseAllSelected = !caseAllSelected;
             caseListModel.elements().asIterator().forEachRemaining(testCase -> testCase.setSelected(caseAllSelected));
             caseList.repaint();
         });
         buttonPanel.add(allButton);
-        JButton addButton = new JButton("+");
+        JButton addButton = new JButton("New");
         addButton.addActionListener(_ -> controller.addTestCase(this, categoryList.getSelectedValue()));
         buttonPanel.add(addButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
@@ -169,17 +160,10 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         panel.add(new JScrollPane(stepList), BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton addButton = new JButton("+");
+        JButton addButton = new JButton("New");
         addButton.addActionListener(_ -> controller.addTestStep(this, categoryList.getSelectedValue(), caseList.getSelectedIndex()));
         buttonPanel.add(addButton);
 
-        JButton deleteButton = new JButton("-");
-        deleteButton.addActionListener(_ -> {
-            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1 && stepList.getSelectedIndex() != -1){
-                controller.deleteTestStep(this, categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex());
-            }
-        });
-        buttonPanel.add(deleteButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         return panel;
@@ -298,30 +282,77 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }
     }
 
-    private <T> JPopupMenu generatePopupMenu(JList<T> list, String listType, boolean isItemSelected){
+    private JPopupMenu generatePopupMenu(JListType listType, boolean isItemSelected) {
         JPopupMenu popupMenu = new JPopupMenu();
-        if(isItemSelected){
-            JMenuItem editItem = new JMenuItem("Edit");
-            JMenuItem deleteItem = new JMenuItem("Delete");
-            switch (listType) {
-                case "category" -> editItem.addActionListener(_ ->{
-                    if(categoryList.getSelectedIndex() != -1){
-                        controller.modify
-                    }
-                });
-            }
-        }
 
+        if (isItemSelected) {
+            addEditDeleteMenuItems(popupMenu, listType);
+        }
+        return popupMenu;
+    }
+
+    private void addEditDeleteMenuItems(JPopupMenu popupMenu, JListType listType) {
+        JMenuItem editItem = createMenuItem("Edit", () -> handleEditItem(listType));
+        JMenuItem deleteItem = createMenuItem("Delete", () -> handleDeleteItem(listType));
+
+        popupMenu.add(editItem);
+        popupMenu.add(deleteItem);
+    }
+
+    private JMenuItem createMenuItem(String text, Runnable action) {
+        JMenuItem item = new JMenuItem(text);
+        item.addActionListener(_ -> action.run());
+        return item;
+    }
+
+    private void handleEditItem(JListType listType) {
+        switch (listType) {
+            case JListType type when JListType.CATEGORY == type && isValidCategorySelection() ->
+                    controller.modifyCategory(this, categoryList.getSelectedValue());
+
+            case JListType type when JListType.CASE == type && isValidCategoryAndCaseSelection() ->
+                    controller.modifyTestCase(this, categoryList.getSelectedValue(), caseList.getSelectedIndex());
+
+            case JListType type when JListType.STEP == type && isValidAllSelection() ->
+                    controller.modifyTestStep(this, categoryList.getSelectedValue(), caseList.getSelectedIndex(), stepList.getSelectedIndex());
+
+            default -> throw new UndefinedException("Unexpected value: " + listType);
+        }
+    }
+
+    private void handleDeleteItem(JListType listType) {
+        switch (listType) {
+            case JListType type when JListType.CATEGORY == type && categoryList.getSelectedIndex() != -1 ->
+                    controller.deleteCategory(this, categoryList.getSelectedValue());
+
+            case JListType type when JListType.CASE == type && isValidCategoryAndCaseSelection() ->
+                    controller.deleteTestCase(this, categoryList.getSelectedValue(),
+                            caseList.getSelectedIndex());
+
+            case JListType type when JListType.STEP == type && isValidAllSelection() ->
+                    controller.deleteTestStep(this, categoryList.getSelectedValue(),
+                            caseList.getSelectedIndex(), stepList.getSelectedIndex());
+
+            default -> throw new UndefinedException("Unexpected value: " + listType);
+        }
+    }
+
+    private boolean isValidCategorySelection() {
+        return categoryList.getSelectedIndex() != -1;
+    }
+
+    private boolean isValidCategoryAndCaseSelection() {
+        return isValidCategorySelection() && caseList.getSelectedIndex() != -1;
+    }
+
+    private boolean isValidAllSelection() {
+        return isValidCategoryAndCaseSelection() && stepList.getSelectedIndex() != -1;
     }
 
     private void initializeCategoryList(){
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setupCategoryListSelectionListener();
         setupCategoryListMouseListener();
-    }
-
-    private void setupCategoryListPopupMenu(){
-
     }
 
     private void setupCategoryListSelectionListener(){
@@ -338,7 +369,29 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private void setupCategoryListMouseListener(){
-
+        categoryList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = categoryList.locationToIndex(e.getPoint());
+                if(index < 0){
+                    return;
+                }
+                categoryList.requestFocusInWindow();
+                categoryList.setSelectedIndex(index);
+                Rectangle rect = categoryList.getCellBounds(index, index);
+                if(SwingUtilities.isRightMouseButton(e)){
+                    if(e.getY() - rect.y < 20){
+                        generatePopupMenu(JListType.CATEGORY, true).show(categoryList, e.getX(), e.getY());
+                    }else {
+                        generatePopupMenu(JListType.CATEGORY, false).show(categoryList, e.getX(), e.getY());
+                    }
+                    return;
+                }
+                if (e.getY() - rect.y < 20) {
+                    loadCases(categoryList.getSelectedValue());
+                }
+            }
+        });
     }
 
     private void initializeCaseList(){
@@ -355,25 +408,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         caseList.setTransferHandler(dragHandler);
     }
 
-    private JPopupMenu setupCaseListPopupMenu(){
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem editItem = new JMenuItem("Edit");
-        editItem.addActionListener(_ -> {
-            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
-                controller.modifyTestCase(this, categoryList.getSelectedValue(), caseList.getSelectedIndex());
-            }
-        });
-        JMenuItem deleteItem = new JMenuItem("Delete");
-        deleteItem.addActionListener(_ -> {
-            if(categoryList.getSelectedIndex() != -1 && caseList.getSelectedIndex() != -1){
-                controller.deleteTestCase(this, categoryList.getSelectedValue(), caseList.getSelectedIndex());
-            }
-        });
-        popupMenu.add(editItem);
-        popupMenu.add(deleteItem);
-        return popupMenu;
-    }
-
     private void setupCaseListSelectionListener(){
         caseList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -388,8 +422,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private void setupCaseListMouseListener(){
-        JPopupMenu menu = setupCaseListPopupMenu();
-        caseList.addMouseListener(new java.awt.event.MouseAdapter() {
+        caseList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int index = caseList.locationToIndex(e.getPoint());
@@ -399,8 +432,12 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 caseList.requestFocusInWindow();
                 caseList.setSelectedIndex(index);
                 Rectangle rect = caseList.getCellBounds(index, index);
-                if(SwingUtilities.isRightMouseButton(e) && e.getY() - rect.y < 20){
-                    menu.show(caseList, e.getX(), e.getY());
+                if(SwingUtilities.isRightMouseButton(e)){
+                    if(e.getY() - rect.y < 20){
+                        generatePopupMenu(JListType.CASE, true).show(caseList, e.getX(), e.getY());
+                    }else {
+                        generatePopupMenu(JListType.CASE, false).show(caseList, e.getX(), e.getY());
+                    }
                     return;
                 }
                 if (e.getX() - rect.x < 20) {
@@ -418,7 +455,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     }
 
     private void setupCaseListMouseMotionListener(){
-        caseList.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        caseList.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 int index = caseList.locationToIndex(e.getPoint());
@@ -452,25 +489,35 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             label.setForeground(isSelected ? list.getSelectionForeground() : list.getForeground());
             return label;
         });
-        JFrame parent = this;
-        stepList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // if double click
-                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-                    int index = stepList.locationToIndex(e.getPoint());
-                    if (index != -1) {
-                        controller.modifyTestStep(parent, categoryList.getSelectedValue(), caseList.getSelectedIndex(), index);
-                    }
-                }
-            }
-        });
+        setupStepListMouseListener();
         stepList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         stepList.setDragEnabled(true);
         stepList.setDropMode(DropMode.INSERT);
         JListDragActionHandler dragHandler = new JListDragActionHandler();
         dragHandler.setOrderChangeListener((oldIndex, newIndex) -> controller.modifyTestStepOrder(categoryList.getSelectedValue(), caseList.getSelectedIndex(), oldIndex, newIndex));
         stepList.setTransferHandler(dragHandler);
+    }
+
+    private void setupStepListMouseListener(){
+        stepList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = stepList.locationToIndex(e.getPoint());
+                if(index < 0){
+                    return;
+                }
+                stepList.requestFocusInWindow();
+                stepList.setSelectedIndex(index);
+                Rectangle rect = stepList.getCellBounds(index, index);
+                if(SwingUtilities.isRightMouseButton(e)){
+                    if(e.getY() - rect.y < 20){
+                        generatePopupMenu(JListType.STEP, true).show(stepList, e.getX(), e.getY());
+                    }else {
+                        generatePopupMenu(JListType.STEP, false).show(stepList, e.getX(), e.getY());
+                    }
+                }
+            }
+        });
     }
 
     private static class CaseListRenderer extends JCheckBox implements ListCellRenderer<TestCase> {
