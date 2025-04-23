@@ -98,7 +98,7 @@ public class StepExecuteService {
     }
 
     private StepState findAndClick(Region region, StepElement element){
-        return handleFindFailed(() -> SikulixUtils.clickOnFound(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec()));
+        return handleFindFailed(() -> SikulixUtils.clickOnFound(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), element.getClickTime()));
     }
 
     private StepState findAndText(Region region, StepElement element, JsonNode... params){
@@ -109,7 +109,7 @@ public class StepExecuteService {
             output = element.getOutputText();
         }
         logger.debug("JSON param : {} - Output text: {}",element.getOutputText(), output);
-        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), output, element.getAction(), element.isEnterKey()));
+        return handleFindFailed(() -> SikulixUtils.clickAndText(region, element.getImageNameOrText(), element.getSimilarity(), element.getTimeoutSec(), element.getClickTime(), output, element.getAction(), element.isEnterKey()));
     }
 
 

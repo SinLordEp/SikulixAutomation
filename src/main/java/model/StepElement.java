@@ -18,6 +18,7 @@ public class StepElement implements Serializable {
     private String imageNameOrText;
     private double similarity = 0.9;
     private int timeoutSec = 2;
+    private int clickTime = 1;
     private DataSource textSource = null;
     private String outputText = null;
     private boolean enterKey = false;
@@ -89,6 +90,14 @@ public class StepElement implements Serializable {
 
     public void setTextSource(DataSource textSource) {
         this.textSource = textSource;
+    }
+
+    public int getClickTime() {
+        return clickTime;
+    }
+
+    public void setClickTime(int clickTime) {
+        this.clickTime = clickTime;
     }
 
     @JsonIgnore

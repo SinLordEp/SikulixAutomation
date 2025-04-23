@@ -2,6 +2,7 @@ package util;
 
 import config.GlobalPaths;
 import exception.ImageIOException;
+import exception.TestInterruptException;
 import model.enums.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
@@ -27,16 +28,24 @@ public class SikulixUtils {
         region.wait(new Pattern(imagePath).similar(similarity), timeoutSec);
     }
 
-    public static void clickOnFound(Region region, String imagePath, double similarity, int timeoutSec) throws FindFailed {
-        region.wait(new Pattern(imagePath).similar(similarity), timeoutSec).click();
+    public static void clickOnFound(Region region, String imagePath, double similarity, int timeoutSec, int clickTime) throws FindFailed {
+        Region foundRegion = region.wait(new Pattern(imagePath).similar(similarity), timeoutSec);
+        for(int i = 0; i < clickTime; i++){
+            foundRegion.click();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new TestInterruptException("Failed to click on image at the \"%s\" time".formatted(i));
+            }
+        }
     }
 
     public static void clickOnText(Region region, String text, int timeoutSec) throws FindFailed {
         region.waitText(text, timeoutSec).click();
     }
 
-    public static void clickAndText(Region region, String imagePath, double similarity, int timeoutSec, String text, StepAction action, boolean enterKey) throws FindFailed {
-        clickOnFound(region, imagePath, similarity, timeoutSec);
+    public static void clickAndText(Region region, String imagePath, double similarity, int timeoutSec, int clickTime, String text, StepAction action, boolean enterKey) throws FindFailed {
+        clickOnFound(region, imagePath, similarity, timeoutSec, clickTime);
         if(action == StepAction.TYPE){
             region.type(text);
         } else if(action == StepAction.PASTE){

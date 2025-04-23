@@ -86,6 +86,9 @@ public class TestStepGUI extends JFrame {
         context.imageOrTextField.setText(element.getImageNameOrText().replace(".PNG", "").replace(".png", ""));
 
         context.action = element.getAction();
+        if(context.action == StepAction.CLICK){
+            context.clickTimesTextField.setText(String.valueOf(element.getClickTime()));
+        }
 
         if (element.getAction() == StepAction.TYPE || element.getAction() == StepAction.PASTE) {
             context.textSource = element.getTextSource();
@@ -253,7 +256,7 @@ public class TestStepGUI extends JFrame {
 
     private void setupScreenshotSection(ElementContext ctx) {
         JPanel screenshotPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton screenshotButton = new JButton("Screenshot");
+        JButton screenshotButton = new JButton("Screenshot - Auto generate screenshot name");
         screenshotButton.setPreferredSize(new Dimension(120, 25));
         screenshotPanel.add(screenshotButton);
         ctx.hideOnNonePanel.add(screenshotPanel);
@@ -294,11 +297,13 @@ public class TestStepGUI extends JFrame {
         JPanel wrapper = new JPanel();
         wrapper.setBorder(BorderFactory.createTitledBorder("Action type"));
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+        JPanel clickPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JPanel sourcePanel = new JPanel();
 
         // Toggle text source panel
         ActionListener typeSwitch = _ -> {
             context.action = StepAction.valueOf(context.actionGroup.getSelection().getActionCommand());
+            clickPanel.setVisible(context.action == StepAction.CLICK || context.action == StepAction.TYPE || context.action == StepAction.PASTE);
             sourcePanel.setVisible(context.action == StepAction.TYPE || context.action == StepAction.PASTE);
             wrapper.revalidate();
             wrapper.repaint();
@@ -313,6 +318,13 @@ public class TestStepGUI extends JFrame {
             panel.add(actionButton);
         }
         wrapper.add(panel);
+
+        // Click times panel
+        clickPanel.add(new JLabel("Click times: "));
+        context.clickTimesTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
+        SwingUtils.makeTextFieldIntegerOnly(context.clickTimesTextField);
+        clickPanel.add(context.clickTimesTextField);
+        wrapper.add(clickPanel);
 
         // Text source panel
         sourcePanel.setBorder(BorderFactory.createTitledBorder("Text Data Source"));
@@ -367,6 +379,7 @@ public class TestStepGUI extends JFrame {
         JTextField imageOrTextField = new JTextField();
         JTextField timeOutTextField = new JTextField("2", 3);
         JTextField similarityTextField = new JTextField("90", 3);
+        JTextField clickTimesTextField = new JTextField("1");
         ButtonGroup actionGroup = new ButtonGroup();
         ButtonGroup textSourceGroup = new ButtonGroup();
         JTextField textOrJsonTextField = new JTextField();
@@ -477,6 +490,9 @@ public class TestStepGUI extends JFrame {
         element.setImageNameOrText(context.imageOrTextField.getText() + ".PNG");
         StepAction stepAction = StepAction.valueOf(context.actionGroup.getSelection().getActionCommand());
         element.setAction(stepAction);
+        if(stepAction == StepAction.CLICK || context.action == StepAction.TYPE || context.action == StepAction.PASTE){
+            element.setClickTime(Integer.parseInt(context.clickTimesTextField.getText()));
+        }
         if (stepAction == StepAction.TYPE || stepAction == StepAction.PASTE) {
             DataSource textSource = DataSource.valueOf(context.textSourceGroup.getSelection().getActionCommand());
             element.setTextSource(textSource);

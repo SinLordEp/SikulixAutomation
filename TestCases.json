@@ -16,6 +16,7 @@
           "imageNameOrText" : "Ventas_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -26,6 +27,7 @@
           "imageNameOrText" : "flecha_menu_izquiera.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 3,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -50,6 +52,7 @@
           "imageNameOrText" : "Ventas_panel.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -75,6 +78,7 @@
           "imageNameOrText" : "Buscar_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -100,6 +104,7 @@
           "imageNameOrText" : "Busqueda_panel.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -125,6 +130,7 @@
           "imageNameOrText" : "Busqueda_buscar_button.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -150,6 +156,7 @@
           "imageNameOrText" : "Busqueda_resultado_uno.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -161,6 +168,7 @@
           "imageNameOrText" : "Busqueda_resultado_vacio.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -184,6 +192,7 @@
           "imageNameOrText" : "Busqueda_nombreContiene_input.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : "JSON",
           "outputText" : "nombre",
           "enterKey" : true
@@ -209,6 +218,7 @@
           "imageNameOrText" : "Busqueda_resultado_uno.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -220,6 +230,7 @@
           "imageNameOrText" : "Busqueda_resultado_vacio.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -231,6 +242,7 @@
           "imageNameOrText" : "cerrar_buscador_clientes.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -256,6 +268,7 @@
           "imageNameOrText" : "1.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : "TEXT",
           "outputText" : "   ",
           "enterKey" : false
@@ -281,6 +294,7 @@
           "imageNameOrText" : "2.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -309,6 +323,7 @@
           "imageNameOrText" : "1.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -319,6 +334,7 @@
           "imageNameOrText" : "1.1.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
@@ -343,6 +359,7 @@
           "imageNameOrText" : "2.PNG",
           "similarity" : 0.9,
           "timeoutSec" : 2,
+          "clickTime" : 1,
           "textSource" : null,
           "outputText" : null,
           "enterKey" : false
