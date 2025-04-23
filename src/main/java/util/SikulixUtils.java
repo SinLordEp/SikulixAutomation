@@ -5,7 +5,6 @@ import exception.TestInterruptException;
 import model.enums.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
-import java.awt.image.BufferedImage;
 
 /**
  * @author Sin
