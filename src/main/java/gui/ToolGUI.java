@@ -563,6 +563,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
             caseList.setSelectedIndex(caseIndex);
             loadTestSteps(caseList.getSelectedValue());
         }
+        testPlanBuilt = false;
+        buildPlanButton.setBackground(Color.ORANGE);
     }
 
     private void repaintTestPlan(List<TestCase> testPlan){
@@ -608,6 +610,8 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private void captureWindowName(String windowName){
         windowNameLabel.setText(windowName);
         captureWindowButton.setEnabled(true);
+        captureWindowButton.setBackground(Color.ORANGE);
+        windowCaptured = false;
     }
 
     private void windowCaptured(){
