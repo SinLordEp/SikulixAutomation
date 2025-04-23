@@ -1,15 +1,11 @@
 package util;
 
 import config.GlobalPaths;
-import exception.ImageIOException;
 import exception.TestInterruptException;
 import model.enums.StepAction;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 /**
  * @author Sin
@@ -54,20 +50,6 @@ public class SikulixUtils {
         if(enterKey){
             region.type(Key.ENTER);
         }
-    }
-
-    public static boolean compareImagesByPixel(BufferedImage firstImage, BufferedImage secondImage){
-        if (firstImage.getWidth() != secondImage.getWidth() || firstImage.getHeight() != secondImage.getHeight()) {
-            return false;
-        }
-        for (int y = 0; y < firstImage.getHeight(); y++) {
-            for (int x = 0; x < firstImage.getWidth(); x++) {
-                if (firstImage.getRGB(x, y) != secondImage.getRGB(x, y)) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     public static void setImagePath(String folderName){
