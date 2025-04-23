@@ -103,8 +103,8 @@ public class StepExecuteService {
 
     private StepState findAndText(Region region, StepElement element, JsonNode... params){
         String output;
-        if(params.length != 0 && element.getTextSource() == DataSource.JSON){
-            output = params[0].get(element.getOutputText()).textValue();
+        if(element.getTextSource() == DataSource.JSON && params != null){
+            output = params[0].get(element.getOutputText()).asText();
         }else{
             output = element.getOutputText();
         }

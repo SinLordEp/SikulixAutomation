@@ -44,11 +44,18 @@ public class CaseExecuteService {
     private void buildThread(List<TestCase> currentTestPlan, boolean isIterating){
         testThread = new Thread(() -> {
             int[] caseIndex = new int[1];
+            int[] paramIndex = new int[1];
+            String[] caseName = new String[1];
+            caseName[0] = "";
             currentTestPlan.forEach(testCase -> {
                 try {
                     Thread.sleep(2000);
                     logger.debug("Executing TestCase: {}", testCase);
-                    int[] paramIndex = new int[1];
+                    if(isIterating && caseName[0].equals(testCase.getName())){
+                        paramIndex[0]++;
+                    }else{
+                        caseName[0] = testCase.getName();
+                    }
                     SikulixUtils.setImagePath(testCase.getName());
                     testCase.getSteps().forEach(testStep -> {
                         testCase.nextCurrentStep();
@@ -56,9 +63,6 @@ public class CaseExecuteService {
                         testCaseService.updateTestPlan(caseIndex[0], testCase);
                         StepState stepState = testStep.getJsonParams().isEmpty() ? stepExecuteService.execute(testStep)
                                 : stepExecuteService.execute(testStep, testCaseService.getJsonByCaseAndIndex(testCase.getName(), paramIndex[0]));
-                        if(isIterating){
-                            paramIndex[0]++;
-                        }
                         if (stepState != StepState.PASS) {
                             throw new TestStepFailedException(testStep.toString());
                         }

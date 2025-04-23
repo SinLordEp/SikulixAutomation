@@ -181,6 +181,7 @@ public class TestStep implements Serializable {
         copy.setY(this.y);
         copy.setWidth(this.width);
         copy.setHeight(this.height);
+        copy.setJsonParams(new ArrayList<>(this.jsonParams));
 
         EnumMap<StepElementType, StepElement> newMap = new EnumMap<>(StepElementType.class);
         for (StepElementType type : StepElementType.values()) {

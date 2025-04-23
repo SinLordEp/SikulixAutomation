@@ -54,7 +54,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
         this.controller = controller;
         controller.addListener(this);
-        setTitle("Testing Automation");
+        setTitle("AQSAutomationFlow");
         setMinimumSize(new Dimension(400, 800));
         setPreferredSize(new Dimension(800, 800));
         setSize(new Dimension(800, 800));
