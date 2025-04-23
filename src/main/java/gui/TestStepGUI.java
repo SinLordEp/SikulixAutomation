@@ -52,6 +52,9 @@ public class TestStepGUI extends JFrame {
             parseTestStep();
         }
         setMainPanel(callback);
+    }
+
+    public void showGUI(){
         setVisible(true);
     }
 

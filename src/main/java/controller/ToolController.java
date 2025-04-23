@@ -49,6 +49,10 @@ public class ToolController {
         exceptionHandler.run(()-> testCaseService.deleteCategory(parent, category), testCaseService.getClass().getName());
     }
 
+    public void modifyCategory(JFrame parent, String category){
+        exceptionHandler.run(()-> testCaseService.modifyCategory(parent, category), testCaseService.getClass().getName());
+    }
+
     public void addTestCase(JFrame parent, String category){
         exceptionHandler.run(()-> testCaseService.addTestCase(parent, category), testCaseService.getClass().getName());
     }

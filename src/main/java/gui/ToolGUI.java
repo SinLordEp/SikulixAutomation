@@ -298,8 +298,33 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         }
     }
 
+    private <T> JPopupMenu generatePopupMenu(JList<T> list, String listType, boolean isItemSelected){
+        JPopupMenu popupMenu = new JPopupMenu();
+        if(isItemSelected){
+            JMenuItem editItem = new JMenuItem("Edit");
+            JMenuItem deleteItem = new JMenuItem("Delete");
+            switch (listType) {
+                case "category" -> editItem.addActionListener(_ ->{
+                    if(categoryList.getSelectedIndex() != -1){
+                        controller.modify
+                    }
+                });
+            }
+        }
+
+    }
+
     private void initializeCategoryList(){
         categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setupCategoryListSelectionListener();
+        setupCategoryListMouseListener();
+    }
+
+    private void setupCategoryListPopupMenu(){
+
+    }
+
+    private void setupCategoryListSelectionListener(){
         categoryList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 if(categoryList.getSelectedIndex() != -1){
@@ -310,6 +335,10 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
                 loadCases(categoryList.getSelectedValue());
             }
         });
+    }
+
+    private void setupCategoryListMouseListener(){
+
     }
 
     private void initializeCaseList(){

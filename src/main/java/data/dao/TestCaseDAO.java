@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.FileIOException;
+import model.TestStep;
 import model.enums.CaseState;
 import model.TestCase;
-
-
+import util.CollectionUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -58,6 +58,12 @@ public class TestCaseDAO {
         setDataIsChanged();
     }
 
+    public void modifyCategory(String oldCategory, String newCategory){
+        categories.put(newCategory, categories.get(oldCategory));
+        categories.remove(oldCategory);
+        setDataIsChanged();
+    }
+
     public void addTestCase(String category, TestCase testCase){
         categories.get(category).add(testCase);
         setDataIsChanged();
@@ -65,6 +71,41 @@ public class TestCaseDAO {
 
     public void deleteTestCase(String category, int caseIndex){
         categories.get(category).remove(caseIndex);
+        setDataIsChanged();
+    }
+
+    public void modifyTestCase(TestCase testCase, String newName){
+        testCase.setName(newName);
+        setDataIsChanged();
+    }
+
+    public void modifyTestCaseOrder(String category, int oldIndex, int newIndex){
+        CollectionUtils.moveElementInList(categories.get(category), oldIndex, newIndex);
+        setDataIsChanged();
+    }
+
+    public TestStep createTestStep(TestCase testCase){
+        return new TestStep("Step " + (testCase.getSteps().size()+1));
+    }
+
+    public void addTestStep(TestCase testCase, TestStep testStep){
+        testCase.addStep(testStep);
+        setDataIsChanged();
+    }
+
+    public void deleteTestStep(TestCase testCase, int stepIndex){
+        testCase.getSteps().remove(stepIndex);
+        setDataIsChanged();
+    }
+
+    public void modifyTestStep(TestCase testCase, int stepIndex, TestStep newTestStep){
+        testCase.getSteps().set(stepIndex, newTestStep);
+        setDataIsChanged();
+    }
+
+    public void modifyTestStepOrder(String category, int caseIndex, int oldStepIndex, int newStepIndex){
+        List<TestStep> testSteps = categories.get(category).get(caseIndex).getSteps();
+        CollectionUtils.moveElementInList(testSteps, oldStepIndex, newStepIndex);
         setDataIsChanged();
     }
 

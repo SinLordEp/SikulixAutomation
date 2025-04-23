@@ -12,7 +12,6 @@ import model.*;
 import model.enums.EventCommand;
 import interfaces.Callback;
 import model.enums.FileOperation;
-import util.CollectionUtils;
 import util.DialogUtils;
 import util.FileUtils;
 
@@ -85,6 +84,18 @@ public class TestCaseService {
         }
     }
 
+    public void modifyCategory(JFrame parent, String category) {
+        if(category != null && !category.isEmpty()){
+            String input = DialogUtils.showInputDialog(parent, "Editing category", "Input new name: ");
+            if(!input.isEmpty()){
+                dao.modifyCategory(category, input);
+                callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
+            }else {
+                throw new OperationCancelException();
+            }
+        }
+    }
+
     public void addTestCase(JFrame parent, String category){
         if(category == null || category.isEmpty()){
             return;
@@ -109,37 +120,34 @@ public class TestCaseService {
 
     public void modifyTestCase(JFrame parent, String category, int caseIndex){
         TestCase testCase = dao.getTestCase(category, caseIndex);
-        String input = DialogUtils.showInputDialog(parent, "Modify Test case", "Input new name: ");
-        if(input.isEmpty()){
-            throw new OperationCancelException();
-        }
-        if(!testCase.getSteps().isEmpty()){
+        if(testCase != null && !testCase.getName().isEmpty()){
+            String input = DialogUtils.showInputDialog(parent, "Modify Test case", "Input new name: ");
+            if(input.isEmpty()){
+                throw new OperationCancelException();
+            }
             try {
                 FileUtils.renameFolder(GlobalPaths.IMAGE_ROOT.resolve(testCase.getName()), GlobalPaths.IMAGE_ROOT.resolve(input));
+                dao.modifyTestCase(testCase, input);
             } catch (IOException e) {
                 throw new FileIOException("Failed to rename folder with cause: " + e.getMessage());
             }
         }
-        testCase.setName(input);
-        dao.setDataIsChanged();
     }
 
     public void modifyTestCaseOrder(String category, int oldIndex, int newIndex){
-        ArrayList<TestCase> testCases = dao.getCategories().get(category);
-        CollectionUtils.moveElementInList(testCases, oldIndex, newIndex);
-        dao.setDataIsChanged();
+        dao.modifyTestCaseOrder(category, oldIndex, newIndex);
         callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
     }
 
     public void addTestStep(JFrame parent, String category, int caseIndex){
         if(category != null && !category.isEmpty() && caseIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
-            TestStep testStep = new TestStep("Step " + (testCase.getSteps().size()+1));
-            new TestStepGUI(parent, testCase, testStep, newTestStep -> {
-                testCase.addStep(newTestStep);
-                dao.setDataIsChanged();
+            TestStep testStep = dao.createTestStep(testCase);
+            TestStepGUI stepGUI = new TestStepGUI(parent, testCase, testStep, newTestStep -> {
+                dao.addTestStep(testCase, newTestStep);
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
             });
+            stepGUI.showGUI();
         }
     }
 
@@ -147,8 +155,7 @@ public class TestCaseService {
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
             if(DialogUtils.showConfirmDialog(parent, "Deleting test step", "Delete TestStep: \"%s\"?".formatted(testCase.getSteps().get(stepIndex).getName()) ) == JOptionPane.YES_OPTION){
-                testCase.getSteps().remove(stepIndex);
-                dao.setDataIsChanged();
+                dao.deleteTestStep(testCase, stepIndex);
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
             }else{
                 throw new OperationCancelException();
@@ -160,18 +167,16 @@ public class TestCaseService {
         if(category != null && !category.isEmpty() && caseIndex >= 0 && stepIndex >= 0){
             TestCase testCase = dao.getTestCase(category, caseIndex);
             TestStep testStep = testCase.getSteps().get(stepIndex);
-            new TestStepGUI(parent, testCase, testStep, newTestStep -> {
-                testCase.getSteps().set(stepIndex, newTestStep);
-                dao.setDataIsChanged();
+            TestStepGUI stepGUI = new TestStepGUI(parent, testCase, testStep, newTestStep -> {
+                dao.modifyTestStep(testCase, stepIndex, newTestStep);
                 callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
             });
+            stepGUI.showGUI();
         }
     }
 
     public void modifyTestStepOrder(String category, int caseIndex, int oldStepIndex, int newStepIndex){
-        List<TestStep> testSteps = dao.getTestCase(category,caseIndex).getSteps();
-        CollectionUtils.moveElementInList(testSteps, oldStepIndex, newStepIndex);
-        dao.setDataIsChanged();
+        dao.modifyTestStepOrder(category, caseIndex, oldStepIndex, newStepIndex);
         callback.onSubmit(new EventPackage(EventCommand.TESTCASE_CHANGED, dao.getCategoryCopy()));
     }
 
@@ -251,4 +256,6 @@ public class TestCaseService {
             }
         }
     }
+
+
 }
