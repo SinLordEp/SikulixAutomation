@@ -324,6 +324,7 @@ public class TestStepGUI extends JFrame {
         context.clickTimesTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         SwingUtils.makeTextFieldIntegerOnly(context.clickTimesTextField);
         clickPanel.add(context.clickTimesTextField);
+        clickPanel.setVisible(context.action != StepAction.FIND);
         wrapper.add(clickPanel);
 
         // Text source panel
@@ -355,16 +356,13 @@ public class TestStepGUI extends JFrame {
         context.textOrJsonTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
         sourcePanel.add(context.textOrJsonTextField);
 
-        sourcePanel.setVisible(false);
+        sourcePanel.setVisible(context.action != StepAction.FIND);
         wrapper.add(sourcePanel);
 
         // Toggle label and input field
         ActionListener formatSwitch = _ -> sourceLabel.setText(textOption.isSelected() ? "Output Text:" : "Json field:");
         textOption.addActionListener(formatSwitch);
         jsonOption.addActionListener(formatSwitch);
-        if(context.action == StepAction.CLICK || context.action == StepAction.TYPE || context.action == StepAction.PASTE){
-            SwingUtilities.invokeLater(() -> typeSwitch.actionPerformed(null));
-        }
         context.hideOnNonePanel.add(wrapper);
     }
 

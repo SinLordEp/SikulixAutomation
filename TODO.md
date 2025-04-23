@@ -36,7 +36,7 @@
 17. Add tooltip to disable button
 18. ~~Add control to empty name input and cancel/window closing on rename/create~~
 19. ~~Make testStepGUI pop up location related to ToolGUI~~
-20. Make getPath pop up location related to ToolGUI and its default name should change by operation
+20. ~~Make getPath pop up location related to ToolGUI and its default name should change by operation~~
 21. ~~Add function to reorder JList~~
 22. ~~Add a panel to import json~~
 23. ~~Build plan will check if JSON is selected and contains all the params for testcase (event)~~
