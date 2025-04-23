@@ -362,7 +362,7 @@ public class TestStepGUI extends JFrame {
         ActionListener formatSwitch = _ -> sourceLabel.setText(textOption.isSelected() ? "Output Text:" : "Json field:");
         textOption.addActionListener(formatSwitch);
         jsonOption.addActionListener(formatSwitch);
-        if(context.action == StepAction.TYPE || context.action == StepAction.PASTE){
+        if(context.action == StepAction.CLICK || context.action == StepAction.TYPE || context.action == StepAction.PASTE){
             SwingUtilities.invokeLater(() -> typeSwitch.actionPerformed(null));
         }
         context.hideOnNonePanel.add(wrapper);

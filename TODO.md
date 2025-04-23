@@ -57,7 +57,8 @@
 11. ~~Add control to image name and step name~~
 12. ~~Mark the none-null element as green~~
 13. ~~Auto generate image name by its testCase, step and element type name~~
-14. Add a text field for clicking times, default is 1
+14. ~~Add a text field for clicking times, default is 1~~
+15. Add a input key field to simulate keyboard input
 
 
 ## TestCaseGUI

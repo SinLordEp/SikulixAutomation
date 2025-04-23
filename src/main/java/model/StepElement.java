@@ -111,6 +111,7 @@ public class StepElement implements Serializable {
         copy.setTextSource(this.textSource);
         copy.setOutputText(this.outputText);
         copy.setEnterKey(this.enterKey);
+        copy.setClickTime(this.clickTime);
         return copy;
     }
 
