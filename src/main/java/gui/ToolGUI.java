@@ -11,13 +11,17 @@ import model.TestStep;
 import model.enums.JListType;
 import util.DialogUtils;
 import interfaces.EventListener;
+import util.ImageUtils;
 import util.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+
+import static config.GlobalPaths.BASE_ROOT;
 
 /**
  * @author Sin
@@ -52,8 +56,6 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
 
     public ToolGUI(ToolController controller) {
         this.controller = controller;
-        ImageIcon appIcon = new ImageIcon("./src/main/resources/AqsAutomationFlow.png");
-        setIconImage(appIcon.getImage());
         controller.addListener(this);
         setTitle("AQSAutomationFlow");
         setMinimumSize(new Dimension(400, 800));
@@ -74,6 +76,7 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
         initializeCategoryList();
         initializeCaseList();
         initializeStepList();
+        setIconImage(ImageUtils.loadIcon());
     }
 
     private void setMainPanel(){

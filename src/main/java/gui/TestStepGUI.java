@@ -41,8 +41,6 @@ public class TestStepGUI extends JFrame {
     public TestStepGUI(JFrame parent, TestCase testCase, TestStep testStep, Callback<TestStep> callback) {
         this.testCase = testCase;
         this.testStep = testStep;
-        ImageIcon appIcon = new ImageIcon("./src/main/resources/AqsAutomationFlow.png");
-        setIconImage(appIcon.getImage());
         isNewStep = testStep.getPassElement() == null;
         setTitle("TestStep Editor");
         setSize(500, 800);
@@ -54,6 +52,7 @@ public class TestStepGUI extends JFrame {
             parseTestStep();
         }
         setMainPanel(callback);
+        setIconImage(ImageUtils.loadIcon());
     }
 
     public void showGUI(){

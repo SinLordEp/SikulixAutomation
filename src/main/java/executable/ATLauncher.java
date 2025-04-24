@@ -6,11 +6,9 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 
 import javax.swing.*;
-import java.awt.*;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 /**
  * @author Sin
@@ -32,7 +30,7 @@ public class ATLauncher {
     }
 
     private static void loadLogger(){
-        Configurator.initialize(null, "src\\main\\resources\\log4j2.xml");
+        Configurator.initialize(null, "/resources/log4j2.xml");
     }
 
     public static Path getCurrentParentPath() {
@@ -41,7 +39,6 @@ public class ATLauncher {
                     .getCodeSource()
                     .getLocation()
                     .toURI();
-
             Path path = Paths.get(uri);
 
             if (path.toString().endsWith(".jar")) {
