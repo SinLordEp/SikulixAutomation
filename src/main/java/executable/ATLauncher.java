@@ -6,9 +6,11 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * @author Sin

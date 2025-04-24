@@ -4,6 +4,7 @@ setlocal
 set APP_NAME=AQSAutomationFlow
 set MAIN_CLASS=executable.ATLauncher
 set MAIN_JAR=%APP_NAME%.jar
+set ICON= src\main\resources\AqsAutomationFlow.ico
 
 if exist dist rmdir /s /q dist
 if exist jpackage-temp rmdir /s /q jpackage-temp

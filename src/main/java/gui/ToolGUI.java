@@ -51,8 +51,9 @@ public class ToolGUI extends JFrame implements EventListener<EventPackage>{
     private final JProgressBar testProgressBar = new JProgressBar();
 
     public ToolGUI(ToolController controller) {
-
         this.controller = controller;
+        ImageIcon appIcon = new ImageIcon("./src/main/resources/AqsAutomationFlow.png");
+        setIconImage(appIcon.getImage());
         controller.addListener(this);
         setTitle("AQSAutomationFlow");
         setMinimumSize(new Dimension(400, 800));
