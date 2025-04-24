@@ -4,7 +4,7 @@ setlocal
 set APP_NAME=AQSAutomationFlow
 set MAIN_CLASS=executable.ATLauncher
 set MAIN_JAR=SikulixAutomation-1.1.jar
-set ICON= src\main\resources\AqsAutomationFlow.ico
+set ICON= src\main\resources\icons\AqsAutomationFlow.ico
 
 if exist dist rmdir /s /q dist
 if exist jpackage-temp rmdir /s /q jpackage-temp
