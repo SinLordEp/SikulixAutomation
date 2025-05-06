@@ -8,10 +8,7 @@ import model.enums.StepAction;
 import model.enums.StepElementType;
 import org.sikuli.script.Region;
 import interfaces.Callback;
-import util.DialogUtils;
-import util.ImageUtils;
-import util.SikulixUtils;
-import util.SwingUtils;
+import util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -285,13 +282,20 @@ public class TestStepGUI extends JFrame {
             }).start();
         }
 
-        screenshotButton.addActionListener(_ -> new Screenshot(captured -> {
-            ctx.image = captured;
-            setImageToLabel(imageLabel, ctx.image);
-            if(ctx.imageOrTextField.getText().isEmpty()){
-                ctx.imageOrTextField.setText("%s_%s_%s".formatted(testCase, stepNameTextField.getText(), ctx.elementType));
-            }
-        }));
+        screenshotButton.addActionListener(_ -> {
+            JNAUtils.focusWindow();
+            SwingUtilities.invokeLater(() -> {
+                new Screenshot(captured -> {
+                    ctx.image = captured;
+                    setImageToLabel(imageLabel, ctx.image);
+                    if(ctx.imageOrTextField.getText().isEmpty()){
+                        ctx.imageOrTextField.setText("%s_%s_%s".formatted(testCase, stepNameTextField.getText(), ctx.elementType));
+                    }
+                });
+            });
+
+        });
+
     }
 
     private void setupActionPanel(ElementContext context) {
@@ -480,7 +484,7 @@ public class TestStepGUI extends JFrame {
         if(context.matchType == DataSource.IMAGE){
             try {
                 ImageUtils.saveImage(context.image, testCase + File.separator + context.imageOrTextField.getText().strip() + ".PNG");
-            } catch (IOException e) {
+            } catch (IOException _) {
                 throw new ImageIOException("Cannot write image to target path");
             }
         }

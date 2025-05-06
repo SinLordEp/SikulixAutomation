@@ -1,6 +1,5 @@
 package service;
 
-import com.sun.jna.platform.win32.WinDef;
 import exception.WindowErrorException;
 import interfaces.Callback;
 import model.EventPackage;
@@ -17,22 +16,14 @@ public class WindowService {
         if(windowName.isEmpty() || windowName.equals("No window is selected, please select target window!")){
             return;
         }
-        WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
-        if(window == null){
+        JNAUtils.getWindowByTitle(windowName);
+        if(!JNAUtils.isWindowExists()){
             throw new WindowErrorException("Can not find windows with name: " + windowName);
         }
-        JNAUtils.bringWindowToFront(window);
-        JNAUtils.setWindowSize(window, width, height);
-        JNAUtils.setWindowAtLocation(window, 0, 0);
+        JNAUtils.bringWindowToFront();
+        JNAUtils.setWindowSize(width, height);
+        JNAUtils.setWindowAtLocation(0, 0);
         callback.onSubmit(new EventPackage(EventCommand.WINDOW_CAPTURED));
     }
 
-    public void unsetWindowAlwaysOnTop(){
-        String windowName = "Servidor Tienda [Tienda PRE ] CastorTPV v@VERSION@";
-        WinDef.HWND window = JNAUtils.getWindowByTitle(windowName);
-        if(window == null){
-            throw new WindowErrorException("Can not find windows with name: " + windowName);
-        }
-        JNAUtils.setWindowAlwaysOnTop(window, false);
-    }
 }

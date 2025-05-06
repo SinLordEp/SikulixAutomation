@@ -7,22 +7,28 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-/**
- * @author Sin
- */
-public class Screenshot extends JFrame{
+public class Screenshot extends JFrame {
     private Point startPoint;
     private Rectangle captureRect;
+    private BufferedImage fullScreenImage;
+    private final Callback<BufferedImage> callback;
 
     public Screenshot(Callback<BufferedImage> callback) {
-        setUndecorated(true);
-        setAlwaysOnTop(true);
-        setOpacity(0.3f);
-        setBackground(Color.BLACK);
-
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        Rectangle screenRect = ge.getMaximumWindowBounds();
-        setBounds(screenRect);
+        this.callback = callback;
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            Rectangle screenRect = ge.getMaximumWindowBounds();
+            fullScreenImage = new Robot().createScreenCapture(screenRect);
+            setUndecorated(true);
+            setAlwaysOnTop(true);
+            setOpacity(1f);
+            setBackground(Color.BLACK);
+            setBounds(screenRect);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            dispose();
+            return;
+        }
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -35,7 +41,7 @@ public class Screenshot extends JFrame{
                 captureRect = createRectangle(startPoint, e.getPoint());
                 dispose();
                 try {
-                    captureAndSave(captureRect, callback);
+                    captureAndSave(captureRect);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -74,18 +80,31 @@ public class Screenshot extends JFrame{
 
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
+        if (fullScreenImage != null) {
+            g.drawImage(fullScreenImage, 0, 0, getWidth(), getHeight(), this);
+        }
         if (captureRect != null) {
-            g.setColor(Color.RED);
+            g.setColor(new Color(255, 0, 0, 128));
             g.drawRect(captureRect.x, captureRect.y, captureRect.width, captureRect.height);
+            g.setColor(new Color(255, 255, 255, 60));
+            g.fillRect(captureRect.x, captureRect.y, captureRect.width, captureRect.height);
         }
     }
 
-    private void captureAndSave(Rectangle rect, Callback<BufferedImage> callback) throws Exception {
-        BufferedImage imageCaptured;
-        Robot robot = new Robot();
-        imageCaptured = robot.createScreenCapture(rect);
-        callback.onSubmit(imageCaptured);
+
+    private void captureAndSave(Rectangle rect) {
+        if (fullScreenImage == null || rect == null || rect.width == 0 || rect.height == 0) {
+            return;
+        }
+        BufferedImage cropped = fullScreenImage.getSubimage(
+                rect.x,
+                rect.y,
+                rect.width,
+                rect.height
+        );
+        if (callback != null) {
+            callback.onSubmit(cropped);
+        }
     }
 
 }
